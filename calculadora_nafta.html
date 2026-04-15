@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Calculadora de Nafta</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%231A5FE8'><rect x='8' y='8' width='54' height='74' rx='9'/><rect x='2' y='78' width='66' height='9' rx='4'/><rect x='16' y='17' width='38' height='27' rx='5' fill='white'/><path d='M62 28 L76 28 Q87 28 87 39 L87 63 Q87 73 76 73 L63 73' fill='none' stroke='%231A5FE8' stroke-width='12' stroke-linecap='round' stroke-linejoin='round'/><rect x='50' y='69' width='22' height='9' rx='4.5' transform='rotate(-12 61 73)'/></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -814,6 +815,17 @@
   .map-detect-label { color: var(--ink-light); font-size: 12px; }
 
   /* ── ADMIN CARS — GLOBAL TABLE ── */
+  /* ── COMPARACIÓN ── */
+  .cmp-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:4px; }
+  .cmp-card { background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:14px; }
+  .cmp-card.winner { border-color:#86efac; background:#f0fdf4; }
+  .cmp-card-name  { font-size:11px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:5px; }
+  .cmp-card-amount{ font-family:'Barlow Condensed',sans-serif; font-size:2rem; font-weight:700; color:var(--ink); line-height:1; }
+  .cmp-card-detail{ font-size:12px; color:var(--ink-light); margin-top:4px; }
+  .cmp-diff-banner{ margin-top:10px; padding:10px 14px; border-radius:var(--radius-sm); font-size:13px; font-weight:600; text-align:center; }
+  .cmp-diff-banner.saving { background:#dcfce7; color:#166534; }
+  .cmp-diff-banner.losing { background:#fee2e2; color:#991b1b; }
+
   .admin-cars-toolbar { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:10px; }
   .admin-cars-toolbar input[type="search"] {
     flex:1; min-width:160px; padding:8px 12px;
@@ -997,6 +1009,14 @@
         </div>
       </div>
 
+      <div id="waypoints-container" style="margin-bottom:0"></div>
+      <button type="button" onclick="addWaypoint()"
+        style="width:100%; padding:10px; margin-bottom:10px; background:transparent; border:1.5px dashed var(--border); border-radius:var(--radius-sm); font-family:'DM Sans',sans-serif; font-size:13px; color:var(--ink-light); cursor:pointer; transition:border-color 0.15s,color 0.15s;"
+        onmouseover="this.style.borderColor='var(--hi)';this.style.color='var(--hi)'"
+        onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--ink-light)'">
+        ➕ Agregar parada intermedia
+      </button>
+
       <button class="map-btn" id="btn-calcular-ruta" onclick="calcularRuta()">Calcular ruta y distancia</button>
 
       <div id="map-detect-badge" class="map-detect-badge">
@@ -1057,6 +1077,28 @@
         <div class="result-detail-lbl" id="lbl-precio">Precio / litro</div>
       </div>
     </div>
+
+    <!-- Tank indicator -->
+    <div id="tank-indicator" style="display:none; margin-top:18px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.1)">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span style="font-size:11px; font-weight:600; letter-spacing:0.15em; text-transform:uppercase; color:rgba(255,255,255,0.5)">🛢 Tanque consumido</span>
+        <span id="tank-pct-text" style="font-size:13px; font-weight:600; color:rgba(255,255,255,0.85)">--%</span>
+      </div>
+      <div style="background:rgba(255,255,255,0.12); border-radius:99px; height:8px; overflow:hidden;">
+        <div id="tank-bar" style="height:100%; border-radius:99px; width:0%; transition:width 0.6s cubic-bezier(0.34,1.56,0.64,1);"></div>
+      </div>
+      <div id="tank-sub" style="font-size:12px; color:rgba(255,255,255,0.5); margin-top:6px;"></div>
+    </div>
+  </div>
+
+  <!-- Botón compartir -->
+  <div id="share-row" style="display:none; text-align:right; margin-top:10px; margin-bottom:4px;">
+    <button id="btn-share" onclick="compartirResultado()"
+      style="padding:9px 18px; background:transparent; border:1.5px solid var(--border); border-radius:var(--radius-sm); font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; color:var(--ink-light); cursor:pointer; transition:all 0.18s; display:inline-flex; align-items:center; gap:7px;"
+      onmouseover="this.style.borderColor='var(--hi)';this.style.color='var(--hi)'"
+      onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--ink-light)'">
+      <span>↑</span> Compartir resultado
+    </button>
   </div>
 
   <!-- ── CHIPS EXTRA ── -->
@@ -1082,6 +1124,32 @@
           <span class="ppr-lbl">Por persona</span>
           <span class="ppr-val" id="ppr-val">—</span>
         </div>
+      </div>
+    </div>
+
+    <!-- Chip: Comparar con otro auto -->
+    <div class="extra-chip" id="chip-comparar" style="display:none">
+      <button class="extra-chip-trigger" onclick="toggleChip('comparar')">
+        <span class="chip-icon">⚖️</span>
+        <span class="chip-label">Comparar con otro auto</span>
+        <span class="chip-arrow">›</span>
+      </button>
+      <div class="chip-panel" id="panel-comparar" style="display:none">
+        <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:14px;">
+          <div class="field" style="margin:0">
+            <label>Marca</label>
+            <div class="select-wrapper"><select id="cmp-marca" onchange="onCmpMarcaChange()"><option value="">— Marca —</option></select></div>
+          </div>
+          <div class="field" style="margin:0">
+            <label>Modelo</label>
+            <div class="select-wrapper"><select id="cmp-modelo" onchange="onCmpModeloChange()" disabled><option value="">— Modelo —</option></select></div>
+          </div>
+          <div class="field" style="margin:0">
+            <label>Versión</label>
+            <div class="select-wrapper"><select id="cmp-version" onchange="updateComparison()" disabled><option value="">— Versión —</option></select></div>
+          </div>
+        </div>
+        <div id="comparison-result"></div>
       </div>
     </div>
 
@@ -1145,7 +1213,11 @@
       <div class="admin-section">
         <h3>Modelos de auto</h3>
         <div class="admin-cars-toolbar">
-          <input type="search" id="car-filter" placeholder="Filtrar por marca, modelo o versión…" oninput="filterCarTable(this.value)">
+          <select id="car-brand-filter" onchange="filterCarTable(document.getElementById('car-filter').value)"
+            style="padding:8px 12px; border:1.5px solid var(--border); border-radius:var(--radius-sm); font-family:'DM Sans',sans-serif; font-size:13px; background:var(--bg); color:var(--ink); cursor:pointer;">
+            <option value="">Todas las marcas</option>
+          </select>
+          <input type="search" id="car-filter" placeholder="Filtrar por modelo o versión…" oninput="filterCarTable(this.value)">
           <button class="admin-add-car" onclick="addCarRow()">+ Agregar auto</button>
         </div>
         <div style="overflow-x:auto">
@@ -1160,6 +1232,7 @@
                 <th class="col-num">Ruta<br>(L)</th>
                 <th class="col-num">GNC C<br>(m³)</th>
                 <th class="col-num">GNC R<br>(m³)</th>
+                <th class="col-num">Tanque<br>(L)</th>
                 <th class="col-pais">AR</th>
                 <th class="col-pais">UY</th>
                 <th class="col-pais">CL</th>
@@ -1219,350 +1292,350 @@ const DEFAULT_DATA = {
   // ciudad/ruta: L/100 km · gnc: m³/100 km · anos: rango de año
   autos: [
     // ── Audi ───────────────────────────────────────────────────
-    {marca:"Audi", modelo:"A3",    version:"1.4 TFSI",  anos:"2013–2020", ciudad:9.5,  ruta:7.0,  paises:['AR']},
-    {marca:"Audi", modelo:"A3",    version:"2.0 TFSI",  anos:"2013–2020", ciudad:11.0, ruta:8.0,  paises:['AR']},
-    {marca:"Audi", modelo:"A4",    version:"2.0 TFSI",  anos:"2008–2025", ciudad:11.5, ruta:8.5,  paises:['AR']},
-    {marca:"Audi", modelo:"Q3",    version:"1.4 TFSI",  anos:"2015–2020", ciudad:11.0, ruta:8.0,  paises:['AR']},
-    {marca:"Audi", modelo:"Q3",    version:"1.5 TFSI",  anos:"2021–2025", ciudad:11.0, ruta:8.0,  paises:['AR']},
-    {marca:"Audi", modelo:"Q5",    version:"2.0 TFSI",  anos:"2012–2025", ciudad:12.5, ruta:9.5,  paises:['AR']},
+    {marca:"Audi", modelo:"A3",    version:"1.4 TFSI",  anos:"2013–2020", ciudad:9.5,  ruta:7.0,  tanque:40, paises:['AR']},
+    {marca:"Audi", modelo:"A3",    version:"2.0 TFSI",  anos:"2013–2020", ciudad:11.0, ruta:8.0,  tanque:40, paises:['AR']},
+    {marca:"Audi", modelo:"A4",    version:"2.0 TFSI",  anos:"2008–2025", ciudad:11.5, ruta:8.5,  tanque:54, paises:['AR']},
+    {marca:"Audi", modelo:"Q3",    version:"1.4 TFSI",  anos:"2015–2020", ciudad:11.0, ruta:8.0,  tanque:60, paises:['AR']},
+    {marca:"Audi", modelo:"Q3",    version:"1.5 TFSI",  anos:"2021–2025", ciudad:11.0, ruta:8.0,  tanque:60, paises:['AR']},
+    {marca:"Audi", modelo:"Q5",    version:"2.0 TFSI",  anos:"2012–2025", ciudad:12.5, ruta:9.5,  tanque:75, paises:['AR']},
     // ── BMW ────────────────────────────────────────────────────
-    {marca:"BMW",  modelo:"Serie 1", version:"118i",    anos:"2012–2019", ciudad:9.5,  ruta:7.0,  paises:['AR']},
-    {marca:"BMW",  modelo:"Serie 1", version:"120i",    anos:"2012–2025", ciudad:10.0, ruta:7.5,  paises:['AR']},
-    {marca:"BMW",  modelo:"Serie 3", version:"318i",    anos:"2005–2025", ciudad:11.0, ruta:8.0,  paises:['AR']},
-    {marca:"BMW",  modelo:"Serie 3", version:"320i",    anos:"2005–2025", ciudad:11.5, ruta:8.5,  paises:['AR']},
-    {marca:"BMW",  modelo:"X1",    version:"sDrive 18i",anos:"2012–2025", ciudad:11.0, ruta:8.0,  paises:['AR']},
-    {marca:"BMW",  modelo:"X3",    version:"xDrive 20i",anos:"2012–2025", ciudad:12.0, ruta:9.0,  paises:['AR']},
+    {marca:"BMW",  modelo:"Serie 1", version:"118i",    anos:"2012–2019", ciudad:9.5,  ruta:7.0,  tanque:40, paises:['AR']},
+    {marca:"BMW",  modelo:"Serie 1", version:"120i",    anos:"2012–2025", ciudad:10.0, ruta:7.5,  tanque:40, paises:['AR']},
+    {marca:"BMW",  modelo:"Serie 3", version:"318i",    anos:"2005–2025", ciudad:11.0, ruta:8.0,  tanque:52, paises:['AR']},
+    {marca:"BMW",  modelo:"Serie 3", version:"320i",    anos:"2005–2025", ciudad:11.5, ruta:8.5,  tanque:52, paises:['AR']},
+    {marca:"BMW",  modelo:"X1",    version:"sDrive 18i",anos:"2012–2025", ciudad:11.0, ruta:8.0,  tanque:61, paises:['AR']},
+    {marca:"BMW",  modelo:"X3",    version:"xDrive 20i",anos:"2012–2025", ciudad:12.0, ruta:9.0,  tanque:65, paises:['AR']},
     // ── Chery ──────────────────────────────────────────────────
-    {marca:"Chery", modelo:"Tiggo 2", version:"1.5",   anos:"2018–2025", ciudad:9.5,  ruta:7.2,  paises:['AR']},
-    {marca:"Chery", modelo:"Tiggo 4", version:"1.5",   anos:"2018–2022", ciudad:10.0, ruta:7.5,  paises:['AR']},
-    {marca:"Chery", modelo:"Tiggo 4 Pro", version:"1.5T", anos:"2022–2025", ciudad:10.0, ruta:7.5, paises:['AR']},
-    {marca:"Chery", modelo:"Tiggo 7 Pro", version:"1.5T", anos:"2021–2025", ciudad:10.5, ruta:8.0, paises:['AR']},
-    {marca:"Chery", modelo:"Tiggo 8 Pro", version:"1.6T", anos:"2022–2025", ciudad:11.5, ruta:8.5, paises:['AR']},
+    {marca:"Chery", modelo:"Tiggo 2", version:"1.5",   anos:"2018–2025", ciudad:9.5,  ruta:7.2,  tanque:45, paises:['AR']},
+    {marca:"Chery", modelo:"Tiggo 4", version:"1.5",   anos:"2018–2022", ciudad:10.0, ruta:7.5,  tanque:50, paises:['AR']},
+    {marca:"Chery", modelo:"Tiggo 4 Pro", version:"1.5T", anos:"2022–2025", ciudad:10.0, ruta:7.5, tanque:50, paises:['AR']},
+    {marca:"Chery", modelo:"Tiggo 7 Pro", version:"1.5T", anos:"2021–2025", ciudad:10.5, ruta:8.0, tanque:55, paises:['AR']},
+    {marca:"Chery", modelo:"Tiggo 8 Pro", version:"1.6T", anos:"2022–2025", ciudad:11.5, ruta:8.5, tanque:60, paises:['AR']},
     // ── Chevrolet ──────────────────────────────────────────────
-    {marca:"Chevrolet", modelo:"Agile",    version:"1.4 N",         anos:"2010–2014", ciudad:9.0,  ruta:6.8,  paises:['AR']},
-    {marca:"Chevrolet", modelo:"Celta",    version:"1.0 N",         anos:"2002–2011", ciudad:7.5,  ruta:5.8,  paises:['AR']},
-    {marca:"Chevrolet", modelo:"Classic",  version:"1.4 N",         anos:"2003–2016", ciudad:9.0,  ruta:6.8,  paises:['AR']},
-    {marca:"Chevrolet", modelo:"Cruze",    version:"1.4 turbo",     anos:"2011–2025", ciudad:9.5,  ruta:6.8,  paises:['AR']},
-    {marca:"Chevrolet", modelo:"Cruze",    version:"1.8 N",         anos:"2011–2015", ciudad:10.5, ruta:7.5,  paises:['AR']},
-    {marca:"Chevrolet", modelo:"Equinox",  version:"2.0 turbo",     anos:"2018–2025", ciudad:11.5, ruta:8.5,  paises:['AR']},
-    {marca:"Chevrolet", modelo:"Meriva",   version:"1.4 N",         anos:"2003–2012", ciudad:10.5, ruta:7.8,  paises:['AR']},
-    {marca:"Chevrolet", modelo:"Meriva",   version:"1.8 N",         anos:"2006–2012", ciudad:11.5, ruta:8.5,  paises:['AR']},
-    {marca:"Chevrolet", modelo:"Montana",  version:"1.8 N",         anos:"2003–2011", ciudad:10.5, ruta:8.0,  paises:['AR']},
-    {marca:"Chevrolet", modelo:"Montana",  version:"1.2 turbo",     anos:"2023–2025", ciudad:8.0,  ruta:6.0,  paises:['AR']},
-    {marca:"Chevrolet", modelo:"Onix",     version:"1.4 N",         anos:"2013–2018", ciudad:8.5,  ruta:6.2,  paises:['AR']},
-    {marca:"Chevrolet", modelo:"Onix",     version:"1.2 turbo",     anos:"2019–2025", ciudad:8.5,  ruta:6.2,  paises:['AR','UY']},
-    {marca:"Chevrolet", modelo:"Onix",     version:"1.2 + GNC",     anos:"2019–2025", ciudad:8.5,  ruta:6.2,  gnc_ciudad:10.0, gnc_ruta:7.5, paises:['AR']},
-    {marca:"Chevrolet", modelo:"Onix",     version:"1.0 turbo flex",anos:"2020–2025", ciudad:8.5,  ruta:6.5,  paises:['BR']},
-    {marca:"Chevrolet", modelo:"Onix Plus",version:"1.0 turbo flex",anos:"2020–2025", ciudad:9.0,  ruta:6.8,  paises:['BR']},
-    {marca:"Chevrolet", modelo:"Prisma",   version:"1.4 N",         anos:"2013–2018", ciudad:8.5,  ruta:6.2,  paises:['AR']},
-    {marca:"Chevrolet", modelo:"S10",      version:"2.8 TDI",       anos:"2012–2025", ciudad:12.0, ruta:9.0,  paises:['AR','BR']},
-    {marca:"Chevrolet", modelo:"Sail",     version:"1.5 N",         anos:"2017–2025", ciudad:9.0,  ruta:6.8,  paises:['CL']},
-    {marca:"Chevrolet", modelo:"Sonic",    version:"1.6 N",         anos:"2012–2018", ciudad:10.0, ruta:7.2,  paises:['AR']},
-    {marca:"Chevrolet", modelo:"Spin",     version:"1.8 N",         anos:"2013–2020", ciudad:11.5, ruta:8.5,  paises:['AR']},
-    {marca:"Chevrolet", modelo:"Tracker",  version:"1.0 turbo",     anos:"2014–2025", ciudad:9.5,  ruta:7.0,  paises:['AR','UY']},
-    {marca:"Chevrolet", modelo:"Tracker",  version:"1.2 turbo flex",anos:"2021–2025", ciudad:9.5,  ruta:7.5,  paises:['BR']},
+    {marca:"Chevrolet", modelo:"Agile",    version:"1.4 N",         anos:"2010–2014", ciudad:9.0,  ruta:6.8,  tanque:46, paises:['AR']},
+    {marca:"Chevrolet", modelo:"Celta",    version:"1.0 N",         anos:"2002–2011", ciudad:7.5,  ruta:5.8,  tanque:43, paises:['AR']},
+    {marca:"Chevrolet", modelo:"Classic",  version:"1.4 N",         anos:"2003–2016", ciudad:9.0,  ruta:6.8,  tanque:46, paises:['AR']},
+    {marca:"Chevrolet", modelo:"Cruze",    version:"1.4 turbo",     anos:"2011–2025", ciudad:9.5,  ruta:6.8,  tanque:60, paises:['AR']},
+    {marca:"Chevrolet", modelo:"Cruze",    version:"1.8 N",         anos:"2011–2015", ciudad:10.5, ruta:7.5,  tanque:60, paises:['AR']},
+    {marca:"Chevrolet", modelo:"Equinox",  version:"2.0 turbo",     anos:"2018–2025", ciudad:11.5, ruta:8.5,  tanque:63, paises:['AR']},
+    {marca:"Chevrolet", modelo:"Meriva",   version:"1.4 N",         anos:"2003–2012", ciudad:10.5, ruta:7.8,  tanque:45, paises:['AR']},
+    {marca:"Chevrolet", modelo:"Meriva",   version:"1.8 N",         anos:"2006–2012", ciudad:11.5, ruta:8.5,  tanque:45, paises:['AR']},
+    {marca:"Chevrolet", modelo:"Montana",  version:"1.8 N",         anos:"2003–2011", ciudad:10.5, ruta:8.0,  tanque:56, paises:['AR']},
+    {marca:"Chevrolet", modelo:"Montana",  version:"1.2 turbo",     anos:"2023–2025", ciudad:8.0,  ruta:6.0,  tanque:56, paises:['AR']},
+    {marca:"Chevrolet", modelo:"Onix",     version:"1.4 N",         anos:"2013–2018", ciudad:8.5,  ruta:6.2,  tanque:40, paises:['AR']},
+    {marca:"Chevrolet", modelo:"Onix",     version:"1.2 turbo",     anos:"2019–2025", ciudad:8.5,  ruta:6.2,  tanque:40, paises:['AR','UY']},
+    {marca:"Chevrolet", modelo:"Onix",     version:"1.2 + GNC",     anos:"2019–2025", ciudad:8.5,  ruta:6.2,  gnc_ciudad:10.0, gnc_ruta:7.5, tanque:40, paises:['AR']},
+    {marca:"Chevrolet", modelo:"Onix",     version:"1.0 turbo flex",anos:"2020–2025", ciudad:8.5,  ruta:6.5,  tanque:40, paises:['BR']},
+    {marca:"Chevrolet", modelo:"Onix Plus",version:"1.0 turbo flex",anos:"2020–2025", ciudad:9.0,  ruta:6.8,  tanque:40, paises:['BR']},
+    {marca:"Chevrolet", modelo:"Prisma",   version:"1.4 N",         anos:"2013–2018", ciudad:8.5,  ruta:6.2,  tanque:40, paises:['AR']},
+    {marca:"Chevrolet", modelo:"S10",      version:"2.8 TDI",       anos:"2012–2025", ciudad:12.0, ruta:9.0,  tanque:76, paises:['AR','BR']},
+    {marca:"Chevrolet", modelo:"Sail",     version:"1.5 N",         anos:"2017–2025", ciudad:9.0,  ruta:6.8,  tanque:51, paises:['CL']},
+    {marca:"Chevrolet", modelo:"Sonic",    version:"1.6 N",         anos:"2012–2018", ciudad:10.0, ruta:7.2,  tanque:53, paises:['AR']},
+    {marca:"Chevrolet", modelo:"Spin",     version:"1.8 N",         anos:"2013–2020", ciudad:11.5, ruta:8.5,  tanque:65, paises:['AR']},
+    {marca:"Chevrolet", modelo:"Tracker",  version:"1.0 turbo",     anos:"2014–2025", ciudad:9.5,  ruta:7.0,  tanque:50, paises:['AR','UY']},
+    {marca:"Chevrolet", modelo:"Tracker",  version:"1.2 turbo flex",anos:"2021–2025", ciudad:9.5,  ruta:7.5,  tanque:50, paises:['BR']},
     // ── Citroën ────────────────────────────────────────────────
-    {marca:"Citroën", modelo:"Berlingo",  version:"1.6 N",         anos:"2008–2017", ciudad:11.0, ruta:8.0,  paises:['AR']},
-    {marca:"Citroën", modelo:"Berlingo",  version:"1.2 PureTech",  anos:"2018–2025", ciudad:9.5,  ruta:7.2,  paises:['AR']},
+    {marca:"Citroën", modelo:"Berlingo",  version:"1.6 N",         anos:"2008–2017", ciudad:11.0, ruta:8.0,  tanque:60, paises:['AR']},
+    {marca:"Citroën", modelo:"Berlingo",  version:"1.2 PureTech",  anos:"2018–2025", ciudad:9.5,  ruta:7.2,  tanque:60, paises:['AR']},
     {marca:"Citroën", modelo:"C2",        version:"1.4 N",         anos:"2005–2009", ciudad:8.5,  ruta:6.5,  paises:['AR']},
-    {marca:"Citroën", modelo:"C3",        version:"1.4 N",         anos:"2003–2016", ciudad:9.0,  ruta:6.8,  paises:['AR']},
-    {marca:"Citroën", modelo:"C3",        version:"1.2 PureTech",  anos:"2017–2025", ciudad:8.5,  ruta:6.2,  paises:['AR']},
-    {marca:"Citroën", modelo:"C3",        version:"1.0 flex",      anos:"2020–2025", ciudad:9.0,  ruta:6.8,  paises:['BR']},
+    {marca:"Citroën", modelo:"C3",        version:"1.4 N",         anos:"2003–2016", ciudad:9.0,  ruta:6.8,  tanque:44, paises:['AR']},
+    {marca:"Citroën", modelo:"C3",        version:"1.2 PureTech",  anos:"2017–2025", ciudad:8.5,  ruta:6.2,  tanque:44, paises:['AR']},
+    {marca:"Citroën", modelo:"C3",        version:"1.0 flex",      anos:"2020–2025", ciudad:9.0,  ruta:6.8,  tanque:44, paises:['BR']},
     {marca:"Citroën", modelo:"C4",        version:"1.6 N",         anos:"2006–2015", ciudad:10.0, ruta:7.5,  paises:['AR']},
     {marca:"Citroën", modelo:"C4",        version:"1.4 turbo",     anos:"2010–2015", ciudad:9.5,  ruta:7.0,  paises:['AR']},
-    {marca:"Citroën", modelo:"C4 Cactus", version:"1.2 PureTech",  anos:"2018–2025", ciudad:8.5,  ruta:6.3,  paises:['AR']},
-    {marca:"Citroën", modelo:"C5 Aircross",version:"1.6 turbo",    anos:"2020–2025", ciudad:10.0, ruta:7.5,  paises:['AR']},
+    {marca:"Citroën", modelo:"C4 Cactus", version:"1.2 PureTech",  anos:"2018–2025", ciudad:8.5,  ruta:6.3,  tanque:50, paises:['AR']},
+    {marca:"Citroën", modelo:"C5 Aircross",version:"1.6 turbo",    anos:"2020–2025", ciudad:10.0, ruta:7.5,  tanque:53, paises:['AR']},
     {marca:"Citroën", modelo:"Picasso",   version:"1.6 N",         anos:"2003–2012", ciudad:10.0, ruta:7.5,  paises:['AR']},
     {marca:"Citroën", modelo:"Xsara",     version:"1.6 N",         anos:"2001–2006", ciudad:9.5,  ruta:7.0,  paises:['AR']},
     // ── Fiat ───────────────────────────────────────────────────
-    {marca:"Fiat", modelo:"Argo",     version:"1.3 N",         anos:"2018–2025", ciudad:9.0,  ruta:6.5,  paises:['AR','UY']},
-    {marca:"Fiat", modelo:"Argo",     version:"1.3 + GNC",     anos:"2018–2025", ciudad:9.0,  ruta:6.5,  gnc_ciudad:10.5, gnc_ruta:7.8, paises:['AR']},
-    {marca:"Fiat", modelo:"Argo",     version:"1.0 flex",      anos:"2018–2025", ciudad:9.0,  ruta:7.0,  paises:['BR']},
-    {marca:"Fiat", modelo:"Argo",     version:"1.3 flex",      anos:"2018–2025", ciudad:9.5,  ruta:7.0,  paises:['BR']},
+    {marca:"Fiat", modelo:"Argo",     version:"1.3 N",         anos:"2018–2025", ciudad:9.0,  ruta:6.5,  tanque:48, paises:['AR','UY']},
+    {marca:"Fiat", modelo:"Argo",     version:"1.3 + GNC",     anos:"2018–2025", ciudad:9.0,  ruta:6.5,  gnc_ciudad:10.5, gnc_ruta:7.8, tanque:48, paises:['AR']},
+    {marca:"Fiat", modelo:"Argo",     version:"1.0 flex",      anos:"2018–2025", ciudad:9.0,  ruta:7.0,  tanque:48, paises:['BR']},
+    {marca:"Fiat", modelo:"Argo",     version:"1.3 flex",      anos:"2018–2025", ciudad:9.5,  ruta:7.0,  tanque:48, paises:['BR']},
     {marca:"Fiat", modelo:"Bravo",    version:"1.4 turbo",     anos:"2008–2015", ciudad:9.5,  ruta:7.0,  paises:['AR']},
     {marca:"Fiat", modelo:"Bravo",    version:"1.6 MJ diesel", anos:"2008–2015", ciudad:7.5,  ruta:5.8,  paises:['AR']},
-    {marca:"Fiat", modelo:"Cronos",   version:"1.3 N",         anos:"2018–2025", ciudad:8.8,  ruta:6.3,  paises:['AR','UY']},
-    {marca:"Fiat", modelo:"Cronos",   version:"1.3 + GNC",     anos:"2018–2025", ciudad:8.8,  ruta:6.3,  gnc_ciudad:10.2, gnc_ruta:7.6, paises:['AR']},
-    {marca:"Fiat", modelo:"Cronos",   version:"1.3 flex",      anos:"2018–2025", ciudad:9.5,  ruta:7.0,  paises:['BR']},
+    {marca:"Fiat", modelo:"Cronos",   version:"1.3 N",         anos:"2018–2025", ciudad:8.8,  ruta:6.3,  tanque:48, paises:['AR','UY']},
+    {marca:"Fiat", modelo:"Cronos",   version:"1.3 + GNC",     anos:"2018–2025", ciudad:8.8,  ruta:6.3,  gnc_ciudad:10.2, gnc_ruta:7.6, tanque:48, paises:['AR']},
+    {marca:"Fiat", modelo:"Cronos",   version:"1.3 flex",      anos:"2018–2025", ciudad:9.5,  ruta:7.0,  tanque:48, paises:['BR']},
     {marca:"Fiat", modelo:"Doblo",    version:"1.4 N",         anos:"2006–2015", ciudad:10.5, ruta:8.0,  paises:['AR']},
     {marca:"Fiat", modelo:"Doblo",    version:"1.8 N",         anos:"2006–2015", ciudad:12.0, ruta:9.0,  paises:['AR']},
-    {marca:"Fiat", modelo:"Ducato",   version:"2.3 diesel",    anos:"2006–2025", ciudad:15.0, ruta:11.0, paises:['AR']},
-    {marca:"Fiat", modelo:"Duna",     version:"1.3/1.5 N",     anos:"1988–2001", ciudad:9.0,  ruta:7.0,  paises:['AR']},
-    {marca:"Fiat", modelo:"Fastback", version:"1.3 turbo",     anos:"2022–2025", ciudad:9.5,  ruta:7.0,  paises:['AR','BR']},
+    {marca:"Fiat", modelo:"Ducato",   version:"2.3 diesel",    anos:"2006–2025", ciudad:15.0, ruta:11.0, tanque:90, paises:['AR']},
+    {marca:"Fiat", modelo:"Duna",     version:"1.3/1.5 N",     anos:"1988–2001", ciudad:9.0,  ruta:7.0,  tanque:45, paises:['AR']},
+    {marca:"Fiat", modelo:"Fastback", version:"1.3 turbo",     anos:"2022–2025", ciudad:9.5,  ruta:7.0,  tanque:48, paises:['AR','BR']},
     {marca:"Fiat", modelo:"Grande Punto", version:"1.4 N",     anos:"2006–2012", ciudad:9.0,  ruta:6.8,  paises:['AR']},
     {marca:"Fiat", modelo:"Grande Punto", version:"1.4 turbo", anos:"2008–2012", ciudad:9.0,  ruta:6.5,  paises:['AR']},
     {marca:"Fiat", modelo:"Idea",     version:"1.4 N",         anos:"2006–2013", ciudad:9.5,  ruta:7.2,  paises:['AR']},
     {marca:"Fiat", modelo:"Linea",    version:"1.4 turbo",     anos:"2010–2015", ciudad:9.5,  ruta:7.0,  paises:['AR']},
     {marca:"Fiat", modelo:"Linea",    version:"1.8 N",         anos:"2010–2015", ciudad:11.0, ruta:8.0,  paises:['AR']},
-    {marca:"Fiat", modelo:"Mobi",     version:"1.0 N",         anos:"2018–2025", ciudad:8.0,  ruta:6.0,  paises:['AR']},
-    {marca:"Fiat", modelo:"Mobi",     version:"1.0 flex",      anos:"2018–2025", ciudad:8.5,  ruta:6.3,  paises:['BR']},
-    {marca:"Fiat", modelo:"Palio",    version:"1.3 N",         anos:"1998–2014", ciudad:8.5,  ruta:6.5,  paises:['AR']},
-    {marca:"Fiat", modelo:"Palio",    version:"1.6 N",         anos:"2000–2014", ciudad:10.0, ruta:7.5,  paises:['AR']},
+    {marca:"Fiat", modelo:"Mobi",     version:"1.0 N",         anos:"2018–2025", ciudad:8.0,  ruta:6.0,  tanque:39, paises:['AR']},
+    {marca:"Fiat", modelo:"Mobi",     version:"1.0 flex",      anos:"2018–2025", ciudad:8.5,  ruta:6.3,  tanque:39, paises:['BR']},
+    {marca:"Fiat", modelo:"Palio",    version:"1.3 N",         anos:"1998–2014", ciudad:8.5,  ruta:6.5,  tanque:48, paises:['AR']},
+    {marca:"Fiat", modelo:"Palio",    version:"1.6 N",         anos:"2000–2014", ciudad:10.0, ruta:7.5,  tanque:48, paises:['AR']},
     {marca:"Fiat", modelo:"Punto",    version:"1.4 N",         anos:"2007–2013", ciudad:9.5,  ruta:7.0,  paises:['AR']},
     {marca:"Fiat", modelo:"Punto",    version:"1.8 N",         anos:"2007–2013", ciudad:11.0, ruta:8.2,  paises:['AR']},
-    {marca:"Fiat", modelo:"Pulse",    version:"1.0 turbo",     anos:"2022–2025", ciudad:9.0,  ruta:6.8,  paises:['AR','BR']},
-    {marca:"Fiat", modelo:"Siena",    version:"1.4 N",         anos:"2001–2014", ciudad:9.5,  ruta:7.0,  paises:['AR']},
-    {marca:"Fiat", modelo:"Siena",    version:"1.6 N",         anos:"2001–2014", ciudad:10.5, ruta:7.8,  paises:['AR']},
-    {marca:"Fiat", modelo:"Strada",   version:"1.4 N",         anos:"2004–2021", ciudad:9.5,  ruta:7.2,  paises:['AR']},
-    {marca:"Fiat", modelo:"Strada",   version:"1.3 N",         anos:"2022–2025", ciudad:9.5,  ruta:7.0,  paises:['AR']},
-    {marca:"Fiat", modelo:"Strada",   version:"1.3 flex",      anos:"2020–2025", ciudad:10.0, ruta:7.5,  paises:['BR']},
-    {marca:"Fiat", modelo:"Toro",     version:"1.3 turbo",     anos:"2022–2025", ciudad:10.5, ruta:8.0,  paises:['AR']},
-    {marca:"Fiat", modelo:"Toro",     version:"2.0 diesel",    anos:"2017–2025", ciudad:12.5, ruta:9.5,  paises:['AR','BR']},
-    {marca:"Fiat", modelo:"Uno",      version:"1.3/1.4 N",     anos:"1985–2014", ciudad:8.5,  ruta:6.5,  paises:['AR']},
+    {marca:"Fiat", modelo:"Pulse",    version:"1.0 turbo",     anos:"2022–2025", ciudad:9.0,  ruta:6.8,  tanque:48, paises:['AR','BR']},
+    {marca:"Fiat", modelo:"Siena",    version:"1.4 N",         anos:"2001–2014", ciudad:9.5,  ruta:7.0,  tanque:48, paises:['AR']},
+    {marca:"Fiat", modelo:"Siena",    version:"1.6 N",         anos:"2001–2014", ciudad:10.5, ruta:7.8,  tanque:48, paises:['AR']},
+    {marca:"Fiat", modelo:"Strada",   version:"1.4 N",         anos:"2004–2021", ciudad:9.5,  ruta:7.2,  tanque:48, paises:['AR']},
+    {marca:"Fiat", modelo:"Strada",   version:"1.3 N",         anos:"2022–2025", ciudad:9.5,  ruta:7.0,  tanque:48, paises:['AR']},
+    {marca:"Fiat", modelo:"Strada",   version:"1.3 flex",      anos:"2020–2025", ciudad:10.0, ruta:7.5,  tanque:48, paises:['BR']},
+    {marca:"Fiat", modelo:"Toro",     version:"1.3 turbo",     anos:"2022–2025", ciudad:10.5, ruta:8.0,  tanque:72, paises:['AR']},
+    {marca:"Fiat", modelo:"Toro",     version:"2.0 diesel",    anos:"2017–2025", ciudad:12.5, ruta:9.5,  tanque:72, paises:['AR','BR']},
+    {marca:"Fiat", modelo:"Uno",      version:"1.3/1.4 N",     anos:"1985–2014", ciudad:8.5,  ruta:6.5,  tanque:37, paises:['AR']},
     // ── Ford ───────────────────────────────────────────────────
-    {marca:"Ford", modelo:"Bronco Sport", version:"2.0 turbo",  anos:"2022–2025", ciudad:11.0, ruta:8.5,  paises:['AR']},
-    {marca:"Ford", modelo:"EcoSport", version:"1.6 N",          anos:"2004–2012", ciudad:10.5, ruta:7.8,  paises:['AR']},
-    {marca:"Ford", modelo:"EcoSport", version:"2.0 N",          anos:"2013–2022", ciudad:11.0, ruta:8.0,  paises:['AR','UY']},
-    {marca:"Ford", modelo:"EcoSport", version:"1.5 flex",       anos:"2013–2022", ciudad:10.5, ruta:8.0,  paises:['BR']},
+    {marca:"Ford", modelo:"Bronco Sport", version:"2.0 turbo",  anos:"2022–2025", ciudad:11.0, ruta:8.5,  tanque:57, paises:['AR']},
+    {marca:"Ford", modelo:"EcoSport", version:"1.6 N",          anos:"2004–2012", ciudad:10.5, ruta:7.8,  tanque:50, paises:['AR']},
+    {marca:"Ford", modelo:"EcoSport", version:"2.0 N",          anos:"2013–2022", ciudad:11.0, ruta:8.0,  tanque:50, paises:['AR','UY']},
+    {marca:"Ford", modelo:"EcoSport", version:"1.5 flex",       anos:"2013–2022", ciudad:10.5, ruta:8.0,  tanque:50, paises:['BR']},
     {marca:"Ford", modelo:"Escort",   version:"1.6 N",          anos:"1997–2004", ciudad:10.0, ruta:7.5,  paises:['AR']},
     {marca:"Ford", modelo:"Escort",   version:"1.8 N",          anos:"1997–2004", ciudad:11.5, ruta:8.5,  paises:['AR']},
-    {marca:"Ford", modelo:"Fiesta",   version:"1.6 N",          anos:"2002–2013", ciudad:10.0, ruta:7.2,  paises:['AR']},
-    {marca:"Ford", modelo:"Fiesta",   version:"1.0 EcoBoost",   anos:"2013–2018", ciudad:8.5,  ruta:6.0,  paises:['AR']},
-    {marca:"Ford", modelo:"Focus",    version:"1.6 N",          anos:"2000–2015", ciudad:10.0, ruta:7.2,  paises:['AR']},
-    {marca:"Ford", modelo:"Focus",    version:"2.0 N",          anos:"2000–2015", ciudad:11.0, ruta:8.0,  paises:['AR']},
-    {marca:"Ford", modelo:"Focus",    version:"2.0 turbo",      anos:"2012–2019", ciudad:10.5, ruta:7.5,  paises:['AR']},
-    {marca:"Ford", modelo:"Ka",       version:"1.0 N",          anos:"2009–2013", ciudad:8.5,  ruta:6.5,  paises:['AR']},
-    {marca:"Ford", modelo:"Ka",       version:"1.5 N",          anos:"2013–2025", ciudad:9.0,  ruta:6.5,  paises:['AR']},
-    {marca:"Ford", modelo:"Ka",       version:"1.5 + GNC",      anos:"2015–2025", ciudad:9.0,  ruta:6.5,  gnc_ciudad:10.5, gnc_ruta:7.8, paises:['AR']},
-    {marca:"Ford", modelo:"Ka",       version:"1.5 flex",       anos:"2013–2025", ciudad:10.0, ruta:7.5,  paises:['BR']},
+    {marca:"Ford", modelo:"Fiesta",   version:"1.6 N",          anos:"2002–2013", ciudad:10.0, ruta:7.2,  tanque:45, paises:['AR']},
+    {marca:"Ford", modelo:"Fiesta",   version:"1.0 EcoBoost",   anos:"2013–2018", ciudad:8.5,  ruta:6.0,  tanque:45, paises:['AR']},
+    {marca:"Ford", modelo:"Focus",    version:"1.6 N",          anos:"2000–2015", ciudad:10.0, ruta:7.2,  tanque:55, paises:['AR']},
+    {marca:"Ford", modelo:"Focus",    version:"2.0 N",          anos:"2000–2015", ciudad:11.0, ruta:8.0,  tanque:55, paises:['AR']},
+    {marca:"Ford", modelo:"Focus",    version:"2.0 turbo",      anos:"2012–2019", ciudad:10.5, ruta:7.5,  tanque:55, paises:['AR']},
+    {marca:"Ford", modelo:"Ka",       version:"1.0 N",          anos:"2009–2013", ciudad:8.5,  ruta:6.5,  tanque:48, paises:['AR']},
+    {marca:"Ford", modelo:"Ka",       version:"1.5 N",          anos:"2013–2025", ciudad:9.0,  ruta:6.5,  tanque:48, paises:['AR']},
+    {marca:"Ford", modelo:"Ka",       version:"1.5 + GNC",      anos:"2015–2025", ciudad:9.0,  ruta:6.5,  gnc_ciudad:10.5, gnc_ruta:7.8, tanque:48, paises:['AR']},
+    {marca:"Ford", modelo:"Ka",       version:"1.5 flex",       anos:"2013–2025", ciudad:10.0, ruta:7.5,  tanque:48, paises:['BR']},
     {marca:"Ford", modelo:"Kuga",     version:"1.6 EcoBoost",   anos:"2012–2019", ciudad:10.5, ruta:7.8,  paises:['AR']},
     {marca:"Ford", modelo:"Mondeo",   version:"2.0 N",          anos:"2001–2012", ciudad:12.0, ruta:8.5,  paises:['AR']},
     {marca:"Ford", modelo:"Mondeo",   version:"2.0 turbo",      anos:"2007–2014", ciudad:11.0, ruta:8.0,  paises:['AR']},
-    {marca:"Ford", modelo:"Ranger",   version:"2.5 N",          anos:"2004–2011", ciudad:12.5, ruta:9.5,  paises:['AR']},
-    {marca:"Ford", modelo:"Ranger",   version:"2.2 TDI",        anos:"2012–2019", ciudad:11.5, ruta:9.0,  paises:['AR','UY','CL']},
-    {marca:"Ford", modelo:"Ranger",   version:"2.3 Bi-Turbo",   anos:"2020–2025", ciudad:12.0, ruta:9.0,  paises:['AR','UY','CL','BR']},
-    {marca:"Ford", modelo:"Ranger",   version:"3.2 TDI",        anos:"2012–2021", ciudad:13.0, ruta:10.0, paises:['AR']},
-    {marca:"Ford", modelo:"Territory", version:"1.5 turbo",     anos:"2021–2025", ciudad:10.0, ruta:7.5,  paises:['AR']},
+    {marca:"Ford", modelo:"Ranger",   version:"2.5 N",          anos:"2004–2011", ciudad:12.5, ruta:9.5,  tanque:80, paises:['AR']},
+    {marca:"Ford", modelo:"Ranger",   version:"2.2 TDI",        anos:"2012–2019", ciudad:11.5, ruta:9.0,  tanque:80, paises:['AR','UY','CL']},
+    {marca:"Ford", modelo:"Ranger",   version:"2.3 Bi-Turbo",   anos:"2020–2025", ciudad:12.0, ruta:9.0,  tanque:80, paises:['AR','UY','CL','BR']},
+    {marca:"Ford", modelo:"Ranger",   version:"3.2 TDI",        anos:"2012–2021", ciudad:13.0, ruta:10.0, tanque:80, paises:['AR']},
+    {marca:"Ford", modelo:"Territory", version:"1.5 turbo",     anos:"2021–2025", ciudad:10.0, ruta:7.5,  tanque:51, paises:['AR']},
     // ── Honda ──────────────────────────────────────────────────
     {marca:"Honda", modelo:"Accord",  version:"2.4 N",          anos:"2005–2015", ciudad:12.0, ruta:9.0,  paises:['AR']},
-    {marca:"Honda", modelo:"City",    version:"1.5 N",          anos:"2003–2025", ciudad:9.5,  ruta:7.0,  paises:['AR']},
-    {marca:"Honda", modelo:"City",    version:"1.5 flex",       anos:"2015–2025", ciudad:10.0, ruta:7.5,  paises:['BR']},
-    {marca:"Honda", modelo:"Civic",   version:"1.6 N",          anos:"2006–2011", ciudad:10.5, ruta:7.5,  paises:['AR']},
-    {marca:"Honda", modelo:"Civic",   version:"2.0 N",          anos:"2012–2016", ciudad:11.5, ruta:8.0,  paises:['AR']},
-    {marca:"Honda", modelo:"Civic",   version:"1.5 turbo",      anos:"2017–2025", ciudad:9.5,  ruta:6.8,  paises:['AR','UY']},
-    {marca:"Honda", modelo:"CR-V",    version:"2.0 N",          anos:"2006–2011", ciudad:12.0, ruta:8.5,  paises:['AR']},
-    {marca:"Honda", modelo:"CR-V",    version:"2.4 N",          anos:"2012–2018", ciudad:12.5, ruta:9.0,  paises:['AR']},
-    {marca:"Honda", modelo:"CR-V",    version:"1.5 turbo",      anos:"2019–2025", ciudad:10.5, ruta:8.0,  paises:['AR','UY']},
-    {marca:"Honda", modelo:"Fit",     version:"1.4 N",          anos:"2003–2008", ciudad:9.5,  ruta:7.0,  paises:['AR']},
-    {marca:"Honda", modelo:"Fit",     version:"1.5 N",          anos:"2009–2022", ciudad:9.5,  ruta:7.0,  paises:['AR']},
-    {marca:"Honda", modelo:"Fit",     version:"1.5 flex",       anos:"2009–2022", ciudad:9.5,  ruta:7.0,  paises:['BR']},
-    {marca:"Honda", modelo:"HR-V",    version:"1.8 N",          anos:"2015–2022", ciudad:10.5, ruta:7.5,  paises:['AR','UY']},
-    {marca:"Honda", modelo:"HR-V",    version:"1.5 turbo",      anos:"2022–2025", ciudad:9.5,  ruta:7.0,  paises:['AR','UY']},
-    {marca:"Honda", modelo:"HR-V",    version:"1.8 flex",       anos:"2015–2025", ciudad:10.5, ruta:7.5,  paises:['BR']},
-    {marca:"Honda", modelo:"WR-V",    version:"1.5 N",          anos:"2022–2025", ciudad:9.0,  ruta:6.8,  paises:['AR']},
-    {marca:"Honda", modelo:"WR-V",    version:"1.5 flex",       anos:"2022–2025", ciudad:9.5,  ruta:7.0,  paises:['BR']},
+    {marca:"Honda", modelo:"City",    version:"1.5 N",          anos:"2003–2025", ciudad:9.5,  ruta:7.0,  tanque:40, paises:['AR']},
+    {marca:"Honda", modelo:"City",    version:"1.5 flex",       anos:"2015–2025", ciudad:10.0, ruta:7.5,  tanque:40, paises:['BR']},
+    {marca:"Honda", modelo:"Civic",   version:"1.6 N",          anos:"2006–2011", ciudad:10.5, ruta:7.5,  tanque:47, paises:['AR']},
+    {marca:"Honda", modelo:"Civic",   version:"2.0 N",          anos:"2012–2016", ciudad:11.5, ruta:8.0,  tanque:47, paises:['AR']},
+    {marca:"Honda", modelo:"Civic",   version:"1.5 turbo",      anos:"2017–2025", ciudad:9.5,  ruta:6.8,  tanque:47, paises:['AR','UY']},
+    {marca:"Honda", modelo:"CR-V",    version:"2.0 N",          anos:"2006–2011", ciudad:12.0, ruta:8.5,  tanque:57, paises:['AR']},
+    {marca:"Honda", modelo:"CR-V",    version:"2.4 N",          anos:"2012–2018", ciudad:12.5, ruta:9.0,  tanque:57, paises:['AR']},
+    {marca:"Honda", modelo:"CR-V",    version:"1.5 turbo",      anos:"2019–2025", ciudad:10.5, ruta:8.0,  tanque:57, paises:['AR','UY']},
+    {marca:"Honda", modelo:"Fit",     version:"1.4 N",          anos:"2003–2008", ciudad:9.5,  ruta:7.0,  tanque:40, paises:['AR']},
+    {marca:"Honda", modelo:"Fit",     version:"1.5 N",          anos:"2009–2022", ciudad:9.5,  ruta:7.0,  tanque:40, paises:['AR']},
+    {marca:"Honda", modelo:"Fit",     version:"1.5 flex",       anos:"2009–2022", ciudad:9.5,  ruta:7.0,  tanque:40, paises:['BR']},
+    {marca:"Honda", modelo:"HR-V",    version:"1.8 N",          anos:"2015–2022", ciudad:10.5, ruta:7.5,  tanque:40, paises:['AR','UY']},
+    {marca:"Honda", modelo:"HR-V",    version:"1.5 turbo",      anos:"2022–2025", ciudad:9.5,  ruta:7.0,  tanque:40, paises:['AR','UY']},
+    {marca:"Honda", modelo:"HR-V",    version:"1.8 flex",       anos:"2015–2025", ciudad:10.5, ruta:7.5,  tanque:40, paises:['BR']},
+    {marca:"Honda", modelo:"WR-V",    version:"1.5 N",          anos:"2022–2025", ciudad:9.0,  ruta:6.8,  tanque:41, paises:['AR']},
+    {marca:"Honda", modelo:"WR-V",    version:"1.5 flex",       anos:"2022–2025", ciudad:9.5,  ruta:7.0,  tanque:41, paises:['BR']},
     // ── Hyundai ────────────────────────────────────────────────
-    {marca:"Hyundai", modelo:"Accent",   version:"1.4 N",       anos:"2000–2018", ciudad:8.5,  ruta:6.5,  paises:['AR','CL']},
-    {marca:"Hyundai", modelo:"Accent",   version:"1.6 N",       anos:"2006–2018", ciudad:9.5,  ruta:7.0,  paises:['AR']},
-    {marca:"Hyundai", modelo:"Creta",    version:"1.0 turbo",   anos:"2021–2025", ciudad:9.5,  ruta:7.0,  paises:['AR','UY','BR']},
+    {marca:"Hyundai", modelo:"Accent",   version:"1.4 N",       anos:"2000–2018", ciudad:8.5,  ruta:6.5,  tanque:43, paises:['AR','CL']},
+    {marca:"Hyundai", modelo:"Accent",   version:"1.6 N",       anos:"2006–2018", ciudad:9.5,  ruta:7.0,  tanque:43, paises:['AR']},
+    {marca:"Hyundai", modelo:"Creta",    version:"1.0 turbo",   anos:"2021–2025", ciudad:9.5,  ruta:7.0,  tanque:50, paises:['AR','UY','BR']},
     {marca:"Hyundai", modelo:"Elantra",  version:"1.6 N",       anos:"2012–2016", ciudad:10.0, ruta:7.2,  paises:['AR']},
     {marca:"Hyundai", modelo:"Elantra",  version:"2.0 N",       anos:"2012–2016", ciudad:11.0, ruta:8.0,  paises:['AR']},
-    {marca:"Hyundai", modelo:"Grand i10",version:"1.2 N",       anos:"2015–2025", ciudad:7.5,  ruta:5.8,  paises:['CL']},
-    {marca:"Hyundai", modelo:"HB20",     version:"1.6 N",       anos:"2012–2021", ciudad:9.5,  ruta:7.0,  paises:['AR']},
-    {marca:"Hyundai", modelo:"HB20",     version:"1.0 turbo",   anos:"2022–2025", ciudad:9.0,  ruta:6.8,  paises:['AR']},
-    {marca:"Hyundai", modelo:"HB20",     version:"1.0 turbo flex",anos:"2019–2025",ciudad:9.0, ruta:6.8,  paises:['BR']},
+    {marca:"Hyundai", modelo:"Grand i10",version:"1.2 N",       anos:"2015–2025", ciudad:7.5,  ruta:5.8,  tanque:40, paises:['CL']},
+    {marca:"Hyundai", modelo:"HB20",     version:"1.6 N",       anos:"2012–2021", ciudad:9.5,  ruta:7.0,  tanque:47, paises:['AR']},
+    {marca:"Hyundai", modelo:"HB20",     version:"1.0 turbo",   anos:"2022–2025", ciudad:9.0,  ruta:6.8,  tanque:47, paises:['AR']},
+    {marca:"Hyundai", modelo:"HB20",     version:"1.0 turbo flex",anos:"2019–2025",ciudad:9.0, ruta:6.8,  tanque:47, paises:['BR']},
     {marca:"Hyundai", modelo:"i30",      version:"1.6 N",       anos:"2008–2017", ciudad:10.0, ruta:7.2,  paises:['AR']},
     {marca:"Hyundai", modelo:"i30",      version:"1.4 turbo",   anos:"2012–2017", ciudad:9.5,  ruta:6.8,  paises:['AR']},
     {marca:"Hyundai", modelo:"ix35/Tucson",version:"2.0 N",     anos:"2010–2015", ciudad:11.5, ruta:8.5,  paises:['AR']},
-    {marca:"Hyundai", modelo:"Santa Fe", version:"2.4 N",       anos:"2013–2019", ciudad:12.5, ruta:9.5,  paises:['AR']},
-    {marca:"Hyundai", modelo:"Santa Fe", version:"2.5 turbo",   anos:"2020–2025", ciudad:12.0, ruta:9.0,  paises:['AR','CL']},
-    {marca:"Hyundai", modelo:"Tucson",   version:"1.6 turbo",   anos:"2016–2025", ciudad:10.0, ruta:7.5,  paises:['AR','UY','CL']},
+    {marca:"Hyundai", modelo:"Santa Fe", version:"2.4 N",       anos:"2013–2019", ciudad:12.5, ruta:9.5,  tanque:67, paises:['AR']},
+    {marca:"Hyundai", modelo:"Santa Fe", version:"2.5 turbo",   anos:"2020–2025", ciudad:12.0, ruta:9.0,  tanque:67, paises:['AR','CL']},
+    {marca:"Hyundai", modelo:"Tucson",   version:"1.6 turbo",   anos:"2016–2025", ciudad:10.0, ruta:7.5,  tanque:54, paises:['AR','UY','CL']},
     // ── Jeep ───────────────────────────────────────────────────
     {marca:"Jeep", modelo:"Cherokee",      version:"2.4 N",     anos:"2014–2020", ciudad:12.5, ruta:9.5,  paises:['AR']},
     {marca:"Jeep", modelo:"Cherokee",      version:"3.2 V6",    anos:"2014–2020", ciudad:14.0, ruta:11.0, paises:['AR']},
-    {marca:"Jeep", modelo:"Commander",     version:"1.3 turbo", anos:"2022–2025", ciudad:10.0, ruta:7.5,  paises:['AR']},
-    {marca:"Jeep", modelo:"Commander",     version:"1.3 turbo flex",anos:"2022–2025",ciudad:10.5,ruta:8.0,paises:['BR']},
-    {marca:"Jeep", modelo:"Compass",       version:"2.4 N",     anos:"2017–2021", ciudad:12.0, ruta:9.0,  paises:['AR']},
-    {marca:"Jeep", modelo:"Compass",       version:"1.3 turbo", anos:"2022–2025", ciudad:9.5,  ruta:7.0,  paises:['AR','UY']},
-    {marca:"Jeep", modelo:"Compass",       version:"1.3 turbo flex",anos:"2021–2025",ciudad:10.0,ruta:7.5,paises:['BR']},
+    {marca:"Jeep", modelo:"Commander",     version:"1.3 turbo", anos:"2022–2025", ciudad:10.0, ruta:7.5,  tanque:60, paises:['AR']},
+    {marca:"Jeep", modelo:"Commander",     version:"1.3 turbo flex",anos:"2022–2025",ciudad:10.5,ruta:8.0,tanque:60, paises:['BR']},
+    {marca:"Jeep", modelo:"Compass",       version:"2.4 N",     anos:"2017–2021", ciudad:12.0, ruta:9.0,  tanque:54, paises:['AR']},
+    {marca:"Jeep", modelo:"Compass",       version:"1.3 turbo", anos:"2022–2025", ciudad:9.5,  ruta:7.0,  tanque:54, paises:['AR','UY']},
+    {marca:"Jeep", modelo:"Compass",       version:"1.3 turbo flex",anos:"2021–2025",ciudad:10.0,ruta:7.5,tanque:54, paises:['BR']},
     {marca:"Jeep", modelo:"Grand Cherokee",version:"3.6 V6",    anos:"2005–2025", ciudad:16.0, ruta:12.0, paises:['AR']},
     {marca:"Jeep", modelo:"Grand Cherokee",version:"2.7 CRD diesel",anos:"2006–2014",ciudad:12.0,ruta:9.0,paises:['AR']},
-    {marca:"Jeep", modelo:"Renegade",      version:"1.8 N",     anos:"2015–2021", ciudad:11.0, ruta:8.0,  paises:['AR']},
-    {marca:"Jeep", modelo:"Renegade",      version:"1.3 turbo", anos:"2021–2025", ciudad:9.5,  ruta:7.0,  paises:['AR']},
-    {marca:"Jeep", modelo:"Renegade",      version:"1.3 turbo flex",anos:"2019–2025",ciudad:10.0,ruta:7.5,paises:['BR']},
+    {marca:"Jeep", modelo:"Renegade",      version:"1.8 N",     anos:"2015–2021", ciudad:11.0, ruta:8.0,  tanque:48, paises:['AR']},
+    {marca:"Jeep", modelo:"Renegade",      version:"1.3 turbo", anos:"2021–2025", ciudad:9.5,  ruta:7.0,  tanque:48, paises:['AR']},
+    {marca:"Jeep", modelo:"Renegade",      version:"1.3 turbo flex",anos:"2019–2025",ciudad:10.0,ruta:7.5,tanque:48, paises:['BR']},
     {marca:"Jeep", modelo:"Wrangler",      version:"3.6 V6",    anos:"2008–2025", ciudad:17.0, ruta:13.0, paises:['AR']},
     {marca:"Jeep", modelo:"Wrangler",      version:"2.0 turbo", anos:"2019–2025", ciudad:13.0, ruta:10.0, paises:['AR']},
     // ── Kia ────────────────────────────────────────────────────
     {marca:"Kia", modelo:"Cerato/Forte", version:"1.6 N",       anos:"2013–2022", ciudad:10.0, ruta:7.5,  paises:['AR','CL']},
     {marca:"Kia", modelo:"Cerato/Forte", version:"2.0 N",       anos:"2013–2022", ciudad:11.0, ruta:8.0,  paises:['AR']},
-    {marca:"Kia", modelo:"Picanto",      version:"1.2 N",       anos:"2012–2025", ciudad:7.5,  ruta:5.8,  paises:['CL']},
-    {marca:"Kia", modelo:"Rio",          version:"1.4 N",       anos:"2012–2025", ciudad:8.5,  ruta:6.5,  paises:['CL']},
-    {marca:"Kia", modelo:"Seltos",       version:"1.4 turbo",   anos:"2021–2025", ciudad:9.5,  ruta:7.0,  paises:['CL','UY']},
+    {marca:"Kia", modelo:"Picanto",      version:"1.2 N",       anos:"2012–2025", ciudad:7.5,  ruta:5.8,  tanque:35, paises:['CL']},
+    {marca:"Kia", modelo:"Rio",          version:"1.4 N",       anos:"2012–2025", ciudad:8.5,  ruta:6.5,  tanque:45, paises:['CL']},
+    {marca:"Kia", modelo:"Seltos",       version:"1.4 turbo",   anos:"2021–2025", ciudad:9.5,  ruta:7.0,  tanque:50, paises:['CL','UY']},
     {marca:"Kia", modelo:"Sorento",      version:"2.4 N",       anos:"2012–2020", ciudad:13.0, ruta:9.5,  paises:['AR']},
     {marca:"Kia", modelo:"Soul",         version:"1.6 N",       anos:"2010–2019", ciudad:10.0, ruta:7.5,  paises:['AR']},
-    {marca:"Kia", modelo:"Sportage",     version:"2.0 N",       anos:"2010–2021", ciudad:11.0, ruta:8.0,  paises:['AR']},
-    {marca:"Kia", modelo:"Sportage",     version:"1.6 turbo",   anos:"2022–2025", ciudad:9.5,  ruta:7.0,  paises:['AR','UY','CL']},
+    {marca:"Kia", modelo:"Sportage",     version:"2.0 N",       anos:"2010–2021", ciudad:11.0, ruta:8.0,  tanque:52, paises:['AR']},
+    {marca:"Kia", modelo:"Sportage",     version:"1.6 turbo",   anos:"2022–2025", ciudad:9.5,  ruta:7.0,  tanque:52, paises:['AR','UY','CL']},
     // ── Mazda ──────────────────────────────────────────────────
-    {marca:"Mazda", modelo:"2",    version:"1.5 N",             anos:"2015–2025", ciudad:8.0,  ruta:6.0,  paises:['CL']},
-    {marca:"Mazda", modelo:"3",    version:"2.0 N",             anos:"2010–2025", ciudad:9.5,  ruta:7.0,  paises:['CL']},
-    {marca:"Mazda", modelo:"CX-3", version:"2.0 N",             anos:"2016–2025", ciudad:9.5,  ruta:7.2,  paises:['CL']},
-    {marca:"Mazda", modelo:"CX-30",version:"2.0 N",             anos:"2020–2025", ciudad:9.5,  ruta:7.2,  paises:['CL']},
-    {marca:"Mazda", modelo:"CX-5", version:"2.0 N",             anos:"2012–2025", ciudad:10.5, ruta:8.0,  paises:['CL']},
-    {marca:"Mazda", modelo:"CX-5", version:"2.5 N",             anos:"2014–2025", ciudad:11.0, ruta:8.5,  paises:['CL']},
+    {marca:"Mazda", modelo:"2",    version:"1.5 N",             anos:"2015–2025", ciudad:8.0,  ruta:6.0,  tanque:44, paises:['CL']},
+    {marca:"Mazda", modelo:"3",    version:"2.0 N",             anos:"2010–2025", ciudad:9.5,  ruta:7.0,  tanque:51, paises:['CL']},
+    {marca:"Mazda", modelo:"CX-3", version:"2.0 N",             anos:"2016–2025", ciudad:9.5,  ruta:7.2,  tanque:44, paises:['CL']},
+    {marca:"Mazda", modelo:"CX-30",version:"2.0 N",             anos:"2020–2025", ciudad:9.5,  ruta:7.2,  tanque:51, paises:['CL']},
+    {marca:"Mazda", modelo:"CX-5", version:"2.0 N",             anos:"2012–2025", ciudad:10.5, ruta:8.0,  tanque:58, paises:['CL']},
+    {marca:"Mazda", modelo:"CX-5", version:"2.5 N",             anos:"2014–2025", ciudad:11.0, ruta:8.5,  tanque:58, paises:['CL']},
     // ── Mercedes-Benz ──────────────────────────────────────────
-    {marca:"Mercedes-Benz", modelo:"Clase A", version:"1.6 N",  anos:"2012–2018", ciudad:9.5,  ruta:7.0,  paises:['AR']},
-    {marca:"Mercedes-Benz", modelo:"Clase A", version:"1.3 turbo",anos:"2019–2025",ciudad:9.0, ruta:6.5,  paises:['AR']},
+    {marca:"Mercedes-Benz", modelo:"Clase A", version:"1.6 N",  anos:"2012–2018", ciudad:9.5,  ruta:7.0,  tanque:43, paises:['AR']},
+    {marca:"Mercedes-Benz", modelo:"Clase A", version:"1.3 turbo",anos:"2019–2025",ciudad:9.0, ruta:6.5,  tanque:43, paises:['AR']},
     {marca:"Mercedes-Benz", modelo:"Clase B", version:"1.6 turbo",anos:"2012–2019",ciudad:9.5, ruta:7.0,  paises:['AR']},
     {marca:"Mercedes-Benz", modelo:"Clase C", version:"1.6 turbo",anos:"2014–2021",ciudad:10.0,ruta:7.5,  paises:['AR']},
     {marca:"Mercedes-Benz", modelo:"Clase C", version:"2.0 turbo",anos:"2014–2025",ciudad:11.0,ruta:8.0,  paises:['AR']},
-    {marca:"Mercedes-Benz", modelo:"GLA",     version:"1.6 turbo",anos:"2014–2020",ciudad:10.0,ruta:7.5,  paises:['AR']},
-    {marca:"Mercedes-Benz", modelo:"GLA",     version:"1.3 turbo",anos:"2021–2025",ciudad:9.5, ruta:7.0,  paises:['AR']},
+    {marca:"Mercedes-Benz", modelo:"GLA",     version:"1.6 turbo",anos:"2014–2020",ciudad:10.0,ruta:7.5,  tanque:43, paises:['AR']},
+    {marca:"Mercedes-Benz", modelo:"GLA",     version:"1.3 turbo",anos:"2021–2025",ciudad:9.5, ruta:7.0,  tanque:43, paises:['AR']},
     {marca:"Mercedes-Benz", modelo:"GLC",     version:"2.0 turbo",anos:"2016–2025",ciudad:11.5,ruta:8.5,  paises:['AR']},
     // ── Mitsubishi ─────────────────────────────────────────────
-    {marca:"Mitsubishi", modelo:"ASX",          version:"1.6 N",   anos:"2010–2024", ciudad:9.5,  ruta:7.0,  paises:['AR','CL']},
-    {marca:"Mitsubishi", modelo:"ASX",          version:"2.0 N",   anos:"2010–2024", ciudad:11.0, ruta:8.0,  paises:['AR']},
-    {marca:"Mitsubishi", modelo:"Eclipse Cross",version:"1.5 turbo",anos:"2018–2024",ciudad:10.0,ruta:7.5,  paises:['AR','CL','UY']},
+    {marca:"Mitsubishi", modelo:"ASX",          version:"1.6 N",   anos:"2010–2024", ciudad:9.5,  ruta:7.0,  tanque:60, paises:['AR','CL']},
+    {marca:"Mitsubishi", modelo:"ASX",          version:"2.0 N",   anos:"2010–2024", ciudad:11.0, ruta:8.0,  tanque:60, paises:['AR']},
+    {marca:"Mitsubishi", modelo:"Eclipse Cross",version:"1.5 turbo",anos:"2018–2024",ciudad:10.0,ruta:7.5,  tanque:60, paises:['AR','CL','UY']},
     {marca:"Mitsubishi", modelo:"L200/Triton",  version:"2.5 diesel",anos:"2005–2015",ciudad:12.5,ruta:9.5, paises:['AR']},
     {marca:"Mitsubishi", modelo:"L200/Triton",  version:"2.4 diesel",anos:"2016–2025",ciudad:12.0,ruta:9.0, paises:['AR','CL','UY']},
     {marca:"Mitsubishi", modelo:"Lancer",       version:"1.6 N",   anos:"2002–2012", ciudad:10.0, ruta:7.5,  paises:['AR']},
     {marca:"Mitsubishi", modelo:"Lancer",       version:"2.0 N",   anos:"2012–2018", ciudad:11.0, ruta:8.0,  paises:['AR']},
     {marca:"Mitsubishi", modelo:"Montero Sport",version:"3.0 V6",  anos:"2000–2008", ciudad:16.0, ruta:12.0, paises:['AR']},
-    {marca:"Mitsubishi", modelo:"Outlander",    version:"2.0 N",   anos:"2006–2013", ciudad:12.0, ruta:9.0,  paises:['AR','CL']},
-    {marca:"Mitsubishi", modelo:"Outlander",    version:"2.4 N",   anos:"2013–2024", ciudad:12.0, ruta:9.0,  paises:['AR','CL']},
+    {marca:"Mitsubishi", modelo:"Outlander",    version:"2.0 N",   anos:"2006–2013", ciudad:12.0, ruta:9.0,  tanque:60, paises:['AR','CL']},
+    {marca:"Mitsubishi", modelo:"Outlander",    version:"2.4 N",   anos:"2013–2024", ciudad:12.0, ruta:9.0,  tanque:60, paises:['AR','CL']},
     // ── Nissan ─────────────────────────────────────────────────
-    {marca:"Nissan", modelo:"Frontier",  version:"2.5 diesel",    anos:"2008–2016", ciudad:12.0, ruta:9.0,  paises:['AR','CL']},
-    {marca:"Nissan", modelo:"Frontier",  version:"2.3 Bi-Turbo",  anos:"2017–2025", ciudad:13.0, ruta:10.0, paises:['AR','CL','BR']},
-    {marca:"Nissan", modelo:"Kicks",     version:"1.6 N",         anos:"2017–2025", ciudad:10.0, ruta:7.5,  paises:['AR']},
-    {marca:"Nissan", modelo:"Kicks",     version:"1.0 turbo flex",anos:"2021–2025", ciudad:9.5,  ruta:7.2,  paises:['BR']},
-    {marca:"Nissan", modelo:"March",     version:"1.0 flex",      anos:"2011–2025", ciudad:8.5,  ruta:6.5,  paises:['BR']},
+    {marca:"Nissan", modelo:"Frontier",  version:"2.5 diesel",    anos:"2008–2016", ciudad:12.0, ruta:9.0,  tanque:80, paises:['AR','CL']},
+    {marca:"Nissan", modelo:"Frontier",  version:"2.3 Bi-Turbo",  anos:"2017–2025", ciudad:13.0, ruta:10.0, tanque:80, paises:['AR','CL','BR']},
+    {marca:"Nissan", modelo:"Kicks",     version:"1.6 N",         anos:"2017–2025", ciudad:10.0, ruta:7.5,  tanque:41, paises:['AR']},
+    {marca:"Nissan", modelo:"Kicks",     version:"1.0 turbo flex",anos:"2021–2025", ciudad:9.5,  ruta:7.2,  tanque:41, paises:['BR']},
+    {marca:"Nissan", modelo:"March",     version:"1.0 flex",      anos:"2011–2025", ciudad:8.5,  ruta:6.5,  tanque:41, paises:['BR']},
     {marca:"Nissan", modelo:"Pathfinder",version:"3.5 V6",        anos:"2013–2022", ciudad:16.0, ruta:12.0, paises:['AR']},
-    {marca:"Nissan", modelo:"Sentra",    version:"1.6 N",         anos:"2013–2019", ciudad:10.0, ruta:7.5,  paises:['AR']},
-    {marca:"Nissan", modelo:"Sentra",    version:"2.0 N",         anos:"2019–2025", ciudad:10.0, ruta:7.5,  paises:['AR','CL']},
+    {marca:"Nissan", modelo:"Sentra",    version:"1.6 N",         anos:"2013–2019", ciudad:10.0, ruta:7.5,  tanque:50, paises:['AR']},
+    {marca:"Nissan", modelo:"Sentra",    version:"2.0 N",         anos:"2019–2025", ciudad:10.0, ruta:7.5,  tanque:50, paises:['AR','CL']},
     {marca:"Nissan", modelo:"Tiida",     version:"1.6 N",         anos:"2007–2013", ciudad:10.0, ruta:7.5,  paises:['AR']},
-    {marca:"Nissan", modelo:"Versa",     version:"1.6 N",         anos:"2012–2025", ciudad:9.5,  ruta:7.0,  paises:['AR','UY']},
-    {marca:"Nissan", modelo:"Versa",     version:"1.6 + GNC",     anos:"2012–2025", ciudad:9.5,  ruta:7.0,  gnc_ciudad:11.0, gnc_ruta:8.2, paises:['AR']},
-    {marca:"Nissan", modelo:"Versa",     version:"1.6 flex",      anos:"2011–2025", ciudad:10.0, ruta:7.5,  paises:['BR']},
+    {marca:"Nissan", modelo:"Versa",     version:"1.6 N",         anos:"2012–2025", ciudad:9.5,  ruta:7.0,  tanque:41, paises:['AR','UY']},
+    {marca:"Nissan", modelo:"Versa",     version:"1.6 + GNC",     anos:"2012–2025", ciudad:9.5,  ruta:7.0,  gnc_ciudad:11.0, gnc_ruta:8.2, tanque:41, paises:['AR']},
+    {marca:"Nissan", modelo:"Versa",     version:"1.6 flex",      anos:"2011–2025", ciudad:10.0, ruta:7.5,  tanque:41, paises:['BR']},
     {marca:"Nissan", modelo:"X-Trail",   version:"2.0 N",         anos:"2008–2017", ciudad:12.0, ruta:9.0,  paises:['AR']},
     {marca:"Nissan", modelo:"X-Trail",   version:"2.5 N",         anos:"2018–2022", ciudad:12.5, ruta:9.5,  paises:['AR']},
     // ── Peugeot ────────────────────────────────────────────────
-    {marca:"Peugeot", modelo:"205",   version:"1.4 N",            anos:"1986–1998", ciudad:9.0,  ruta:7.0,  paises:['AR']},
-    {marca:"Peugeot", modelo:"206",   version:"1.4 N",            anos:"1999–2014", ciudad:9.0,  ruta:7.0,  paises:['AR']},
-    {marca:"Peugeot", modelo:"206",   version:"1.6 N",            anos:"2001–2014", ciudad:10.0, ruta:7.5,  paises:['AR']},
-    {marca:"Peugeot", modelo:"207",   version:"1.4 N",            anos:"2006–2016", ciudad:9.0,  ruta:7.0,  paises:['AR']},
-    {marca:"Peugeot", modelo:"207",   version:"1.6 N",            anos:"2006–2016", ciudad:10.0, ruta:7.5,  paises:['AR']},
-    {marca:"Peugeot", modelo:"207",   version:"1.6 turbo",        anos:"2007–2016", ciudad:9.5,  ruta:7.0,  paises:['AR']},
-    {marca:"Peugeot", modelo:"208",   version:"1.6 N",            anos:"2013–2018", ciudad:10.0, ruta:7.5,  paises:['AR']},
-    {marca:"Peugeot", modelo:"208",   version:"1.2 PureTech",     anos:"2019–2025", ciudad:8.5,  ruta:6.0,  paises:['AR','UY']},
-    {marca:"Peugeot", modelo:"2008",  version:"1.6 N",            anos:"2016–2018", ciudad:11.0, ruta:8.0,  paises:['AR']},
-    {marca:"Peugeot", modelo:"2008",  version:"1.2 PureTech",     anos:"2019–2025", ciudad:9.0,  ruta:6.5,  paises:['AR']},
-    {marca:"Peugeot", modelo:"3008",  version:"1.6 turbo",        anos:"2017–2025", ciudad:10.0, ruta:7.5,  paises:['AR']},
-    {marca:"Peugeot", modelo:"3008",  version:"2.0 BlueHDi diesel",anos:"2018–2025",ciudad:7.5, ruta:6.0,  paises:['AR']},
+    {marca:"Peugeot", modelo:"205",   version:"1.4 N",            anos:"1986–1998", ciudad:9.0,  ruta:7.0,  tanque:43, paises:['AR']},
+    {marca:"Peugeot", modelo:"206",   version:"1.4 N",            anos:"1999–2014", ciudad:9.0,  ruta:7.0,  tanque:47, paises:['AR']},
+    {marca:"Peugeot", modelo:"206",   version:"1.6 N",            anos:"2001–2014", ciudad:10.0, ruta:7.5,  tanque:47, paises:['AR']},
+    {marca:"Peugeot", modelo:"207",   version:"1.4 N",            anos:"2006–2016", ciudad:9.0,  ruta:7.0,  tanque:50, paises:['AR']},
+    {marca:"Peugeot", modelo:"207",   version:"1.6 N",            anos:"2006–2016", ciudad:10.0, ruta:7.5,  tanque:50, paises:['AR']},
+    {marca:"Peugeot", modelo:"207",   version:"1.6 turbo",        anos:"2007–2016", ciudad:9.5,  ruta:7.0,  tanque:50, paises:['AR']},
+    {marca:"Peugeot", modelo:"208",   version:"1.6 N",            anos:"2013–2018", ciudad:10.0, ruta:7.5,  tanque:44, paises:['AR']},
+    {marca:"Peugeot", modelo:"208",   version:"1.2 PureTech",     anos:"2019–2025", ciudad:8.5,  ruta:6.0,  tanque:44, paises:['AR','UY']},
+    {marca:"Peugeot", modelo:"2008",  version:"1.6 N",            anos:"2016–2018", ciudad:11.0, ruta:8.0,  tanque:50, paises:['AR']},
+    {marca:"Peugeot", modelo:"2008",  version:"1.2 PureTech",     anos:"2019–2025", ciudad:9.0,  ruta:6.5,  tanque:50, paises:['AR']},
+    {marca:"Peugeot", modelo:"3008",  version:"1.6 turbo",        anos:"2017–2025", ciudad:10.0, ruta:7.5,  tanque:53, paises:['AR']},
+    {marca:"Peugeot", modelo:"3008",  version:"2.0 BlueHDi diesel",anos:"2018–2025",ciudad:7.5, ruta:6.0,  tanque:53, paises:['AR']},
     {marca:"Peugeot", modelo:"306",   version:"1.6 N",            anos:"1994–2003", ciudad:10.0, ruta:7.5,  paises:['AR']},
     {marca:"Peugeot", modelo:"306",   version:"1.8 N",            anos:"1994–2003", ciudad:11.0, ruta:8.0,  paises:['AR']},
     {marca:"Peugeot", modelo:"307",   version:"2.0 N",            anos:"2001–2011", ciudad:11.5, ruta:8.5,  paises:['AR']},
     {marca:"Peugeot", modelo:"307",   version:"1.6 turbo",        anos:"2005–2011", ciudad:10.5, ruta:7.8,  paises:['AR']},
-    {marca:"Peugeot", modelo:"308",   version:"1.6 turbo",        anos:"2008–2025", ciudad:10.5, ruta:7.5,  paises:['AR']},
-    {marca:"Peugeot", modelo:"405",   version:"1.8/2.0 N",        anos:"1990–2000", ciudad:11.0, ruta:8.5,  paises:['AR']},
+    {marca:"Peugeot", modelo:"308",   version:"1.6 turbo",        anos:"2008–2025", ciudad:10.5, ruta:7.5,  tanque:60, paises:['AR']},
+    {marca:"Peugeot", modelo:"405",   version:"1.8/2.0 N",        anos:"1990–2000", ciudad:11.0, ruta:8.5,  tanque:60, paises:['AR']},
     {marca:"Peugeot", modelo:"406",   version:"2.0 N",            anos:"1996–2005", ciudad:11.5, ruta:8.5,  paises:['AR']},
     {marca:"Peugeot", modelo:"408",   version:"2.0 N",            anos:"2011–2022", ciudad:11.5, ruta:8.5,  paises:['AR']},
     {marca:"Peugeot", modelo:"408",   version:"1.6 turbo",        anos:"2013–2022", ciudad:10.0, ruta:7.5,  paises:['AR']},
     {marca:"Peugeot", modelo:"5008",  version:"1.6 turbo",        anos:"2019–2022", ciudad:10.5, ruta:8.0,  paises:['AR']},
-    {marca:"Peugeot", modelo:"Partner",version:"1.4 N",           anos:"2002–2012", ciudad:10.5, ruta:8.0,  paises:['AR']},
-    {marca:"Peugeot", modelo:"Partner",version:"1.6 N",           anos:"2012–2025", ciudad:11.0, ruta:8.5,  paises:['AR']},
+    {marca:"Peugeot", modelo:"Partner",version:"1.4 N",           anos:"2002–2012", ciudad:10.5, ruta:8.0,  tanque:60, paises:['AR']},
+    {marca:"Peugeot", modelo:"Partner",version:"1.6 N",           anos:"2012–2025", ciudad:11.0, ruta:8.5,  tanque:60, paises:['AR']},
     // ── RAM ────────────────────────────────────────────────────
-    {marca:"RAM", modelo:"700",    version:"2.0 turbo",           anos:"2018–2025", ciudad:11.5, ruta:9.0,  paises:['AR','BR']},
-    {marca:"RAM", modelo:"1500",   version:"5.7 V8 Hemi",        anos:"2009–2025", ciudad:22.0, ruta:16.0, paises:['AR']},
+    {marca:"RAM", modelo:"700",    version:"2.0 turbo",           anos:"2018–2025", ciudad:11.5, ruta:9.0,  tanque:45, paises:['AR','BR']},
+    {marca:"RAM", modelo:"1500",   version:"5.7 V8 Hemi",        anos:"2009–2025", ciudad:22.0, ruta:16.0, tanque:98, paises:['AR']},
     // ── Renault ────────────────────────────────────────────────
-    {marca:"Renault", modelo:"Captur",  version:"1.6 N",         anos:"2017–2020", ciudad:11.0, ruta:8.0,  paises:['AR']},
-    {marca:"Renault", modelo:"Captur",  version:"1.3 turbo",     anos:"2021–2025", ciudad:9.5,  ruta:7.0,  paises:['AR','UY','CL']},
-    {marca:"Renault", modelo:"Captur",  version:"1.0 turbo flex",anos:"2021–2025", ciudad:9.0,  ruta:7.0,  paises:['BR']},
+    {marca:"Renault", modelo:"Captur",  version:"1.6 N",         anos:"2017–2020", ciudad:11.0, ruta:8.0,  tanque:45, paises:['AR']},
+    {marca:"Renault", modelo:"Captur",  version:"1.3 turbo",     anos:"2021–2025", ciudad:9.5,  ruta:7.0,  tanque:45, paises:['AR','UY','CL']},
+    {marca:"Renault", modelo:"Captur",  version:"1.0 turbo flex",anos:"2021–2025", ciudad:9.0,  ruta:7.0,  tanque:45, paises:['BR']},
     {marca:"Renault", modelo:"Clio",    version:"1.2 N",         anos:"2003–2016", ciudad:9.0,  ruta:6.8,  paises:['AR']},
     {marca:"Renault", modelo:"Clio",    version:"1.6 N",         anos:"2003–2016", ciudad:10.0, ruta:7.5,  paises:['AR']},
-    {marca:"Renault", modelo:"Duster",  version:"1.6 N",         anos:"2012–2020", ciudad:11.0, ruta:8.0,  paises:['AR']},
-    {marca:"Renault", modelo:"Duster",  version:"2.0 N",         anos:"2012–2020", ciudad:12.0, ruta:9.0,  paises:['AR']},
-    {marca:"Renault", modelo:"Duster",  version:"1.3 turbo",     anos:"2021–2025", ciudad:10.0, ruta:7.5,  paises:['AR']},
+    {marca:"Renault", modelo:"Duster",  version:"1.6 N",         anos:"2012–2020", ciudad:11.0, ruta:8.0,  tanque:50, paises:['AR']},
+    {marca:"Renault", modelo:"Duster",  version:"2.0 N",         anos:"2012–2020", ciudad:12.0, ruta:9.0,  tanque:50, paises:['AR']},
+    {marca:"Renault", modelo:"Duster",  version:"1.3 turbo",     anos:"2021–2025", ciudad:10.0, ruta:7.5,  tanque:50, paises:['AR']},
     {marca:"Renault", modelo:"Fluence", version:"2.0 N",         anos:"2011–2020", ciudad:11.5, ruta:8.0,  paises:['AR']},
     {marca:"Renault", modelo:"Fluence", version:"1.6 turbo",     anos:"2013–2020", ciudad:10.5, ruta:7.5,  paises:['AR']},
-    {marca:"Renault", modelo:"Kangoo",  version:"1.6 N",         anos:"2000–2025", ciudad:11.5, ruta:8.5,  paises:['AR']},
-    {marca:"Renault", modelo:"Kangoo",  version:"1.6 + GNC",     anos:"2010–2025", ciudad:11.5, ruta:8.5,  gnc_ciudad:13.0, gnc_ruta:9.8, paises:['AR']},
-    {marca:"Renault", modelo:"Kwid",    version:"1.0 N",         anos:"2017–2025", ciudad:7.5,  ruta:5.5,  paises:['AR','UY']},
-    {marca:"Renault", modelo:"Kwid",    version:"1.0 N + GNC",   anos:"2020–2025", ciudad:7.5,  ruta:5.5,  gnc_ciudad:8.8, gnc_ruta:6.5, paises:['AR']},
-    {marca:"Renault", modelo:"Kwid",    version:"1.0 flex",      anos:"2017–2025", ciudad:8.0,  ruta:6.0,  paises:['BR']},
+    {marca:"Renault", modelo:"Kangoo",  version:"1.6 N",         anos:"2000–2025", ciudad:11.5, ruta:8.5,  tanque:60, paises:['AR']},
+    {marca:"Renault", modelo:"Kangoo",  version:"1.6 + GNC",     anos:"2010–2025", ciudad:11.5, ruta:8.5,  gnc_ciudad:13.0, gnc_ruta:9.8, tanque:60, paises:['AR']},
+    {marca:"Renault", modelo:"Kwid",    version:"1.0 N",         anos:"2017–2025", ciudad:7.5,  ruta:5.5,  tanque:35, paises:['AR','UY']},
+    {marca:"Renault", modelo:"Kwid",    version:"1.0 N + GNC",   anos:"2020–2025", ciudad:7.5,  ruta:5.5,  gnc_ciudad:8.8, gnc_ruta:6.5, tanque:35, paises:['AR']},
+    {marca:"Renault", modelo:"Kwid",    version:"1.0 flex",      anos:"2017–2025", ciudad:8.0,  ruta:6.0,  tanque:35, paises:['BR']},
     {marca:"Renault", modelo:"Laguna",  version:"1.8/2.0 N",     anos:"2000–2010", ciudad:11.0, ruta:8.0,  paises:['AR']},
-    {marca:"Renault", modelo:"Logan",   version:"1.6 N",         anos:"2006–2022", ciudad:9.5,  ruta:7.0,  paises:['AR']},
-    {marca:"Renault", modelo:"Logan",   version:"1.6 + GNC",     anos:"2006–2022", ciudad:9.5,  ruta:7.0,  gnc_ciudad:11.0, gnc_ruta:8.2, paises:['AR']},
+    {marca:"Renault", modelo:"Logan",   version:"1.6 N",         anos:"2006–2022", ciudad:9.5,  ruta:7.0,  tanque:50, paises:['AR']},
+    {marca:"Renault", modelo:"Logan",   version:"1.6 + GNC",     anos:"2006–2022", ciudad:9.5,  ruta:7.0,  gnc_ciudad:11.0, gnc_ruta:8.2, tanque:50, paises:['AR']},
     {marca:"Renault", modelo:"Megane",  version:"1.6 N",         anos:"1999–2012", ciudad:10.0, ruta:7.5,  paises:['AR']},
     {marca:"Renault", modelo:"Megane",  version:"2.0 N",         anos:"1999–2012", ciudad:11.5, ruta:8.5,  paises:['AR']},
     {marca:"Renault", modelo:"Megane",  version:"1.6 turbo",     anos:"2013–2018", ciudad:10.0, ruta:7.2,  paises:['AR']},
-    {marca:"Renault", modelo:"Oroch",   version:"2.0 N",         anos:"2016–2022", ciudad:11.5, ruta:9.0,  paises:['AR','BR']},
-    {marca:"Renault", modelo:"Oroch",   version:"1.3 turbo",     anos:"2023–2025", ciudad:10.0, ruta:7.5,  paises:['AR']},
-    {marca:"Renault", modelo:"Sandero", version:"1.6 N",         anos:"2008–2025", ciudad:9.5,  ruta:7.0,  paises:['AR','UY']},
-    {marca:"Renault", modelo:"Sandero", version:"1.6 + GNC",     anos:"2010–2025", ciudad:9.5,  ruta:7.0,  gnc_ciudad:11.0, gnc_ruta:8.2, paises:['AR']},
-    {marca:"Renault", modelo:"Sandero", version:"1.0 turbo",     anos:"2022–2025", ciudad:8.5,  ruta:6.5,  paises:['AR']},
-    {marca:"Renault", modelo:"Sandero", version:"1.0 flex",      anos:"2018–2025", ciudad:10.0, ruta:7.5,  paises:['BR']},
-    {marca:"Renault", modelo:"Stepway", version:"1.6 N",         anos:"2008–2025", ciudad:10.0, ruta:7.5,  paises:['AR','UY']},
+    {marca:"Renault", modelo:"Oroch",   version:"2.0 N",         anos:"2016–2022", ciudad:11.5, ruta:9.0,  tanque:50, paises:['AR','BR']},
+    {marca:"Renault", modelo:"Oroch",   version:"1.3 turbo",     anos:"2023–2025", ciudad:10.0, ruta:7.5,  tanque:50, paises:['AR']},
+    {marca:"Renault", modelo:"Sandero", version:"1.6 N",         anos:"2008–2025", ciudad:9.5,  ruta:7.0,  tanque:50, paises:['AR','UY']},
+    {marca:"Renault", modelo:"Sandero", version:"1.6 + GNC",     anos:"2010–2025", ciudad:9.5,  ruta:7.0,  gnc_ciudad:11.0, gnc_ruta:8.2, tanque:50, paises:['AR']},
+    {marca:"Renault", modelo:"Sandero", version:"1.0 turbo",     anos:"2022–2025", ciudad:8.5,  ruta:6.5,  tanque:50, paises:['AR']},
+    {marca:"Renault", modelo:"Sandero", version:"1.0 flex",      anos:"2018–2025", ciudad:10.0, ruta:7.5,  tanque:50, paises:['BR']},
+    {marca:"Renault", modelo:"Stepway", version:"1.6 N",         anos:"2008–2025", ciudad:10.0, ruta:7.5,  tanque:50, paises:['AR','UY']},
     {marca:"Renault", modelo:"Symbol",  version:"1.6 N",         anos:"2002–2016", ciudad:9.5,  ruta:7.2,  paises:['AR']},
     // ── Subaru ─────────────────────────────────────────────────
-    {marca:"Subaru", modelo:"Forester", version:"2.0 N",         anos:"2008–2025", ciudad:11.5, ruta:8.5,  paises:['AR','CL']},
-    {marca:"Subaru", modelo:"Forester", version:"2.5 N",         anos:"2008–2025", ciudad:12.0, ruta:9.0,  paises:['CL']},
-    {marca:"Subaru", modelo:"Impreza",  version:"2.0 N",         anos:"2008–2025", ciudad:10.0, ruta:7.5,  paises:['AR','CL']},
+    {marca:"Subaru", modelo:"Forester", version:"2.0 N",         anos:"2008–2025", ciudad:11.5, ruta:8.5,  tanque:63, paises:['AR','CL']},
+    {marca:"Subaru", modelo:"Forester", version:"2.5 N",         anos:"2008–2025", ciudad:12.0, ruta:9.0,  tanque:63, paises:['CL']},
+    {marca:"Subaru", modelo:"Impreza",  version:"2.0 N",         anos:"2008–2025", ciudad:10.0, ruta:7.5,  tanque:50, paises:['AR','CL']},
     {marca:"Subaru", modelo:"Legacy",   version:"2.5 N",         anos:"2009–2020", ciudad:12.0, ruta:9.0,  paises:['AR','CL']},
     {marca:"Subaru", modelo:"Outback",  version:"2.5 N",         anos:"2010–2025", ciudad:12.5, ruta:9.5,  paises:['AR','CL']},
-    {marca:"Subaru", modelo:"XV",       version:"2.0 N",         anos:"2013–2025", ciudad:10.0, ruta:7.5,  paises:['AR','CL']},
+    {marca:"Subaru", modelo:"XV",       version:"2.0 N",         anos:"2013–2025", ciudad:10.0, ruta:7.5,  tanque:50, paises:['AR','CL']},
     // ── Suzuki ─────────────────────────────────────────────────
-    {marca:"Suzuki", modelo:"Baleno",   version:"1.2 N",         anos:"2016–2025", ciudad:8.0,  ruta:6.0,  paises:['CL']},
-    {marca:"Suzuki", modelo:"Jimny",    version:"1.3 N",         anos:"2005–2018", ciudad:12.0, ruta:9.5,  paises:['AR','CL']},
-    {marca:"Suzuki", modelo:"Jimny",    version:"1.5 N",         anos:"2019–2025", ciudad:12.0, ruta:9.5,  paises:['CL']},
-    {marca:"Suzuki", modelo:"S-Cross",  version:"1.4 turbo",     anos:"2016–2025", ciudad:9.5,  ruta:7.0,  paises:['CL']},
-    {marca:"Suzuki", modelo:"Swift",    version:"1.2 N",         anos:"2010–2025", ciudad:7.5,  ruta:5.8,  paises:['CL']},
-    {marca:"Suzuki", modelo:"Vitara",   version:"1.4 turbo",     anos:"2015–2025", ciudad:9.0,  ruta:6.5,  paises:['AR','CL']},
+    {marca:"Suzuki", modelo:"Baleno",   version:"1.2 N",         anos:"2016–2025", ciudad:8.0,  ruta:6.0,  tanque:37, paises:['CL']},
+    {marca:"Suzuki", modelo:"Jimny",    version:"1.3 N",         anos:"2005–2018", ciudad:12.0, ruta:9.5,  tanque:40, paises:['AR','CL']},
+    {marca:"Suzuki", modelo:"Jimny",    version:"1.5 N",         anos:"2019–2025", ciudad:12.0, ruta:9.5,  tanque:40, paises:['CL']},
+    {marca:"Suzuki", modelo:"S-Cross",  version:"1.4 turbo",     anos:"2016–2025", ciudad:9.5,  ruta:7.0,  tanque:47, paises:['CL']},
+    {marca:"Suzuki", modelo:"Swift",    version:"1.2 N",         anos:"2010–2025", ciudad:7.5,  ruta:5.8,  tanque:37, paises:['CL']},
+    {marca:"Suzuki", modelo:"Vitara",   version:"1.4 turbo",     anos:"2015–2025", ciudad:9.0,  ruta:6.5,  tanque:47, paises:['AR','CL']},
     // ── Toyota ─────────────────────────────────────────────────
-    {marca:"Toyota", modelo:"Corolla",        version:"1.8 N",        anos:"1998–2013", ciudad:10.5, ruta:7.8,  paises:['AR','UY']},
-    {marca:"Toyota", modelo:"Corolla",        version:"2.0 N",        anos:"2014–2025", ciudad:10.0, ruta:7.0,  paises:['AR','UY','CL']},
-    {marca:"Toyota", modelo:"Corolla",        version:"1.8 híbrido",  anos:"2020–2025", ciudad:7.0,  ruta:5.8,  paises:['AR','UY']},
-    {marca:"Toyota", modelo:"Corolla",        version:"2.0 flex",     anos:"2019–2025", ciudad:10.5, ruta:7.8,  paises:['BR']},
-    {marca:"Toyota", modelo:"Corolla Cross",  version:"2.0 híbrido",  anos:"2022–2025", ciudad:6.5,  ruta:5.8,  paises:['AR','UY']},
-    {marca:"Toyota", modelo:"Corolla Cross",  version:"2.0 híbrido flex",anos:"2022–2025",ciudad:6.8,ruta:6.0,paises:['BR']},
-    {marca:"Toyota", modelo:"Etios",          version:"1.5 N",        anos:"2013–2021", ciudad:9.0,  ruta:6.8,  paises:['AR']},
-    {marca:"Toyota", modelo:"Etios",          version:"1.5 + GNC",    anos:"2015–2021", ciudad:9.0,  ruta:6.8,  gnc_ciudad:10.5, gnc_ruta:7.8, paises:['AR']},
-    {marca:"Toyota", modelo:"Etios",          version:"1.5 flex",     anos:"2012–2022", ciudad:9.5,  ruta:7.0,  paises:['BR']},
+    {marca:"Toyota", modelo:"Corolla",        version:"1.8 N",        anos:"1998–2013", ciudad:10.5, ruta:7.8,  tanque:50, paises:['AR','UY']},
+    {marca:"Toyota", modelo:"Corolla",        version:"2.0 N",        anos:"2014–2025", ciudad:10.0, ruta:7.0,  tanque:50, paises:['AR','UY','CL']},
+    {marca:"Toyota", modelo:"Corolla",        version:"1.8 híbrido",  anos:"2020–2025", ciudad:7.0,  ruta:5.8,  tanque:50, paises:['AR','UY']},
+    {marca:"Toyota", modelo:"Corolla",        version:"2.0 flex",     anos:"2019–2025", ciudad:10.5, ruta:7.8,  tanque:50, paises:['BR']},
+    {marca:"Toyota", modelo:"Corolla Cross",  version:"2.0 híbrido",  anos:"2022–2025", ciudad:6.5,  ruta:5.8,  tanque:50, paises:['AR','UY']},
+    {marca:"Toyota", modelo:"Corolla Cross",  version:"2.0 híbrido flex",anos:"2022–2025",ciudad:6.8,ruta:6.0,tanque:50, paises:['BR']},
+    {marca:"Toyota", modelo:"Etios",          version:"1.5 N",        anos:"2013–2021", ciudad:9.0,  ruta:6.8,  tanque:50, paises:['AR']},
+    {marca:"Toyota", modelo:"Etios",          version:"1.5 + GNC",    anos:"2015–2021", ciudad:9.0,  ruta:6.8,  gnc_ciudad:10.5, gnc_ruta:7.8, tanque:50, paises:['AR']},
+    {marca:"Toyota", modelo:"Etios",          version:"1.5 flex",     anos:"2012–2022", ciudad:9.5,  ruta:7.0,  tanque:50, paises:['BR']},
     {marca:"Toyota", modelo:"Fortuner",       version:"2.7 N",        anos:"2006–2010", ciudad:15.0, ruta:11.5, paises:['AR']},
-    {marca:"Toyota", modelo:"Hilux",          version:"2.7 N",        anos:"2004–2011", ciudad:13.0, ruta:10.0, paises:['AR','UY','CL']},
-    {marca:"Toyota", modelo:"Hilux",          version:"3.0 diesel",   anos:"2004–2015", ciudad:12.0, ruta:9.0,  paises:['AR','UY','CL']},
-    {marca:"Toyota", modelo:"Hilux",          version:"2.4 diesel",   anos:"2015–2025", ciudad:11.5, ruta:9.0,  paises:['AR','UY','CL','BR']},
-    {marca:"Toyota", modelo:"Hilux",          version:"2.8 diesel",   anos:"2015–2025", ciudad:11.0, ruta:8.5,  paises:['AR','UY','CL','BR']},
-    {marca:"Toyota", modelo:"Land Cruiser Prado",version:"2.7 N",     anos:"2003–2015", ciudad:15.0, ruta:12.0, paises:['AR','CL']},
-    {marca:"Toyota", modelo:"Land Cruiser Prado",version:"2.8 diesel",anos:"2016–2025", ciudad:14.0, ruta:11.0, paises:['AR','CL']},
+    {marca:"Toyota", modelo:"Hilux",          version:"2.7 N",        anos:"2004–2011", ciudad:13.0, ruta:10.0, tanque:80, paises:['AR','UY','CL']},
+    {marca:"Toyota", modelo:"Hilux",          version:"3.0 diesel",   anos:"2004–2015", ciudad:12.0, ruta:9.0,  tanque:80, paises:['AR','UY','CL']},
+    {marca:"Toyota", modelo:"Hilux",          version:"2.4 diesel",   anos:"2015–2025", ciudad:11.5, ruta:9.0,  tanque:80, paises:['AR','UY','CL','BR']},
+    {marca:"Toyota", modelo:"Hilux",          version:"2.8 diesel",   anos:"2015–2025", ciudad:11.0, ruta:8.5,  tanque:80, paises:['AR','UY','CL','BR']},
+    {marca:"Toyota", modelo:"Land Cruiser Prado",version:"2.7 N",     anos:"2003–2015", ciudad:15.0, ruta:12.0, tanque:87, paises:['AR','CL']},
+    {marca:"Toyota", modelo:"Land Cruiser Prado",version:"2.8 diesel",anos:"2016–2025", ciudad:14.0, ruta:11.0, tanque:87, paises:['AR','CL']},
     {marca:"Toyota", modelo:"Prius",          version:"1.8 híbrido",  anos:"2010–2022", ciudad:5.5,  ruta:4.5,  paises:['AR']},
-    {marca:"Toyota", modelo:"RAV4",           version:"2.0 N",        anos:"2013–2018", ciudad:12.0, ruta:9.0,  paises:['AR']},
-    {marca:"Toyota", modelo:"RAV4",           version:"2.5 híbrido",  anos:"2019–2025", ciudad:7.5,  ruta:6.5,  paises:['AR','UY','CL']},
-    {marca:"Toyota", modelo:"SW4",            version:"2.7 N",        anos:"2005–2015", ciudad:14.0, ruta:11.0, paises:['AR','UY','CL']},
-    {marca:"Toyota", modelo:"SW4",            version:"2.8 diesel",   anos:"2016–2025", ciudad:13.0, ruta:10.0, paises:['AR','UY','CL']},
-    {marca:"Toyota", modelo:"Yaris",          version:"1.3 N",        anos:"2006–2020", ciudad:8.5,  ruta:6.5,  paises:['AR','CL','UY']},
-    {marca:"Toyota", modelo:"Yaris",          version:"1.5 N",        anos:"2020–2025", ciudad:8.5,  ruta:6.5,  paises:['CL','UY']},
-    {marca:"Toyota", modelo:"Yaris",          version:"1.5 flex",     anos:"2018–2025", ciudad:9.0,  ruta:6.8,  paises:['BR']},
+    {marca:"Toyota", modelo:"RAV4",           version:"2.0 N",        anos:"2013–2018", ciudad:12.0, ruta:9.0,  tanque:55, paises:['AR']},
+    {marca:"Toyota", modelo:"RAV4",           version:"2.5 híbrido",  anos:"2019–2025", ciudad:7.5,  ruta:6.5,  tanque:55, paises:['AR','UY','CL']},
+    {marca:"Toyota", modelo:"SW4",            version:"2.7 N",        anos:"2005–2015", ciudad:14.0, ruta:11.0, tanque:87, paises:['AR','UY','CL']},
+    {marca:"Toyota", modelo:"SW4",            version:"2.8 diesel",   anos:"2016–2025", ciudad:13.0, ruta:10.0, tanque:87, paises:['AR','UY','CL']},
+    {marca:"Toyota", modelo:"Yaris",          version:"1.3 N",        anos:"2006–2020", ciudad:8.5,  ruta:6.5,  tanque:42, paises:['AR','CL','UY']},
+    {marca:"Toyota", modelo:"Yaris",          version:"1.5 N",        anos:"2020–2025", ciudad:8.5,  ruta:6.5,  tanque:42, paises:['CL','UY']},
+    {marca:"Toyota", modelo:"Yaris",          version:"1.5 flex",     anos:"2018–2025", ciudad:9.0,  ruta:6.8,  tanque:42, paises:['BR']},
     // ── Volkswagen ─────────────────────────────────────────────
-    {marca:"Volkswagen", modelo:"Amarok",    version:"2.0 TDI",       anos:"2011–2016", ciudad:12.0, ruta:9.0,  paises:['AR','UY']},
-    {marca:"Volkswagen", modelo:"Amarok",    version:"2.0 Bi-TDI",    anos:"2011–2022", ciudad:11.5, ruta:9.0,  paises:['AR','UY']},
-    {marca:"Volkswagen", modelo:"Amarok",    version:"3.0 V6 TDI",    anos:"2017–2025", ciudad:13.0, ruta:10.0, paises:['AR','UY']},
+    {marca:"Volkswagen", modelo:"Amarok",    version:"2.0 TDI",       anos:"2011–2016", ciudad:12.0, ruta:9.0,  tanque:120, paises:['AR','UY']},
+    {marca:"Volkswagen", modelo:"Amarok",    version:"2.0 Bi-TDI",    anos:"2011–2022", ciudad:11.5, ruta:9.0,  tanque:120, paises:['AR','UY']},
+    {marca:"Volkswagen", modelo:"Amarok",    version:"3.0 V6 TDI",    anos:"2017–2025", ciudad:13.0, ruta:10.0, tanque:120, paises:['AR','UY']},
     {marca:"Volkswagen", modelo:"Bora/Vento",version:"2.0 N",         anos:"2000–2011", ciudad:11.5, ruta:8.5,  paises:['AR']},
     {marca:"Volkswagen", modelo:"Bora/Vento",version:"1.4 TSI",       anos:"2012–2025", ciudad:9.0,  ruta:6.5,  paises:['AR']},
     {marca:"Volkswagen", modelo:"Bora/Vento",version:"1.4 TSI + GNC", anos:"2012–2025", ciudad:9.0,  ruta:6.5,  gnc_ciudad:10.5, gnc_ruta:7.8, paises:['AR']},
     {marca:"Volkswagen", modelo:"Fox",       version:"1.0 N",         anos:"2005–2011", ciudad:9.0,  ruta:6.8,  paises:['AR']},
     {marca:"Volkswagen", modelo:"Fox",       version:"1.6 N",         anos:"2005–2011", ciudad:10.0, ruta:7.5,  paises:['AR']},
-    {marca:"Volkswagen", modelo:"Gol",       version:"1.0 N",         anos:"1994–2008", ciudad:9.0,  ruta:6.8,  paises:['AR']},
-    {marca:"Volkswagen", modelo:"Gol",       version:"1.4 N",         anos:"2008–2014", ciudad:9.5,  ruta:7.0,  paises:['AR']},
-    {marca:"Volkswagen", modelo:"Gol",       version:"1.6 N",         anos:"2014–2025", ciudad:9.5,  ruta:6.8,  paises:['AR','UY','CL']},
-    {marca:"Volkswagen", modelo:"Gol",       version:"1.6 + GNC",     anos:"2015–2025", ciudad:9.5,  ruta:6.8,  gnc_ciudad:11.0, gnc_ruta:8.2, paises:['AR']},
-    {marca:"Volkswagen", modelo:"Gol",       version:"1.0 turbo flex",anos:"2018–2025", ciudad:9.0,  ruta:6.5,  paises:['BR']},
+    {marca:"Volkswagen", modelo:"Gol",       version:"1.0 N",         anos:"1994–2008", ciudad:9.0,  ruta:6.8,  tanque:43, paises:['AR']},
+    {marca:"Volkswagen", modelo:"Gol",       version:"1.4 N",         anos:"2008–2014", ciudad:9.5,  ruta:7.0,  tanque:43, paises:['AR']},
+    {marca:"Volkswagen", modelo:"Gol",       version:"1.6 N",         anos:"2014–2025", ciudad:9.5,  ruta:6.8,  tanque:43, paises:['AR','UY','CL']},
+    {marca:"Volkswagen", modelo:"Gol",       version:"1.6 + GNC",     anos:"2015–2025", ciudad:9.5,  ruta:6.8,  gnc_ciudad:11.0, gnc_ruta:8.2, tanque:43, paises:['AR']},
+    {marca:"Volkswagen", modelo:"Gol",       version:"1.0 turbo flex",anos:"2018–2025", ciudad:9.0,  ruta:6.5,  tanque:43, paises:['BR']},
     {marca:"Volkswagen", modelo:"Golf",      version:"1.6 N",         anos:"2000–2014", ciudad:10.5, ruta:7.8,  paises:['AR']},
     {marca:"Volkswagen", modelo:"Golf",      version:"1.4 TSI",       anos:"2013–2025", ciudad:9.5,  ruta:7.0,  paises:['AR']},
     {marca:"Volkswagen", modelo:"Passat",    version:"1.8 turbo",     anos:"2007–2015", ciudad:10.0, ruta:7.5,  paises:['AR']},
     {marca:"Volkswagen", modelo:"Passat",    version:"2.0 TSI",       anos:"2007–2015", ciudad:11.0, ruta:8.0,  paises:['AR']},
-    {marca:"Volkswagen", modelo:"Polo",      version:"1.6 N",         anos:"2002–2025", ciudad:10.0, ruta:7.0,  paises:['AR']},
-    {marca:"Volkswagen", modelo:"Polo",      version:"1.6 + GNC",     anos:"2010–2025", ciudad:10.0, ruta:7.0,  gnc_ciudad:11.5, gnc_ruta:8.5, paises:['AR']},
-    {marca:"Volkswagen", modelo:"Polo",      version:"1.0 turbo flex",anos:"2018–2025", ciudad:9.0,  ruta:7.0,  paises:['BR']},
+    {marca:"Volkswagen", modelo:"Polo",      version:"1.6 N",         anos:"2002–2025", ciudad:10.0, ruta:7.0,  tanque:40, paises:['AR']},
+    {marca:"Volkswagen", modelo:"Polo",      version:"1.6 + GNC",     anos:"2010–2025", ciudad:10.0, ruta:7.0,  gnc_ciudad:11.5, gnc_ruta:8.5, tanque:40, paises:['AR']},
+    {marca:"Volkswagen", modelo:"Polo",      version:"1.0 turbo flex",anos:"2018–2025", ciudad:9.0,  ruta:7.0,  tanque:40, paises:['BR']},
     {marca:"Volkswagen", modelo:"Polo Classic",version:"1.6 N",       anos:"1997–2009", ciudad:10.0, ruta:7.5,  paises:['AR']},
-    {marca:"Volkswagen", modelo:"Saveiro",   version:"1.6 N",         anos:"2010–2018", ciudad:10.5, ruta:8.0,  paises:['AR']},
-    {marca:"Volkswagen", modelo:"Saveiro",   version:"1.6 flex",      anos:"2010–2025", ciudad:10.5, ruta:8.0,  paises:['BR']},
-    {marca:"Volkswagen", modelo:"Suran",     version:"1.6 N",         anos:"2006–2018", ciudad:10.0, ruta:7.5,  paises:['AR']},
-    {marca:"Volkswagen", modelo:"T-Cross",   version:"1.0 turbo",     anos:"2019–2025", ciudad:9.5,  ruta:7.0,  paises:['AR','UY','CL','BR']},
-    {marca:"Volkswagen", modelo:"Taos",      version:"1.4 turbo",     anos:"2021–2025", ciudad:9.5,  ruta:7.0,  paises:['AR','UY']},
-    {marca:"Volkswagen", modelo:"Tiguan",    version:"1.4 TSI",       anos:"2010–2020", ciudad:11.5, ruta:8.5,  paises:['AR']},
-    {marca:"Volkswagen", modelo:"Tiguan",    version:"2.0 TSI",       anos:"2020–2025", ciudad:11.0, ruta:8.0,  paises:['AR']},
-    {marca:"Volkswagen", modelo:"Virtus",    version:"1.6 N",         anos:"2019–2025", ciudad:10.0, ruta:7.5,  paises:['AR','UY']},
-    {marca:"Volkswagen", modelo:"Virtus",    version:"1.0 turbo",     anos:"2021–2025", ciudad:9.0,  ruta:7.0,  paises:['AR','UY','CL']},
-    {marca:"Volkswagen", modelo:"Virtus",    version:"1.0 turbo flex",anos:"2018–2025", ciudad:9.0,  ruta:7.0,  paises:['BR']},
+    {marca:"Volkswagen", modelo:"Saveiro",   version:"1.6 N",         anos:"2010–2018", ciudad:10.5, ruta:8.0,  tanque:55, paises:['AR']},
+    {marca:"Volkswagen", modelo:"Saveiro",   version:"1.6 flex",      anos:"2010–2025", ciudad:10.5, ruta:8.0,  tanque:55, paises:['BR']},
+    {marca:"Volkswagen", modelo:"Suran",     version:"1.6 N",         anos:"2006–2018", ciudad:10.0, ruta:7.5,  tanque:55, paises:['AR']},
+    {marca:"Volkswagen", modelo:"T-Cross",   version:"1.0 turbo",     anos:"2019–2025", ciudad:9.5,  ruta:7.0,  tanque:50, paises:['AR','UY','CL','BR']},
+    {marca:"Volkswagen", modelo:"Taos",      version:"1.4 turbo",     anos:"2021–2025", ciudad:9.5,  ruta:7.0,  tanque:47, paises:['AR','UY']},
+    {marca:"Volkswagen", modelo:"Tiguan",    version:"1.4 TSI",       anos:"2010–2020", ciudad:11.5, ruta:8.5,  tanque:60, paises:['AR']},
+    {marca:"Volkswagen", modelo:"Tiguan",    version:"2.0 TSI",       anos:"2020–2025", ciudad:11.0, ruta:8.0,  tanque:60, paises:['AR']},
+    {marca:"Volkswagen", modelo:"Virtus",    version:"1.6 N",         anos:"2019–2025", ciudad:10.0, ruta:7.5,  tanque:52, paises:['AR','UY']},
+    {marca:"Volkswagen", modelo:"Virtus",    version:"1.0 turbo",     anos:"2021–2025", ciudad:9.0,  ruta:7.0,  tanque:52, paises:['AR','UY','CL']},
+    {marca:"Volkswagen", modelo:"Virtus",    version:"1.0 turbo flex",anos:"2018–2025", ciudad:9.0,  ruta:7.0,  tanque:52, paises:['BR']},
   ],
   estaciones: {
     AR: [
@@ -1785,6 +1858,7 @@ function toggleChip(id) {
   if (!isOpen) {
     if (id === 'pasajeros') updatePassengersDisplay();
     if (id === 'gnc')       updateGNCDisplay();
+    if (id === 'comparar')  { populateCmpMarcas(); updateComparison(); }
   }
 }
 
@@ -1927,6 +2001,9 @@ function calcular() {
     amountEl.innerHTML = `<span class="result-empty">${msg}</span>`;
     detailsEl.style.display = 'none';
     chipsEl.style.display   = 'none';
+    document.getElementById('tank-indicator').style.display = 'none';
+    document.getElementById('share-row').style.display      = 'none';
+    document.getElementById('chip-comparar').style.display  = 'none';
     lastResult = null;
   };
 
@@ -1972,18 +2049,194 @@ function calcular() {
   // Mostrar chips y actualizar los que están abiertos
   chipsEl.style.display = 'flex';
 
+  // Tank indicator
+  const tanque = auto.tanque || 50;
+  const pctTanque = Math.min(100, Math.round((volumen / tanque) * 100));
+  const tankEl  = document.getElementById('tank-indicator');
+  const tankBar = document.getElementById('tank-bar');
+  tankEl.style.display = '';
+  tankBar.style.width = pctTanque + '%';
+  tankBar.style.background = pctTanque > 80
+    ? 'linear-gradient(to right,#E01C1C,#FF6B6B)'
+    : pctTanque > 50
+      ? 'linear-gradient(to right,#F59E0B,#FCD34D)'
+      : 'linear-gradient(to right,#1A5FE8,#5B9EFF)';
+  document.getElementById('tank-pct-text').textContent = pctTanque + '%';
+  document.getElementById('tank-sub').textContent = `${fmt(volumen,1)} ${unidad} de ${tanque}L de capacidad`;
+
+  // Botón compartir
+  document.getElementById('share-row').style.display = '';
+
   // GNC chip: visible solo si el combustible actual NO es GNC y hay precio GNC en el país
   const hayGNC = appData.estaciones[currentCountry].some(e => e.naftas.some(n => n.tipo === 'GNC'));
   document.getElementById('chip-gnc').style.display = (!isGNC && hayGNC) ? '' : 'none';
 
+  // Chip comparar
+  document.getElementById('chip-comparar').style.display = '';
+
   // Refrescar displays si los paneles están abiertos
   if (document.getElementById('panel-pasajeros').style.display !== 'none') updatePassengersDisplay();
   if (document.getElementById('panel-gnc').style.display !== 'none') updateGNCDisplay();
+  if (document.getElementById('panel-comparar').style.display !== 'none') updateComparison();
 
   // Shimmer
   amountEl.classList.remove('updating');
   void amountEl.offsetWidth;
   amountEl.classList.add('updating');
+}
+
+// ══════════════════════════════════════════════════════════════
+//  COMPARTIR
+// ══════════════════════════════════════════════════════════════
+async function compartirResultado() {
+  if (!lastResult) return;
+  const { costo, currency, fmt, auto, km } = lastResult;
+  const origen  = document.getElementById('input-origen')?.value.trim() || '';
+  const destino = document.getElementById('input-destino')?.value.trim() || '';
+  const tabMapa = document.getElementById('tab-mapa')?.classList.contains('active');
+  const autoLbl = `${auto.marca} ${auto.modelo}`;
+  const rutaLbl = (tabMapa && origen && destino)
+    ? `${origen.split(',')[0]} → ${destino.split(',')[0]}`
+    : `${km} km`;
+  const texto = `🚗 ${autoLbl} | ${rutaLbl} | 💰 ${currency} ${fmt(costo)} | calculadoradenafta.com`;
+  const btn = document.getElementById('btn-share');
+  const orig = btn.innerHTML;
+  if (navigator.share) {
+    try { await navigator.share({ title:'Costo del viaje', text:texto, url:'https://calculadoradenafta.com' }); return; }
+    catch(e) { if (e.name === 'AbortError') return; }
+  }
+  try { await navigator.clipboard.writeText(texto); }
+  catch(e) {
+    const ta = document.createElement('textarea');
+    ta.value = texto; ta.style.cssText = 'position:fixed;opacity:0';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+  }
+  btn.innerHTML = '✓ Copiado';
+  btn.style.borderColor = '#86efac'; btn.style.color = '#166534';
+  setTimeout(() => { btn.innerHTML = orig; btn.style.borderColor=''; btn.style.color=''; }, 2500);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  COMPARAR DOS AUTOS
+// ══════════════════════════════════════════════════════════════
+function populateCmpMarcas() {
+  const lista  = appData.autos.filter(a => a.paises && a.paises.includes(currentCountry));
+  const marcas = [...new Set(lista.map(a => a.marca))].sort((a,b) => a.localeCompare(b,'es'));
+  const sel = document.getElementById('cmp-marca');
+  sel.innerHTML = '<option value="">— Marca —</option>';
+  marcas.forEach(m => { const o=document.createElement('option'); o.value=m; o.textContent=m; sel.appendChild(o); });
+  document.getElementById('cmp-modelo').innerHTML = '<option value="">— Modelo —</option>';
+  document.getElementById('cmp-modelo').disabled = true;
+  document.getElementById('cmp-version').innerHTML = '<option value="">— Versión —</option>';
+  document.getElementById('cmp-version').disabled = true;
+  document.getElementById('comparison-result').innerHTML = '';
+}
+
+function onCmpMarcaChange() {
+  const marca = document.getElementById('cmp-marca').value;
+  const lista = appData.autos.filter(a => a.paises.includes(currentCountry) && a.marca === marca);
+  const modelos = [...new Set(lista.map(a => a.modelo))].sort((a,b) => a.localeCompare(b,'es'));
+  const sel = document.getElementById('cmp-modelo');
+  sel.innerHTML = '<option value="">— Modelo —</option>';
+  modelos.forEach(m => { const o=document.createElement('option'); o.value=m; o.textContent=m; sel.appendChild(o); });
+  sel.disabled = !marca;
+  document.getElementById('cmp-version').innerHTML = '<option value="">— Versión —</option>';
+  document.getElementById('cmp-version').disabled = true;
+  document.getElementById('comparison-result').innerHTML = '';
+}
+
+function onCmpModeloChange() {
+  const marca  = document.getElementById('cmp-marca').value;
+  const modelo = document.getElementById('cmp-modelo').value;
+  const lista  = appData.autos
+    .filter(a => a.paises.includes(currentCountry) && a.marca === marca && a.modelo === modelo)
+    .sort((a,b) => a.version.localeCompare(b.version,'es'));
+  const sel = document.getElementById('cmp-version');
+  sel.innerHTML = '<option value="">— Versión —</option>';
+  lista.forEach((a,i) => {
+    const o=document.createElement('option'); o.value=i;
+    o.textContent = a.anos ? `${a.version}  (${a.anos})` : a.version;
+    sel.appendChild(o);
+  });
+  sel.disabled = !modelo;
+  if (lista.length===1) { sel.value='0'; updateComparison(); }
+}
+
+function updateComparison() {
+  if (!lastResult) return;
+  const marca  = document.getElementById('cmp-marca').value;
+  const modelo = document.getElementById('cmp-modelo').value;
+  const vIdx   = document.getElementById('cmp-version').value;
+  const resEl  = document.getElementById('comparison-result');
+  if (!marca || !modelo || vIdx === '') { resEl.innerHTML = ''; return; }
+  const auto2 = appData.autos.filter(a =>
+    a.paises.includes(currentCountry) && a.marca === marca && a.modelo === modelo
+  )[parseInt(vIdx)];
+  if (!auto2) return;
+  const { costo:costo1, currency, fmt, auto:auto1, km, nafta, isGNC } = lastResult;
+  const consumo1 = isGNC
+    ? auto1.gnc_ciudad + (auto1.gnc_ruta - auto1.gnc_ciudad)*(roadPct/100)
+    : auto1.ciudad + (auto1.ruta - auto1.ciudad)*(roadPct/100);
+  const consumo2 = isGNC
+    ? (auto2.gnc_ciudad||0) + ((auto2.gnc_ruta||0)-(auto2.gnc_ciudad||0))*(roadPct/100)
+    : auto2.ciudad + (auto2.ruta - auto2.ciudad)*(roadPct/100);
+  const costo2 = (km/100) * consumo2 * nafta.precio;
+  const label1 = `${document.getElementById('select-marca').value} ${document.getElementById('select-modelo').value}`;
+  const label2 = `${auto2.marca} ${auto2.modelo}`;
+  const diff = Math.abs(costo1-costo2);
+  const w = costo1 <= costo2 ? 1 : 2;
+  resEl.innerHTML = `
+    <div class="cmp-grid">
+      <div class="cmp-card ${w===1?'winner':''}">
+        <div class="cmp-card-name">${w===1?'✓ ':''}${label1}</div>
+        <div class="cmp-card-amount">${currency} ${fmt(costo1)}</div>
+        <div class="cmp-card-detail">${fmt(consumo1,1)} L/100km</div>
+      </div>
+      <div class="cmp-card ${w===2?'winner':''}">
+        <div class="cmp-card-name">${w===2?'✓ ':''}${label2}</div>
+        <div class="cmp-card-amount">${currency} ${fmt(costo2)}</div>
+        <div class="cmp-card-detail">${fmt(consumo2,1)} L/100km</div>
+      </div>
+    </div>
+    <div class="cmp-diff-banner ${w===1?'saving':'losing'}">
+      ${w===1 ? `${label1} ahorra ${currency} ${fmt(diff)} en este viaje` : `${label2} ahorra ${currency} ${fmt(diff)} en este viaje`}
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  PARADAS INTERMEDIAS
+// ══════════════════════════════════════════════════════════════
+let waypointCoords = [];
+let waypointCount  = 0;
+
+function addWaypoint() {
+  const container = document.getElementById('waypoints-container');
+  const idx = waypointCount++;
+  waypointCoords[idx] = null;
+  const n = container.children.length + 1;
+  const wrap = document.createElement('div');
+  wrap.dataset.wpIdx = idx;
+  wrap.style.cssText = 'display:flex; align-items:flex-end; gap:8px; margin-bottom:10px;';
+  wrap.innerHTML = `
+    <div style="flex:1">
+      <label style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:5px">Parada ${n}</label>
+      <div class="autocomplete-wrap" style="position:relative">
+        <input type="text" id="input-wp-${idx}" placeholder="Ciudad o dirección…" autocomplete="off"
+          style="width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:14px;background:var(--surface);color:var(--ink);"
+          oninput="onGeoInput(this,'list-wp-${idx}')">
+        <div class="autocomplete-list" id="list-wp-${idx}" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:99;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden"></div>
+      </div>
+    </div>
+    <button onclick="removeWaypoint(this,${idx})"
+      style="padding:11px 13px;background:none;border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;color:var(--ink-faint);font-size:13px;flex-shrink:0;transition:all 0.15s;"
+      onmouseover="this.style.borderColor='var(--warn)';this.style.color='var(--warn)'"
+      onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--ink-faint)'">✕</button>`;
+  container.appendChild(wrap);
+}
+
+function removeWaypoint(btn, idx) {
+  waypointCoords[idx] = null;
+  btn.closest('[data-wp-idx]').remove();
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -2043,6 +2296,21 @@ function renderCarTable() {
   });
   tbody.innerHTML = '';
   lista.forEach(a => tbody.appendChild(makeCarRow(a)));
+  populateBrandFilterDropdown();
+}
+
+function populateBrandFilterDropdown() {
+  const sel = document.getElementById('car-brand-filter');
+  if (!sel) return;
+  const cur = sel.value;
+  const marcas = [...new Set(appData.autos.map(a => a.marca))].sort((a,b) => a.localeCompare(b,'es'));
+  sel.innerHTML = '<option value="">Todas las marcas</option>';
+  marcas.forEach(m => {
+    const o = document.createElement('option');
+    o.value = m; o.textContent = m;
+    if (m === cur) o.selected = true;
+    sel.appendChild(o);
+  });
 }
 
 function makeCarRow(a) {
@@ -2057,6 +2325,7 @@ function makeCarRow(a) {
     <td class="col-num"><input type="number"   data-field="ruta"      value="${a.ruta||''}"    step="0.1" min="0"></td>
     <td class="col-num"><input type="number"   data-field="gnc_ciudad" value="${a.gnc_ciudad||''}" step="0.1" min="0" placeholder="—"></td>
     <td class="col-num"><input type="number"   data-field="gnc_ruta"   value="${a.gnc_ruta||''}"   step="0.1" min="0" placeholder="—"></td>
+    <td class="col-num"><input type="number"   data-field="tanque"     value="${a.tanque||''}"      step="1"   min="20" max="200" placeholder="—"></td>
     <td class="col-pais"><input type="checkbox" data-pais="AR" ${pa.includes('AR')?'checked':''}></td>
     <td class="col-pais"><input type="checkbox" data-pais="UY" ${pa.includes('UY')?'checked':''}></td>
     <td class="col-pais"><input type="checkbox" data-pais="CL" ${pa.includes('CL')?'checked':''}></td>
@@ -2091,14 +2360,15 @@ function addCarRow() {
 }
 
 function filterCarTable(q) {
-  const term = q.toLowerCase();
+  const term  = (q || '').toLowerCase();
+  const brand = (document.getElementById('car-brand-filter')?.value || '').toLowerCase();
   document.querySelectorAll('#admin-car-tbody tr').forEach(tr => {
-    const text = [
-      tr.querySelector('[data-field="marca"]').value,
+    const mVal = tr.querySelector('[data-field="marca"]').value.toLowerCase();
+    const text = [mVal,
       tr.querySelector('[data-field="modelo"]').value,
       tr.querySelector('[data-field="version"]').value
     ].join(' ').toLowerCase();
-    tr.style.display = text.includes(term) ? '' : 'none';
+    tr.style.display = ((!term || text.includes(term)) && (!brand || mVal === brand)) ? '' : 'none';
   });
 }
 
@@ -2113,12 +2383,14 @@ function collectCarsFromTable() {
     const ruta      = parseFloat(tr.querySelector('[data-field="ruta"]').value);
     const gnc_ciudad = parseFloat(tr.querySelector('[data-field="gnc_ciudad"]').value);
     const gnc_ruta   = parseFloat(tr.querySelector('[data-field="gnc_ruta"]').value);
+    const tanque     = parseInt(tr.querySelector('[data-field="tanque"]').value);
     const paises    = [...tr.querySelectorAll('[data-pais]:checked')].map(c => c.dataset.pais);
     if (!marca || !modelo || !version || isNaN(ciudad) || isNaN(ruta)) return;
     const entry = {marca, modelo, version, ciudad, ruta, paises};
     if (anos)                                  entry.anos      = anos;
     if (!isNaN(gnc_ciudad) && gnc_ciudad > 0) entry.gnc_ciudad = gnc_ciudad;
     if (!isNaN(gnc_ruta)   && gnc_ruta   > 0) entry.gnc_ruta   = gnc_ruta;
+    if (!isNaN(tanque)     && tanque     > 0) entry.tanque     = tanque;
     autos.push(entry);
   });
   return autos.sort((a,b) =>
@@ -2424,8 +2696,12 @@ async function fetchNominatim(q, listId, input) {
       div.onmousedown = () => {
         input.value = label || item.display_name;
         const coords = { lat: parseFloat(item.lat), lng: parseFloat(item.lon) };
-        if (listId === 'list-origen') origenCoords = coords;
-        else destinoCoords = coords;
+        if      (listId === 'list-origen')  origenCoords = coords;
+        else if (listId === 'list-destino') destinoCoords = coords;
+        else {
+          const wpIdx = parseInt(listId.replace('list-wp-', ''));
+          if (!isNaN(wpIdx)) waypointCoords[wpIdx] = coords;
+        }
         list.style.display = 'none';
       };
       list.appendChild(div);
@@ -2464,8 +2740,14 @@ async function calcularRuta() {
     // annotations=speed → velocidad por segmento, permite distinguir
     // autopistas urbanas (alta velocidad) de ciudad real (baja velocidad)
     // overview=simplified mantiene la geometría del mapa liviana
-    const url = `https://router.project-osrm.org/route/v1/driving/`
-      + `${origenCoords.lng},${origenCoords.lat};${destinoCoords.lng},${destinoCoords.lat}`
+    // Incluir paradas intermedias en la ruta
+    const activeWps = waypointCoords.filter(Boolean);
+    const coordStr  = [
+      `${origenCoords.lng},${origenCoords.lat}`,
+      ...activeWps.map(c => `${c.lng},${c.lat}`),
+      `${destinoCoords.lng},${destinoCoords.lat}`
+    ].join(';');
+    const url = `https://router.project-osrm.org/route/v1/driving/${coordStr}`
       + `?overview=simplified&geometries=geojson&annotations=speed,distance`;
 
     const res = await fetch(url);
@@ -2479,19 +2761,20 @@ async function calcularRuta() {
     const route = data.routes[0];
     const totalKm = route.distance / 1000;
 
-    // Detección ciudad/ruta por porcentaje de distancia en segmentos de alta velocidad
-    // OSRM anota velocidad (m/s) y distancia por segmento en legs[0].annotation
+    // Detección ciudad/ruta — suma todos los legs (para rutas con paradas)
     let rutaKm = 0, totalAnnotatedKm = 0;
-    const HIGHWAY_THRESHOLD_KMH = 70; // segmentos > 70 km/h = ruta/autopista
+    const HIGHWAY_THRESHOLD_KMH = 70;
     try {
-      const ann = route.legs[0].annotation;
-      if (ann && ann.speed && ann.distance) {
-        ann.speed.forEach((spd, i) => {
-          const segKm = (ann.distance[i] || 0) / 1000;
-          totalAnnotatedKm += segKm;
-          if (spd * 3.6 >= HIGHWAY_THRESHOLD_KMH) rutaKm += segKm;
-        });
-      }
+      (route.legs || []).forEach(leg => {
+        const ann = leg.annotation;
+        if (ann && ann.speed && ann.distance) {
+          ann.speed.forEach((spd, i) => {
+            const segKm = (ann.distance[i] || 0) / 1000;
+            totalAnnotatedKm += segKm;
+            if (spd * 3.6 >= HIGHWAY_THRESHOLD_KMH) rutaKm += segKm;
+          });
+        }
+      });
     } catch(_) {}
     const rutaPct = totalAnnotatedKm > 0
       ? Math.round(rutaKm / totalAnnotatedKm * 100)
@@ -2537,6 +2820,7 @@ async function calcularRuta() {
     });
     L.marker([origenCoords.lat, origenCoords.lng], { icon: mkIcon('#1D5C4A') }).addTo(mapInstance);
     L.marker([destinoCoords.lat, destinoCoords.lng], { icon: mkIcon('#C0392B') }).addTo(mapInstance);
+    activeWps.forEach(c => L.marker([c.lat, c.lng], { icon: mkIcon('#F59E0B') }).addTo(mapInstance));
 
     // Fit + forzar redibujado
     mapInstance.fitBounds(routeLayer.getBounds(), { padding: [24, 24] });
