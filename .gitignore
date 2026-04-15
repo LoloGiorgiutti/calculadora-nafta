@@ -1,0 +1,5 @@
+# Ignorar archivos que no son parte del sitio web
+*.xlsx
+*.xls
+*.csv
+.DS_Store
