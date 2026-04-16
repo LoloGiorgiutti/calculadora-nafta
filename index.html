@@ -2726,7 +2726,7 @@ function onGeoInput(input, listId) {
   clearTimeout(geoTimers[listId]);
   const list = document.getElementById(listId);
   if (q.length < 3) { list.style.display = 'none'; return; }
-  geoTimers[listId] = setTimeout(() => fetchNominatim(q, listId, input), 420);
+  geoTimers[listId] = setTimeout(() => fetchNominatim(q, listId, input), 300);
 }
 
 // Mapa de countrycodes para cada país activo
@@ -2734,113 +2734,76 @@ const COUNTRY_CODES = { AR:'ar', UY:'uy', CL:'cl', BR:'br' };
 
 async function fetchNominatim(q, listId, input) {
   const list = document.getElementById(listId);
+
+  // Cancelar request anterior y guardar la query activa para descartar resultados stale
   if (geoControllers[listId]) geoControllers[listId].abort();
   geoControllers[listId] = new AbortController();
-  const signal = geoControllers[listId].signal;
+  const signal       = geoControllers[listId].signal;
+  const queryAtStart = q; // guard: si el input cambia mientras estamos en await, no renderizamos
 
   try {
-    const cc  = COUNTRY_CODES[currentCountry] || 'ar';
-    const hdr = { 'Accept-Language': 'es' };
-    const base = 'https://nominatim.openstreetmap.org/search';
+    // ── Photon (Komoot) — motor de autocomplete sobre OSM, mucho mejor para nombres parciales ──
+    // Encuentra "Av. General Las Heras" con solo escribir "las heras"
+    let url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=12&lang=es`;
 
-    // Viewbox bias (bounded=0 → prefiere resultados cercanos sin excluir otros)
-    let vb = '';
+    // Bias hacia la ubicación del usuario (Buenos Aires por defecto para Argentina)
     if (userLocation) {
-      const d = 8, { lat, lng } = userLocation;
-      vb = `&viewbox=${lng-d},${lat+d},${lng+d},${lat-d}&bounded=0`;
+      url += `&lat=${userLocation.lat}&lon=${userLocation.lng}`;
+    } else {
+      url += `&lat=-34.61&lon=-58.44`; // Centro de Buenos Aires
     }
 
-    const common = `&format=json&limit=8&addressdetails=1&namedetails=1&countrycodes=${cc}${vb}`;
+    const res = await fetch(url, { signal });
+    if (!res.ok) throw new Error('photon_error');
+    const geojson = await res.json();
 
-    // Generar variantes de la query para mejorar cobertura:
-    // "las heras" → también prueba "avenida las heras", "general las heras", etc.
-    function queryVariants(raw) {
-      const vars = new Set([raw]);
-      const clean = raw
-        .replace(/^av(enida)?\.?\s+/i, '')
-        .replace(/^c(alle)?\.?\s+/i, '')
-        .replace(/^gral?\.?\s+/i, 'general ')
-        .replace(/^dr\.?\s+/i, 'doctor ')
-        .trim();
-      if (clean && clean !== raw) vars.add(clean);
-      if (!/^av/i.test(raw))      vars.add('avenida ' + clean);
-      if (!/^general/i.test(raw) && !/^gral/i.test(raw)) vars.add('general ' + clean);
-      return [...vars].slice(0, 3);
-    }
+    // ── Guard: si el usuario editó el texto mientras esperábamos, descartamos ──
+    if (input.value.trim() !== queryAtStart) return;
 
-    const variants = queryVariants(q);
+    let features = (geojson.features || [])
+      // Filtrar solo Argentina
+      .filter(f => !f.properties.country || f.properties.country === 'Argentina');
 
-    // Búsqueda paralela: texto libre × variantes + búsqueda estructurada por calle
-    const fetches = variants.flatMap(v => [
-      fetch(`${base}?q=${encodeURIComponent(v)}${common}`, { headers: hdr, signal }).then(r => r.json()).catch(()=>[]),
-      fetch(`${base}?street=${encodeURIComponent(v)}${common}`, { headers: hdr, signal }).then(r => r.json()).catch(()=>[]),
-    ]);
-    const results = await Promise.allSettled(fetches);
+    if (!features.length) { list.style.display = 'none'; return; }
 
-    // Combinar y deduplicar por place_id
-    const seen = new Set();
-    let data = results
-      .filter(r => r.status === 'fulfilled')
-      .flatMap(r => Array.isArray(r.value) ? r.value : [])
-      .filter(item => {
-        if (seen.has(item.place_id)) return false;
-        seen.add(item.place_id); return true;
-      });
-
-    // Fallback: si no encontró nada, reintenta en todos los países del app
-    if (!data.length) {
-      const r = await fetch(
-        `${base}?q=${encodeURIComponent(q)}&format=json&limit=8&addressdetails=1&namedetails=1&countrycodes=ar,uy,cl,br${vb}`,
-        { headers: hdr, signal }
-      ).catch(()=>null);
-      if (r?.ok) data = await r.json();
-    }
-
-    // Ordenar por distancia al usuario (el más cercano primero)
-    if (userLocation && data.length > 1) {
+    // Ordenar por distancia al usuario
+    if (userLocation) {
       const { lat: ulat, lng: ulng } = userLocation;
-      data.sort((a, b) => {
-        const da = Math.hypot(parseFloat(a.lat) - ulat, parseFloat(a.lon) - ulng);
-        const db = Math.hypot(parseFloat(b.lat) - ulat, parseFloat(b.lon) - ulng);
-        return da - db;
+      features.sort((a, b) => {
+        const [aLon, aLat] = a.geometry.coordinates;
+        const [bLon, bLat] = b.geometry.coordinates;
+        return Math.hypot(aLat - ulat, aLon - ulng) - Math.hypot(bLat - ulat, bLon - ulng);
       });
     }
 
     list.innerHTML = '';
-    if (!data.length) { list.style.display = 'none'; return; }
+    features.slice(0, 6).forEach(feat => {
+      const p   = feat.properties;
+      const [lon, lat] = feat.geometry.coordinates;
 
-    data.slice(0, 6).forEach(item => {
-      const addr = item.address || {};
-
-      // Etiqueta legible según si es dirección exacta o lugar
-      let label;
-      if (addr.house_number && addr.road) {
-        // Dirección exacta: "Av. del Libertador 1500, Palermo, Buenos Aires"
-        label = [
-          `${addr.road} ${addr.house_number}`,
-          addr.suburb || addr.neighbourhood || addr.quarter || '',
-          addr.city || addr.town || addr.village || addr.municipality || '',
-          addr.state || ''
-        ].filter(Boolean).join(', ');
+      // Construir etiqueta legible
+      const parts = [];
+      if (p.street && p.housenumber) {
+        parts.push(`${p.street} ${p.housenumber}`);
+      } else if (p.street) {
+        parts.push(p.street);
       } else {
-        // Lugar/barrio/ciudad
-        const nombre = item.namedetails?.name || item.name || addr.road || '';
-        label = [
-          nombre,
-          addr.suburb || addr.neighbourhood || addr.quarter || '',
-          addr.city || addr.town || addr.village || addr.municipality || '',
-          addr.state || ''
-        ].filter(Boolean).filter((v, i, a) => v !== a[i - 1]).join(', ');
+        parts.push(p.name || '');
       }
+      if (p.district || p.suburb) parts.push(p.district || p.suburb);
+      if (p.city || p.town)       parts.push(p.city || p.town);
+      if (p.state)                parts.push(p.state);
+
+      const label = parts.filter(Boolean).filter((v, i, a) => v !== a[i - 1]).join(', ');
 
       const div = document.createElement('div');
       div.className = 'autocomplete-item';
-      div.textContent = label || item.display_name;
-      div.title = item.display_name; // tooltip con nombre completo al hover
+      div.textContent = label || p.name || '';
+      div.title = [p.street || p.name, p.city || p.town, p.state].filter(Boolean).join(', ');
       div.onmousedown = () => {
-        input.value = label || item.display_name;
-        const coords = { lat: parseFloat(item.lat), lng: parseFloat(item.lon) };
-        if      (listId === 'list-origen')  origenCoords = coords;
+        input.value = label || p.name || '';
+        const coords = { lat, lng: lon };
+        if      (listId === 'list-origen')  origenCoords  = coords;
         else if (listId === 'list-destino') destinoCoords = coords;
         else {
           const wpIdx = parseInt(listId.replace('list-wp-', ''));
@@ -2850,7 +2813,7 @@ async function fetchNominatim(q, listId, input) {
       };
       list.appendChild(div);
     });
-    list.style.display = 'block';
+    list.style.display = features.length ? 'block' : 'none';
 
   } catch(e) {
     if (e.name !== 'AbortError') list.style.display = 'none';
