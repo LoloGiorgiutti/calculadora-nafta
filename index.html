@@ -918,8 +918,8 @@
 
 <div class="container">
 
-  <!-- País -->
-  <div class="country-bar">
+  <!-- País — oculto: por ahora solo Argentina -->
+  <div class="country-bar" style="display:none">
     <span class="flag" id="flag-display">🇦🇷</span>
     <span>País:</span>
     <select id="select-country" onchange="onCountryChange()">
@@ -1165,6 +1165,18 @@
       </div>
     </div>
 
+    <!-- Chip: Comparar con Uber -->
+    <div class="extra-chip" id="chip-uber" style="display:none">
+      <button class="extra-chip-trigger" onclick="toggleChip('uber')">
+        <span class="chip-icon">🚖</span>
+        <span class="chip-label">Comparar con Uber</span>
+        <span class="chip-arrow">›</span>
+      </button>
+      <div class="chip-panel" id="panel-uber" style="display:none">
+        <div id="uber-panel-content"></div>
+      </div>
+    </div>
+
   </div>
 
   <p class="footnote">Los precios son de referencia y pueden variar. Actualizados: <span id="last-update">—</span></p>
@@ -1258,6 +1270,16 @@
         <button class="admin-add-car" style="margin-top:8px" onclick="addStation()">+ Agregar estación</button>
       </div>
 
+      <!-- ── TARIFAS DE REFERENCIA ── -->
+      <div class="admin-section">
+        <h3>Tarifas de referencia</h3>
+        <div class="admin-row">
+          <strong>Uber $/km (Argentina)</strong>
+          <input type="number" id="adm-uber-km" class="admin-input" min="100" max="99999" step="50" placeholder="1800">
+        </div>
+        <p class="admin-hint">Tarifa usada en el chip "Comparar con Uber". Actualizala periódicamente según los precios vigentes en la app.</p>
+      </div>
+
       <!-- ── PUBLICACIÓN ── -->
       <div class="admin-section">
         <h3>Publicar cambios para todos</h3>
@@ -1291,6 +1313,7 @@ const DEFAULT_DATA = {
   subtitle: "Calculá el costo en combustible de cualquier viaje, en segundos.",
   lastUpdate: "Abril 2026",
   sheetsUrl: "",
+  uberPorKm: 1800,   // Tarifa de referencia Uber Argentina ($/km) — actualizar en admin
   // ── Lista global de autos ──────────────────────────────────
   // ciudad/ruta: L/100 km · gnc: m³/100 km · anos: rango de año
   autos: [
@@ -1744,6 +1767,7 @@ try {
   if (saved.subtitle)   appData.subtitle = saved.subtitle;
   if (saved.lastUpdate) appData.lastUpdate = saved.lastUpdate;
   if (saved.sheetsUrl)  appData.sheetsUrl = saved.sheetsUrl;
+  if (saved.uberPorKm)  appData.uberPorKm = saved.uberPorKm;
   // Solo cargar autos guardados si tienen el nuevo formato {marca, modelo, version}
   if (Array.isArray(saved.autos) && saved.autos.length && saved.autos[0].marca) {
     appData.autos = saved.autos;
@@ -1781,6 +1805,7 @@ async function init() {
         appData.autos = remote.autos;
       }
       if (remote.lastUpdate) appData.lastUpdate = remote.lastUpdate;
+      if (remote.uberPorKm)  appData.uberPorKm  = remote.uberPorKm;
     }
   } catch(e) { /* sin conexión o primer deploy — usa DEFAULT_DATA */ }
 
@@ -1877,6 +1902,7 @@ function toggleChip(id) {
     if (id === 'pasajeros') updatePassengersDisplay();
     if (id === 'gnc')       updateGNCDisplay();
     if (id === 'comparar')  { populateCmpMarcas(); updateComparison(); }
+    if (id === 'uber')      updateUberDisplay();
   }
 }
 
@@ -1946,6 +1972,46 @@ function updateGNCDisplay() {
     </div>
     ${bannerHtml}
     ${estiamadoNote}`;
+}
+
+function updateUberDisplay() {
+  if (!lastResult) return;
+  const { costo, currency, fmt, km } = lastResult;
+  const content = document.getElementById('uber-panel-content');
+  const tarifa = appData.uberPorKm || 1800;
+
+  // Uber cobra tarifa base + por km; modelamos como tarifa plana por km (más base aprox 5 km)
+  const BASE_KM_EQUIV = 3; // km equivalentes de tarifa base (aprox $500-800 / tarifa)
+  const costoUber = (km + BASE_KM_EQUIV) * tarifa;
+  const diff = costoUber - costo;
+  const ahorroConAuto = diff > 0;
+  const pctDiff = Math.round(Math.abs(diff) / costoUber * 100);
+
+  const bannerHtml = ahorroConAuto
+    ? `<div class="gnc-saving-banner">✓ Manejar te ahorra aprox. <strong>${currency} ${fmt(diff)}</strong> (${pctDiff}% menos que Uber)</div>`
+    : `<div class="gnc-cost-banner">Uber sería aprox. <strong>${currency} ${fmt(Math.abs(diff))}</strong> más barato en este viaje</div>`;
+
+  content.innerHTML = `
+    <div class="gnc-panel-grid">
+      <div class="gnc-cell">
+        <div class="gnc-cell-lbl">Costo en nafta</div>
+        <div class="gnc-cell-val">${currency} ${fmt(costo)}</div>
+      </div>
+      <div class="gnc-cell">
+        <div class="gnc-cell-lbl">Costo estimado Uber</div>
+        <div class="gnc-cell-val">${currency} ${fmt(costoUber)}</div>
+      </div>
+      <div class="gnc-cell">
+        <div class="gnc-cell-lbl">Tarifa de referencia</div>
+        <div class="gnc-cell-val">${currency} ${fmt(tarifa)} /km</div>
+      </div>
+      <div class="gnc-cell">
+        <div class="gnc-cell-lbl">Distancia</div>
+        <div class="gnc-cell-val">${fmt(km)} km</div>
+      </div>
+    </div>
+    ${bannerHtml}
+    <p class="gnc-note">* Estimación orientativa. El precio real de Uber varía según demanda, hora y ruta. Tarifa actualizable en el panel de administración.</p>`;
 }
 
 function populateEstaciones() {
@@ -2022,6 +2088,7 @@ function calcular() {
     document.getElementById('tank-indicator').style.display = 'none';
     document.getElementById('share-row').style.display      = 'none';
     document.getElementById('chip-comparar').style.display  = 'none';
+    document.getElementById('chip-uber').style.display      = 'none';
     lastResult = null;
   };
 
@@ -2092,10 +2159,14 @@ function calcular() {
   // Chip comparar
   document.getElementById('chip-comparar').style.display = '';
 
+  // Chip Uber
+  document.getElementById('chip-uber').style.display = '';
+
   // Refrescar displays si los paneles están abiertos
   if (document.getElementById('panel-pasajeros').style.display !== 'none') updatePassengersDisplay();
   if (document.getElementById('panel-gnc').style.display !== 'none') updateGNCDisplay();
   if (document.getElementById('panel-comparar').style.display !== 'none') updateComparison();
+  if (document.getElementById('panel-uber').style.display !== 'none') updateUberDisplay();
 
   // Shimmer
   amountEl.classList.remove('updating');
@@ -2491,6 +2562,7 @@ function openAdmin() {
   overlay.classList.add('open');
   document.getElementById('adm-title').value    = appData.title;
   document.getElementById('adm-subtitle').value = appData.subtitle;
+  document.getElementById('adm-uber-km').value  = appData.uberPorKm || 1800;
   document.getElementById('adm-gh-token').value = localStorage.getItem('gh_token') || '';
   document.getElementById('publish-status').textContent = '';
 
@@ -2508,8 +2580,10 @@ function closeAdmin() {
 }
 
 async function saveAdmin() {
-  appData.title    = document.getElementById('adm-title').value;
-  appData.subtitle = document.getElementById('adm-subtitle').value;
+  appData.title      = document.getElementById('adm-title').value;
+  appData.subtitle   = document.getElementById('adm-subtitle').value;
+  const uberKmVal    = parseFloat(document.getElementById('adm-uber-km').value);
+  if (!isNaN(uberKmVal) && uberKmVal > 0) appData.uberPorKm = uberKmVal;
 
   const now = new Date();
   const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -2525,7 +2599,8 @@ async function saveAdmin() {
   // Persistir localmente
   localStorage.setItem('nafta_data', JSON.stringify({
     title: appData.title, subtitle: appData.subtitle,
-    lastUpdate: appData.lastUpdate, autos: appData.autos, estaciones: appData.estaciones
+    lastUpdate: appData.lastUpdate, autos: appData.autos, estaciones: appData.estaciones,
+    uberPorKm: appData.uberPorKm
   }));
 
   // Refresh UI
@@ -2556,7 +2631,8 @@ async function publishToGitHub(token) {
     const configData = {
       lastUpdate: appData.lastUpdate,
       estaciones: appData.estaciones,
-      autos: appData.autos
+      autos: appData.autos,
+      uberPorKm: appData.uberPorKm
     };
     const content = JSON.stringify(configData, null, 2);
     // btoa con soporte UTF-8
