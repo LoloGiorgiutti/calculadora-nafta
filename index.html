@@ -1127,6 +1127,18 @@
       </div>
     </div>
 
+    <!-- Chip: Comparar con Uber -->
+    <div class="extra-chip" id="chip-uber" style="display:none">
+      <button class="extra-chip-trigger" onclick="toggleChip('uber')">
+        <span class="chip-icon">🚖</span>
+        <span class="chip-label">Comparar con Uber</span>
+        <span class="chip-arrow">›</span>
+      </button>
+      <div class="chip-panel" id="panel-uber" style="display:none">
+        <div id="uber-panel-content"></div>
+      </div>
+    </div>
+
     <!-- Chip: Comparar con otro auto -->
     <div class="extra-chip" id="chip-comparar" style="display:none">
       <button class="extra-chip-trigger" onclick="toggleChip('comparar')">
@@ -1162,18 +1174,6 @@
       </button>
       <div class="chip-panel" id="panel-gnc" style="display:none">
         <div id="gnc-panel-content"></div>
-      </div>
-    </div>
-
-    <!-- Chip: Comparar con Uber -->
-    <div class="extra-chip" id="chip-uber" style="display:none">
-      <button class="extra-chip-trigger" onclick="toggleChip('uber')">
-        <span class="chip-icon">🚖</span>
-        <span class="chip-label">Comparar con Uber</span>
-        <span class="chip-arrow">›</span>
-      </button>
-      <div class="chip-panel" id="panel-uber" style="display:none">
-        <div id="uber-panel-content"></div>
       </div>
     </div>
 
@@ -2014,7 +2014,7 @@ function updateUberDisplay() {
       </div>
     </div>
     ${bannerHtml}
-    <p class="gnc-note">* Estimación orientativa. El precio real de Uber varía según demanda, hora y ruta. Tarifa actualizable en el panel de administración.</p>`;
+    <p class="gnc-note">* Estimación orientativa. El precio real de Uber varía según demanda, hora y ruta.</p>`;
 }
 
 function populateEstaciones() {
@@ -2205,7 +2205,8 @@ async function compartirResultado() {
 
   if (navigator.share) {
     try {
-      await navigator.share({ title: `Costo del viaje — ${currency} ${fmt(costo)}`, text: texto, url: shareUrl });
+      // Solo 'text' — si se pasa 'url' por separado iOS lo agrega al final y queda duplicado
+      await navigator.share({ title: `Costo del viaje — ${currency} ${fmt(costo)}`, text: texto });
       return;
     } catch(e) { if (e.name === 'AbortError') return; }
   }
