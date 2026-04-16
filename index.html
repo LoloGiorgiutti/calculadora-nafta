@@ -1817,7 +1817,10 @@ async function init() {
   populateEstaciones();
   onSliderRoad();
 
-  // Geolocalización para bias en Nominatim
+  // Aplicar parámetros compartidos de la URL (link compartido)
+  applyUrlParams();
+
+  // Geolocalización para bias en geocodificador
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       pos => { userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude }; },
@@ -2175,24 +2178,36 @@ function calcular() {
 }
 
 // ══════════════════════════════════════════════════════════════
-//  COMPARTIR
+//  COMPARTIR — genera una URL que reproduce el cálculo exacto
 // ══════════════════════════════════════════════════════════════
 async function compartirResultado() {
   if (!lastResult) return;
   const { costo, currency, fmt, auto, km } = lastResult;
-  const origen  = document.getElementById('input-origen')?.value.trim() || '';
-  const destino = document.getElementById('input-destino')?.value.trim() || '';
-  const tabMapa = document.getElementById('tab-mapa')?.classList.contains('active');
-  const autoLbl = `${auto.marca} ${auto.modelo}`;
-  const rutaLbl = (tabMapa && origen && destino)
-    ? `${origen.split(',')[0]} → ${destino.split(',')[0]}`
-    : `${km} km`;
-  const texto = `🚗 ${autoLbl} | ${rutaLbl} | 💰 ${currency} ${fmt(costo)} | calculadoradenafta.com`;
-  const btn = document.getElementById('btn-share');
+
+  const marca   = document.getElementById('select-marca').value;
+  const modelo  = document.getElementById('select-modelo').value;
+  const vIdx    = document.getElementById('select-version').value;
+  const estIdx  = document.getElementById('select-estacion').value;
+  const nftIdx  = document.getElementById('select-nafta').value;
+  const estacion = appData.estaciones[currentCountry][parseInt(estIdx)];
+  const nafta    = estacion.naftas[parseInt(nftIdx)];
+
+  const params = new URLSearchParams({
+    marca, modelo, v: vIdx,
+    km: Math.round(km), road: roadPct,
+    est: estacion.nombre, nft: nafta.tipo
+  });
+  const shareUrl = `https://calculadoradenafta.com/?${params}`;
+  const texto    = `🚗 ${auto.marca} ${auto.modelo} · ${estacion.nombre} ${nafta.tipo} · ${Math.round(km)} km\n💰 ${currency} ${fmt(costo)} en combustible\n${shareUrl}`;
+
+  const btn  = document.getElementById('btn-share');
   const orig = btn.innerHTML;
+
   if (navigator.share) {
-    try { await navigator.share({ title:'Costo del viaje', text:texto, url:'https://calculadoradenafta.com' }); return; }
-    catch(e) { if (e.name === 'AbortError') return; }
+    try {
+      await navigator.share({ title: `Costo del viaje — ${currency} ${fmt(costo)}`, text: texto, url: shareUrl });
+      return;
+    } catch(e) { if (e.name === 'AbortError') return; }
   }
   try { await navigator.clipboard.writeText(texto); }
   catch(e) {
@@ -2200,9 +2215,63 @@ async function compartirResultado() {
     ta.value = texto; ta.style.cssText = 'position:fixed;opacity:0';
     document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
   }
-  btn.innerHTML = '✓ Copiado';
+  btn.innerHTML = '✓ Link copiado';
   btn.style.borderColor = '#86efac'; btn.style.color = '#166534';
   setTimeout(() => { btn.innerHTML = orig; btn.style.borderColor=''; btn.style.color=''; }, 2500);
+}
+
+// Aplica parámetros de la URL al formulario (para links compartidos)
+function applyUrlParams() {
+  const p = new URLSearchParams(window.location.search);
+  if (!p.has('marca')) return;
+
+  const marca     = p.get('marca');
+  const modelo    = p.get('modelo');
+  const vIdx      = p.get('v')    || '0';
+  const km        = p.get('km')   || '100';
+  const road      = parseInt(p.get('road') || '30');
+  const estNombre = p.get('est')  || '';
+  const nftTipo   = p.get('nft')  || '';
+
+  // Auto
+  const selMarca = document.getElementById('select-marca');
+  if ([...selMarca.options].some(o => o.value === marca)) {
+    selMarca.value = marca;
+    onMarcaChange();
+    const selModelo = document.getElementById('select-modelo');
+    if ([...selModelo.options].some(o => o.value === modelo)) {
+      selModelo.value = modelo;
+      onModeloChange();
+      const selV = document.getElementById('select-version');
+      if (vIdx !== '' && selV.options[parseInt(vIdx) + 1]) selV.value = vIdx;
+    }
+  }
+
+  // Distancia y tipo de camino
+  document.getElementById('input-km').value = km;
+  document.getElementById('slider-road').value = road;
+  roadPct = road;
+  onSliderRoad();
+
+  // Estación y combustible
+  if (estNombre) {
+    const estaciones = appData.estaciones[currentCountry];
+    const estIdx = estaciones.findIndex(e => e.nombre === estNombre);
+    if (estIdx >= 0) {
+      document.getElementById('select-estacion').value = estIdx;
+      onEstacionChange();
+      if (nftTipo) {
+        const selNafta = document.getElementById('select-nafta');
+        const nftIdx   = estaciones[estIdx].naftas.findIndex(n => n.tipo === nftTipo);
+        if (nftIdx >= 0) selNafta.value = nftIdx;
+      }
+    }
+  }
+
+  calcular();
+
+  // Limpiar params de la URL sin recargar la página
+  history.replaceState(null, '', window.location.pathname);
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -2860,7 +2929,11 @@ async function calcularRuta() {
     const url = `https://router.project-osrm.org/route/v1/driving/${coordStr}`
       + `?overview=simplified&geometries=geojson&annotations=speed,distance`;
 
-    const res = await fetch(url);
+    // Timeout de 15 segundos — el servidor público de OSRM a veces no responde
+    const routeCtrl = new AbortController();
+    const routeTimeout = setTimeout(() => routeCtrl.abort(), 15000);
+    const res = await fetch(url, { signal: routeCtrl.signal });
+    clearTimeout(routeTimeout);
     const data = await res.json();
 
     if (data.code !== 'Ok' || !data.routes.length) {
@@ -2937,7 +3010,11 @@ async function calcularRuta() {
     setTimeout(() => mapInstance.invalidateSize(), 120);
 
   } catch(e) {
-    alert('Error al calcular la ruta. Verificá tu conexión a internet.');
+    if (e.name === 'AbortError') {
+      alert('El servidor de rutas tardó demasiado. Intentá de nuevo en unos segundos.');
+    } else {
+      alert('Error al calcular la ruta. Verificá tu conexión a internet.');
+    }
   } finally {
     btn.textContent = 'Calcular ruta y distancia';
     btn.disabled = false;
