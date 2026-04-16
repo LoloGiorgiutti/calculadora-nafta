@@ -32,7 +32,7 @@
         "naftas": [
           {
             "tipo": "Regular",
-            "precio": 1065
+            "precio": 2000
           },
           {
             "tipo": "V-Power",
@@ -3998,5 +3998,6 @@
       ],
       "anos": "2019–2025"
     }
-  ]
+  ],
+  "uberPorKm": 850
 }
