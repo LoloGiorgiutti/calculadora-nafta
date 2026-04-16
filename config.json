@@ -7,7 +7,7 @@
         "naftas": [
           {
             "tipo": "Súper",
-            "precio": 2000
+            "precio": 1060
           },
           {
             "tipo": "Premium",
@@ -32,7 +32,7 @@
         "naftas": [
           {
             "tipo": "Regular",
-            "precio": 2000
+            "precio": 1065
           },
           {
             "tipo": "V-Power",
