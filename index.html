@@ -1282,17 +1282,30 @@
 
       <!-- ── GOOGLE SHEETS ── -->
       <div class="admin-section">
-        <h3>Actualizar precios desde Google Sheets</h3>
-        <p class="admin-hint" style="margin-bottom:10px">
-          Publicá tu planilla como CSV (Archivo → Compartir → Publicar en la web → CSV) y pegá la URL acá.
-          Formato esperado: <code style="font-size:11px">pais,estacion,tipo,precio</code>
+        <h3>Sincronizar desde Google Sheets</h3>
+        <p class="admin-hint" style="margin-bottom:14px">
+          Publicá cada hoja como CSV: <em>Archivo → Compartir → Publicar en la web → elegir hoja → CSV</em>.
         </p>
+
+        <strong style="font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-light)">Precios de combustible</strong>
+        <p class="admin-hint" style="margin:4px 0 8px">Columnas: <code style="font-size:11px">pais, estacion, tipo, precio</code> — si borrás una fila, ese combustible desaparece.</p>
         <div class="admin-row">
-          <strong style="flex-shrink:0">URL del CSV</strong>
+          <strong style="flex-shrink:0">URL CSV precios</strong>
           <input type="text" id="adm-sheets-url" class="admin-input" style="width:100%!important;text-align:left;font-size:12px" placeholder="https://docs.google.com/spreadsheets/d/…/pub?output=csv">
         </div>
-        <button class="admin-add-car" style="margin-top:8px" onclick="fetchSheetsPrices()">⬇ Cargar precios</button>
+        <button class="admin-add-car" style="margin-top:6px" onclick="fetchSheetsPrices()">⬇ Cargar precios</button>
         <p class="admin-hint" id="sheets-status" style="margin-top:6px"></p>
+
+        <hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
+
+        <strong style="font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-light)">Modelos de auto</strong>
+        <p class="admin-hint" style="margin:4px 0 8px">Columnas: <code style="font-size:11px">marca, modelo, version, anos, ciudad, ruta, gnc_ciudad, gnc_ruta, tanque</code> — los 4 últimos pueden ir vacíos. Se ordenan solos alfabéticamente.</p>
+        <div class="admin-row">
+          <strong style="flex-shrink:0">URL CSV autos</strong>
+          <input type="text" id="adm-cars-url" class="admin-input" style="width:100%!important;text-align:left;font-size:12px" placeholder="https://docs.google.com/spreadsheets/d/…/pub?gid=…&output=csv">
+        </div>
+        <button class="admin-add-car" style="margin-top:6px" onclick="fetchCarsFromSheet()">⬇ Cargar autos</button>
+        <p class="admin-hint" id="cars-sheet-status" style="margin-top:6px"></p>
       </div>
 
       <!-- ── PUBLICACIÓN ── -->
@@ -1328,6 +1341,7 @@ const DEFAULT_DATA = {
   subtitle: "Calculá el costo en combustible de cualquier viaje, en segundos.",
   lastUpdate: "Abril 2026",
   sheetsUrl: "",
+  carsSheetUrl: "",
   uberPorKm: 1800,   // Tarifa de referencia Uber Argentina ($/km) — actualizar en admin
   // ── Lista global de autos ──────────────────────────────────
   // ciudad/ruta: L/100 km · gnc: m³/100 km · anos: rango de año
@@ -1781,8 +1795,9 @@ try {
   if (saved.title)      appData.title = saved.title;
   if (saved.subtitle)   appData.subtitle = saved.subtitle;
   if (saved.lastUpdate) appData.lastUpdate = saved.lastUpdate;
-  if (saved.sheetsUrl)  appData.sheetsUrl = saved.sheetsUrl;
-  if (saved.uberPorKm)  appData.uberPorKm = saved.uberPorKm;
+  if (saved.sheetsUrl)     appData.sheetsUrl     = saved.sheetsUrl;
+  if (saved.carsSheetUrl)  appData.carsSheetUrl  = saved.carsSheetUrl;
+  if (saved.uberPorKm)     appData.uberPorKm     = saved.uberPorKm;
   // Solo cargar autos guardados si tienen el nuevo formato {marca, modelo, version}
   if (Array.isArray(saved.autos) && saved.autos.length && saved.autos[0].marca) {
     appData.autos = saved.autos;
@@ -2648,7 +2663,8 @@ function openAdmin() {
   document.getElementById('adm-title').value      = appData.title;
   document.getElementById('adm-subtitle').value   = appData.subtitle;
   document.getElementById('adm-uber-km').value    = appData.uberPorKm || 1800;
-  document.getElementById('adm-sheets-url').value = appData.sheetsUrl || '';
+  document.getElementById('adm-sheets-url').value  = appData.sheetsUrl    || '';
+  document.getElementById('adm-cars-url').value    = appData.carsSheetUrl || '';
   document.getElementById('adm-gh-token').value   = localStorage.getItem('gh_token') || '';
   document.getElementById('publish-status').textContent = '';
 
@@ -2670,7 +2686,8 @@ async function saveAdmin() {
   appData.subtitle   = document.getElementById('adm-subtitle').value;
   const uberKmVal    = parseFloat(document.getElementById('adm-uber-km').value);
   if (!isNaN(uberKmVal) && uberKmVal > 0) appData.uberPorKm = uberKmVal;
-  appData.sheetsUrl  = document.getElementById('adm-sheets-url').value.trim();
+  appData.sheetsUrl    = document.getElementById('adm-sheets-url').value.trim();
+  appData.carsSheetUrl = document.getElementById('adm-cars-url').value.trim();
 
   const now = new Date();
   const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -2687,7 +2704,7 @@ async function saveAdmin() {
   localStorage.setItem('nafta_data', JSON.stringify({
     title: appData.title, subtitle: appData.subtitle,
     lastUpdate: appData.lastUpdate, autos: appData.autos, estaciones: appData.estaciones,
-    uberPorKm: appData.uberPorKm
+    uberPorKm: appData.uberPorKm, sheetsUrl: appData.sheetsUrl, carsSheetUrl: appData.carsSheetUrl
   }));
 
   // Refresh UI
@@ -2742,9 +2759,9 @@ async function publishToGitHub(token) {
   } catch(e) { return false; }
 }
 
-// ── Google Sheets auto-update ────────────────────────────────
-// Formato CSV esperado: pais,estacion,tipo,precio (primera fila = encabezado)
-// Ejemplo: AR,YPF,Súper,1060
+// ── Google Sheets: precios ───────────────────────────────────
+// Formato CSV: pais,estacion,tipo,precio  (encabezado en fila 1)
+// La planilla es fuente de verdad: si borrás una fila, ese combustible desaparece de esa estación.
 async function fetchSheetsPrices() {
   const url    = document.getElementById('adm-sheets-url').value.trim();
   const status = document.getElementById('sheets-status');
@@ -2752,30 +2769,87 @@ async function fetchSheetsPrices() {
 
   status.textContent = 'Descargando precios…';
   try {
-    const res  = await fetch(url);
+    const res  = await fetch(url + (url.includes('?') ? '&' : '?') + 't=' + Date.now());
     const text = await res.text();
-    const lines = text.split('\n').slice(1); // saltar encabezado
-    let count = 0;
+    const lines = text.trim().split('\n').slice(1); // saltar encabezado
+
+    // Agrupar filas por estación → reemplazar naftas completas
+    const byStation = {}; // clave: "pais|estacion"
     lines.forEach(line => {
-      const cols = line.split(',').map(s => s.trim().replace(/^"|"$/g,''));
+      const cols = line.split(',').map(s => s.trim().replace(/^"|"$/g, ''));
       const [pais, estacion, tipo, precioStr] = cols;
       if (!pais || !estacion || !tipo || !precioStr) return;
       const precio = parseFloat(precioStr);
       if (isNaN(precio)) return;
-      const ests = appData.estaciones[pais];
-      if (!ests) return;
-      const est = ests.find(e => e.nombre === estacion);
-      if (!est) return;
-      const nafta = est.naftas.find(n => n.tipo === tipo);
-      if (!nafta) return;
-      nafta.precio = precio;
-      count++;
+      const key = `${pais}|${estacion}`;
+      if (!byStation[key]) byStation[key] = { pais, estacion, naftas: [] };
+      byStation[key].naftas.push({ tipo, precio });
     });
+
+    // Reemplazar el array de naftas de cada estación encontrada en el Sheet
+    // (estaciones que no aparecen en el Sheet quedan sin tocar)
+    let count = 0;
+    for (const { pais, estacion, naftas } of Object.values(byStation)) {
+      const ests = appData.estaciones[pais];
+      if (!ests) continue;
+      const est = ests.find(e => e.nombre === estacion);
+      if (!est) continue;
+      est.naftas = naftas; // reemplazo total — si falta una fila, ese tipo desaparece
+      count += naftas.length;
+    }
+
     renderStations(currentAdminStationTab);
     const now = new Date();
     const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
     appData.lastUpdate = `${months[now.getMonth()]} ${now.getFullYear()}`;
-    status.textContent = `✓ ${count} precio${count!==1?'s':''} actualizado${count!==1?'s':''}. Guardá los cambios para persistirlos.`;
+    status.textContent = `✓ ${count} precio${count!==1?'s':''} cargado${count!==1?'s':''}. Guardá los cambios para publicarlos.`;
+  } catch(e) {
+    status.textContent = `✕ Error al cargar: ${e.message}`;
+  }
+}
+
+// ── Google Sheets: autos ─────────────────────────────────────
+// Formato CSV: marca,modelo,version,anos,ciudad,ruta,gnc_ciudad,gnc_ruta,tanque
+// gnc_ciudad / gnc_ruta / tanque pueden ir vacíos.
+// Los autos del Sheet se mezclan con los existentes (mismo marca+modelo+version = reemplaza).
+async function fetchCarsFromSheet() {
+  const url    = document.getElementById('adm-cars-url').value.trim();
+  const status = document.getElementById('cars-sheet-status');
+  if (!url) { status.textContent = '⚠ Ingresá la URL del CSV de autos primero.'; return; }
+
+  status.textContent = 'Descargando autos…';
+  try {
+    const res  = await fetch(url + (url.includes('?') ? '&' : '?') + 't=' + Date.now());
+    const text = await res.text();
+    const lines = text.trim().split('\n').slice(1);
+
+    const nuevos = [];
+    lines.forEach(line => {
+      const cols = line.split(',').map(s => s.trim().replace(/^"|"$/g, ''));
+      const [marca, modelo, version, anos, ciudadStr, rutaStr, gncCStr, gncRStr, tanqueStr] = cols;
+      if (!marca || !modelo || !version || !ciudadStr || !rutaStr) return;
+      const ciudad = parseFloat(ciudadStr), ruta = parseFloat(rutaStr);
+      if (isNaN(ciudad) || isNaN(ruta)) return;
+      const auto = { marca, modelo, version, anos: anos || '', ciudad, ruta, paises: ['AR'] };
+      const gncC = parseFloat(gncCStr), gncR = parseFloat(gncRStr);
+      if (!isNaN(gncC) && !isNaN(gncR)) { auto.gnc_ciudad = gncC; auto.gnc_ruta = gncR; }
+      const tanque = parseFloat(tanqueStr);
+      if (!isNaN(tanque)) auto.tanque = tanque;
+      nuevos.push(auto);
+    });
+
+    // Merge: sheet overrides/adds, defaults que no están en el sheet se conservan
+    const merged = [...appData.autos];
+    nuevos.forEach(n => {
+      const idx = merged.findIndex(c =>
+        c.marca === n.marca && c.modelo === n.modelo && c.version === n.version
+      );
+      if (idx >= 0) merged[idx] = n; else merged.push(n);
+    });
+    appData.autos = merged;
+
+    populateAutos(); // actualiza los selects (ya ordena alfabéticamente)
+    status.textContent = `✓ ${nuevos.length} auto${nuevos.length!==1?'s':''} cargado${nuevos.length!==1?'s':''}. Guardá los cambios para publicarlos.`;
   } catch(e) {
     status.textContent = `✕ Error al cargar: ${e.message}`;
   }
