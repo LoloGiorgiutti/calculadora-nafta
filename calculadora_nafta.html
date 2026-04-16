@@ -1258,20 +1258,23 @@
         <button class="admin-add-car" style="margin-top:8px" onclick="addStation()">+ Agregar estación</button>
       </div>
 
-      <!-- ── GOOGLE SHEETS ── -->
+      <!-- ── PUBLICACIÓN ── -->
       <div class="admin-section">
-        <h3>Actualización automática de precios</h3>
-        <p class="admin-hint" style="margin-bottom:10px">Creá una Google Sheets pública con columnas: <strong>pais, estacion, tipo, precio</strong>. Publicala como CSV (Archivo → Compartir → Publicar en la web → CSV) y pegá la URL acá.</p>
+        <h3>Publicar cambios para todos</h3>
+        <p class="admin-hint" style="margin-bottom:10px">
+          Con un token de GitHub los cambios se publican automáticamente en calculadoradenafta.com para todos.
+          <a href="https://github.com/settings/tokens/new?description=Calculadora+Nafta&scopes=public_repo" target="_blank" style="color:var(--hi)">Crear token aquí</a>
+          (tildar solo <strong>public_repo</strong>).
+        </p>
         <div class="admin-row">
-          <strong style="flex-shrink:0">URL CSV</strong>
-          <input type="url" id="adm-sheets-url" class="admin-input" style="width:100%!important;text-align:left;font-size:11px" placeholder="https://docs.google.com/spreadsheets/d/…/pub?output=csv">
+          <strong style="flex-shrink:0">GitHub Token</strong>
+          <input type="password" id="adm-gh-token" class="admin-input" style="width:100%!important;text-align:left;font-size:12px" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
         </div>
-        <button class="admin-refresh-btn" onclick="fetchSheetsPrices()">↻ Actualizar precios desde Sheets</button>
-        <p class="admin-hint" id="sheets-status" style="margin-top:8px"></p>
+        <p class="admin-hint" id="publish-status" style="margin-top:8px"></p>
       </div>
 
-      <button class="admin-save-btn" onclick="saveAdmin()">💾 Guardar cambios</button>
-      <p class="admin-hint">Los cambios se guardan en este navegador. Para compartirlos, exportá y reemplazá el HTML.</p>
+      <button class="admin-save-btn" onclick="saveAdmin()">💾 Guardar y publicar</button>
+      <p class="admin-hint" style="margin-top:6px">Sin token: se guarda solo en este dispositivo.</p>
     </div>
   </div>
 </div>
@@ -1763,12 +1766,27 @@ let roadPct = 30; // 0=100% ciudad, 100=100% ruta
 // ══════════════════════════════════════════════════════════════
 //  INIT
 // ══════════════════════════════════════════════════════════════
-function init() {
-  document.getElementById('site-title').innerHTML = appData.title.replace('tu viaje', '<em>tu viaje?</em>').replace('?','');
-  // Simpler: just set text
-  document.getElementById('site-title').textContent = appData.title;
+async function init() {
+  // Cargar config.json remoto (precios y datos actualizados para todos los usuarios)
+  try {
+    const res = await fetch('/config.json?t=' + Date.now());
+    if (res.ok) {
+      const remote = await res.json();
+      if (remote.estaciones) {
+        for (const pais of Object.keys(remote.estaciones)) {
+          appData.estaciones[pais] = remote.estaciones[pais];
+        }
+      }
+      if (Array.isArray(remote.autos) && remote.autos.length && remote.autos[0].marca) {
+        appData.autos = remote.autos;
+      }
+      if (remote.lastUpdate) appData.lastUpdate = remote.lastUpdate;
+    }
+  } catch(e) { /* sin conexión o primer deploy — usa DEFAULT_DATA */ }
+
+  document.getElementById('site-title').textContent    = appData.title;
   document.getElementById('site-subtitle').textContent = appData.subtitle;
-  document.getElementById('last-update').textContent = appData.lastUpdate;
+  document.getElementById('last-update').textContent   = appData.lastUpdate;
 
   populateAutos();
   populateEstaciones();
@@ -2473,8 +2491,8 @@ function openAdmin() {
   overlay.classList.add('open');
   document.getElementById('adm-title').value    = appData.title;
   document.getElementById('adm-subtitle').value = appData.subtitle;
-  document.getElementById('adm-sheets-url').value = appData.sheetsUrl || '';
-  document.getElementById('sheets-status').textContent = '';
+  document.getElementById('adm-gh-token').value = localStorage.getItem('gh_token') || '';
+  document.getElementById('publish-status').textContent = '';
 
   // Cars table — global view (no country filter)
   renderCarTable();
@@ -2489,7 +2507,7 @@ function closeAdmin() {
   document.getElementById('admin-overlay').classList.remove('open');
 }
 
-function saveAdmin() {
+async function saveAdmin() {
   appData.title    = document.getElementById('adm-title').value;
   appData.subtitle = document.getElementById('adm-subtitle').value;
 
@@ -2497,21 +2515,17 @@ function saveAdmin() {
   const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
   appData.lastUpdate = `${months[now.getMonth()]} ${now.getFullYear()}`;
 
-  // Collect cars from global table (flat sorted array with paises)
   appData.autos = collectCarsFromTable();
-
-  // Collect stations for currently active station tab
   appData.estaciones[currentAdminStationTab] = collectStationsFromUI();
 
-  appData.sheetsUrl = (document.getElementById('adm-sheets-url').value || '').trim();
+  // Guardar token en localStorage (no en config.json — es privado)
+  const token = (document.getElementById('adm-gh-token').value || '').trim();
+  if (token) localStorage.setItem('gh_token', token);
 
+  // Persistir localmente
   localStorage.setItem('nafta_data', JSON.stringify({
-    title:      appData.title,
-    subtitle:   appData.subtitle,
-    lastUpdate: appData.lastUpdate,
-    sheetsUrl:  appData.sheetsUrl,
-    autos:      appData.autos,
-    estaciones: appData.estaciones
+    title: appData.title, subtitle: appData.subtitle,
+    lastUpdate: appData.lastUpdate, autos: appData.autos, estaciones: appData.estaciones
   }));
 
   // Refresh UI
@@ -2519,14 +2533,50 @@ function saveAdmin() {
   document.getElementById('site-subtitle').textContent = appData.subtitle;
   document.getElementById('last-update').textContent   = appData.lastUpdate;
   populateAutos();
-
   closeAdmin();
   calcular();
 
-  // Feedback
+  // Publicar en GitHub si hay token
   const btn = document.querySelector('.admin-save-btn');
-  btn.textContent = '✓ Guardado';
-  setTimeout(() => btn.textContent = '💾 Guardar cambios', 2000);
+  if (token) {
+    btn.textContent = '⏳ Publicando…';
+    btn.disabled = true;
+    const ok = await publishToGitHub(token);
+    btn.disabled = false;
+    btn.textContent = ok ? '✓ Publicado para todos' : '✓ Guardado (error al publicar)';
+  } else {
+    btn.textContent = '✓ Guardado (solo este dispositivo)';
+  }
+  setTimeout(() => btn.textContent = '💾 Guardar y publicar', 3000);
+}
+
+async function publishToGitHub(token) {
+  try {
+    const owner = 'LoloGiorgiutti', repo = 'calculadora-nafta', path = 'config.json';
+    const configData = {
+      lastUpdate: appData.lastUpdate,
+      estaciones: appData.estaciones,
+      autos: appData.autos
+    };
+    const content = JSON.stringify(configData, null, 2);
+    // btoa con soporte UTF-8
+    const encoded = btoa(unescape(encodeURIComponent(content)));
+
+    // Obtener SHA actual del archivo
+    const getRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+      headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' }
+    });
+    const getJson = await getRes.json();
+    const sha = getJson.sha;
+
+    // Subir archivo actualizado
+    const putRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json', Accept: 'application/vnd.github+json' },
+      body: JSON.stringify({ message: `Actualizar precios — ${appData.lastUpdate}`, content: encoded, sha })
+    });
+    return putRes.ok;
+  } catch(e) { return false; }
 }
 
 // ── Google Sheets auto-update ────────────────────────────────
@@ -2626,30 +2676,48 @@ async function fetchNominatim(q, listId, input) {
 
     const common = `&format=json&limit=8&addressdetails=1&namedetails=1&countrycodes=${cc}${vb}`;
 
-    // Búsqueda paralela: texto libre + búsqueda estructurada por calle
-    // La búsqueda estructurada (?street=) es mucho mejor para "libertador 1500"
-    const [r1, r2] = await Promise.allSettled([
-      fetch(`${base}?q=${encodeURIComponent(q)}${common}`, { headers: hdr, signal }).then(r => r.json()),
-      fetch(`${base}?street=${encodeURIComponent(q)}${common}`, { headers: hdr, signal }).then(r => r.json()),
+    // Generar variantes de la query para mejorar cobertura:
+    // "las heras" → también prueba "avenida las heras", "general las heras", etc.
+    function queryVariants(raw) {
+      const vars = new Set([raw]);
+      const clean = raw
+        .replace(/^av(enida)?\.?\s+/i, '')
+        .replace(/^c(alle)?\.?\s+/i, '')
+        .replace(/^gral?\.?\s+/i, 'general ')
+        .replace(/^dr\.?\s+/i, 'doctor ')
+        .trim();
+      if (clean && clean !== raw) vars.add(clean);
+      if (!/^av/i.test(raw))      vars.add('avenida ' + clean);
+      if (!/^general/i.test(raw) && !/^gral/i.test(raw)) vars.add('general ' + clean);
+      return [...vars].slice(0, 3);
+    }
+
+    const variants = queryVariants(q);
+
+    // Búsqueda paralela: texto libre × variantes + búsqueda estructurada por calle
+    const fetches = variants.flatMap(v => [
+      fetch(`${base}?q=${encodeURIComponent(v)}${common}`, { headers: hdr, signal }).then(r => r.json()).catch(()=>[]),
+      fetch(`${base}?street=${encodeURIComponent(v)}${common}`, { headers: hdr, signal }).then(r => r.json()).catch(()=>[]),
     ]);
+    const results = await Promise.allSettled(fetches);
 
     // Combinar y deduplicar por place_id
     const seen = new Set();
-    let data = [
-      ...(r1.status === 'fulfilled' ? r1.value : []),
-      ...(r2.status === 'fulfilled' ? r2.value : []),
-    ].filter(item => {
-      if (seen.has(item.place_id)) return false;
-      seen.add(item.place_id); return true;
-    });
+    let data = results
+      .filter(r => r.status === 'fulfilled')
+      .flatMap(r => Array.isArray(r.value) ? r.value : [])
+      .filter(item => {
+        if (seen.has(item.place_id)) return false;
+        seen.add(item.place_id); return true;
+      });
 
     // Fallback: si no encontró nada, reintenta en todos los países del app
     if (!data.length) {
       const r = await fetch(
         `${base}?q=${encodeURIComponent(q)}&format=json&limit=8&addressdetails=1&namedetails=1&countrycodes=ar,uy,cl,br${vb}`,
         { headers: hdr, signal }
-      );
-      data = await r.json();
+      ).catch(()=>null);
+      if (r?.ok) data = await r.json();
     }
 
     // Ordenar por distancia al usuario (el más cercano primero)
@@ -2798,7 +2866,7 @@ async function calcularRuta() {
     mapDiv.style.display = 'block';
 
     if (!mapInstance) {
-      mapInstance = L.map('map', { zoomControl: true });
+      mapInstance = L.map('map', { zoomControl: true, scrollWheelZoom: false });
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       }).addTo(mapInstance);

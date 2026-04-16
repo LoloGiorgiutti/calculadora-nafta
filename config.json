@@ -1,0 +1,327 @@
+{
+  "lastUpdate": "Abril 2026",
+  "estaciones": {
+    "AR": [
+      {
+        "nombre": "YPF",
+        "naftas": [
+          {
+            "tipo": "Súper",
+            "precio": 1060
+          },
+          {
+            "tipo": "Premium",
+            "precio": 1130
+          },
+          {
+            "tipo": "Infinia",
+            "precio": 1290
+          },
+          {
+            "tipo": "Diesel",
+            "precio": 990
+          },
+          {
+            "tipo": "Infinia Diesel",
+            "precio": 1170
+          }
+        ]
+      },
+      {
+        "nombre": "Shell",
+        "naftas": [
+          {
+            "tipo": "Regular",
+            "precio": 1065
+          },
+          {
+            "tipo": "V-Power",
+            "precio": 1145
+          },
+          {
+            "tipo": "V-Power Racing",
+            "precio": 1310
+          },
+          {
+            "tipo": "Diesel",
+            "precio": 995
+          },
+          {
+            "tipo": "V-Power Diesel",
+            "precio": 1185
+          }
+        ]
+      },
+      {
+        "nombre": "Axion",
+        "naftas": [
+          {
+            "tipo": "Regular",
+            "precio": 1055
+          },
+          {
+            "tipo": "Premium",
+            "precio": 1120
+          },
+          {
+            "tipo": "Ultra",
+            "precio": 1275
+          },
+          {
+            "tipo": "Diesel",
+            "precio": 985
+          },
+          {
+            "tipo": "Ultra Diesel",
+            "precio": 1160
+          }
+        ]
+      },
+      {
+        "nombre": "Puma",
+        "naftas": [
+          {
+            "tipo": "Regular",
+            "precio": 1050
+          },
+          {
+            "tipo": "Premium",
+            "precio": 1115
+          },
+          {
+            "tipo": "Diesel",
+            "precio": 980
+          }
+        ]
+      },
+      {
+        "nombre": "Petrobras",
+        "naftas": [
+          {
+            "tipo": "Regular",
+            "precio": 1055
+          },
+          {
+            "tipo": "Premium",
+            "precio": 1120
+          },
+          {
+            "tipo": "Podium",
+            "precio": 1270
+          },
+          {
+            "tipo": "Diesel",
+            "precio": 985
+          }
+        ]
+      },
+      {
+        "nombre": "Refinor",
+        "naftas": [
+          {
+            "tipo": "Regular",
+            "precio": 1040
+          },
+          {
+            "tipo": "Premium",
+            "precio": 1110
+          },
+          {
+            "tipo": "Diesel",
+            "precio": 975
+          }
+        ]
+      },
+      {
+        "nombre": "GNC YPF Gas",
+        "naftas": [
+          {
+            "tipo": "GNC",
+            "precio": 96
+          }
+        ]
+      },
+      {
+        "nombre": "GNC Shell Gas",
+        "naftas": [
+          {
+            "tipo": "GNC",
+            "precio": 95
+          }
+        ]
+      },
+      {
+        "nombre": "GNC Axion Energy",
+        "naftas": [
+          {
+            "tipo": "GNC",
+            "precio": 93
+          }
+        ]
+      },
+      {
+        "nombre": "GNC Independiente",
+        "naftas": [
+          {
+            "tipo": "GNC",
+            "precio": 90
+          }
+        ]
+      }
+    ],
+    "UY": [
+      {
+        "nombre": "ANCAP",
+        "naftas": [
+          {
+            "tipo": "Regular (91)",
+            "precio": 79
+          },
+          {
+            "tipo": "Premium (95)",
+            "precio": 85
+          },
+          {
+            "tipo": "Gasoil",
+            "precio": 64
+          }
+        ]
+      },
+      {
+        "nombre": "Shell UY",
+        "naftas": [
+          {
+            "tipo": "Regular",
+            "precio": 80
+          },
+          {
+            "tipo": "V-Power",
+            "precio": 88
+          },
+          {
+            "tipo": "Diesel",
+            "precio": 65
+          }
+        ]
+      },
+      {
+        "nombre": "Petrobras UY",
+        "naftas": [
+          {
+            "tipo": "Regular",
+            "precio": 79
+          },
+          {
+            "tipo": "Premium",
+            "precio": 86
+          },
+          {
+            "tipo": "Diesel",
+            "precio": 64
+          }
+        ]
+      }
+    ],
+    "CL": [
+      {
+        "nombre": "Copec",
+        "naftas": [
+          {
+            "tipo": "93 octanos",
+            "precio": 1120
+          },
+          {
+            "tipo": "95 octanos",
+            "precio": 1180
+          },
+          {
+            "tipo": "97 octanos",
+            "precio": 1240
+          },
+          {
+            "tipo": "Diesel",
+            "precio": 980
+          }
+        ]
+      },
+      {
+        "nombre": "Shell CL",
+        "naftas": [
+          {
+            "tipo": "93 octanos",
+            "precio": 1115
+          },
+          {
+            "tipo": "95 octanos",
+            "precio": 1175
+          },
+          {
+            "tipo": "V-Power",
+            "precio": 1250
+          },
+          {
+            "tipo": "Diesel",
+            "precio": 975
+          }
+        ]
+      },
+      {
+        "nombre": "Petrobras CL",
+        "naftas": [
+          {
+            "tipo": "93 octanos",
+            "precio": 1110
+          },
+          {
+            "tipo": "95 octanos",
+            "precio": 1170
+          },
+          {
+            "tipo": "Diesel",
+            "precio": 970
+          }
+        ]
+      }
+    ],
+    "BR": [
+      {
+        "nombre": "Petrobras BR",
+        "naftas": [
+          {
+            "tipo": "Gasolina comum",
+            "precio": 6.2
+          },
+          {
+            "tipo": "Gasolina aditivada",
+            "precio": 6.6
+          },
+          {
+            "tipo": "Etanol",
+            "precio": 4.3
+          },
+          {
+            "tipo": "Diesel",
+            "precio": 6.0
+          }
+        ]
+      },
+      {
+        "nombre": "Shell BR",
+        "naftas": [
+          {
+            "tipo": "Gasolina comum",
+            "precio": 6.25
+          },
+          {
+            "tipo": "V-Power",
+            "precio": 6.8
+          },
+          {
+            "tipo": "Diesel",
+            "precio": 6.05
+          }
+        ]
+      }
+    ]
+  }
+}
