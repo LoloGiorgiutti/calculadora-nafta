@@ -2744,7 +2744,7 @@ async function fetchNominatim(q, listId, input) {
   try {
     // ── Photon (Komoot) — motor de autocomplete sobre OSM, mucho mejor para nombres parciales ──
     // Encuentra "Av. General Las Heras" con solo escribir "las heras"
-    let url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=12&lang=es`;
+    let url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=12`;
 
     // Bias hacia la ubicación del usuario (Buenos Aires por defecto para Argentina)
     if (userLocation) {
@@ -2761,8 +2761,11 @@ async function fetchNominatim(q, listId, input) {
     if (input.value.trim() !== queryAtStart) return;
 
     let features = (geojson.features || [])
-      // Filtrar solo Argentina
-      .filter(f => !f.properties.country || f.properties.country === 'Argentina');
+      // Filtrar solo Argentina por código ISO (countrycode es siempre 'AR' sin importar el idioma)
+      .filter(f => {
+        const cc = (f.properties.countrycode || '').toUpperCase();
+        return !cc || cc === 'AR';
+      });
 
     if (!features.length) { list.style.display = 'none'; return; }
 
