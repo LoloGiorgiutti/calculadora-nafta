@@ -1280,6 +1280,21 @@
         <p class="admin-hint">Tarifa usada en el chip "Comparar con Uber". Actualizala periódicamente según los precios vigentes en la app.</p>
       </div>
 
+      <!-- ── GOOGLE SHEETS ── -->
+      <div class="admin-section">
+        <h3>Actualizar precios desde Google Sheets</h3>
+        <p class="admin-hint" style="margin-bottom:10px">
+          Publicá tu planilla como CSV (Archivo → Compartir → Publicar en la web → CSV) y pegá la URL acá.
+          Formato esperado: <code style="font-size:11px">pais,estacion,tipo,precio</code>
+        </p>
+        <div class="admin-row">
+          <strong style="flex-shrink:0">URL del CSV</strong>
+          <input type="text" id="adm-sheets-url" class="admin-input" style="width:100%!important;text-align:left;font-size:12px" placeholder="https://docs.google.com/spreadsheets/d/…/pub?output=csv">
+        </div>
+        <button class="admin-add-car" style="margin-top:8px" onclick="fetchSheetsPrices()">⬇ Cargar precios</button>
+        <p class="admin-hint" id="sheets-status" style="margin-top:6px"></p>
+      </div>
+
       <!-- ── PUBLICACIÓN ── -->
       <div class="admin-section">
         <h3>Publicar cambios para todos</h3>
@@ -2630,10 +2645,11 @@ function collectStationsFromUI() {
 function openAdmin() {
   const overlay = document.getElementById('admin-overlay');
   overlay.classList.add('open');
-  document.getElementById('adm-title').value    = appData.title;
-  document.getElementById('adm-subtitle').value = appData.subtitle;
-  document.getElementById('adm-uber-km').value  = appData.uberPorKm || 1800;
-  document.getElementById('adm-gh-token').value = localStorage.getItem('gh_token') || '';
+  document.getElementById('adm-title').value      = appData.title;
+  document.getElementById('adm-subtitle').value   = appData.subtitle;
+  document.getElementById('adm-uber-km').value    = appData.uberPorKm || 1800;
+  document.getElementById('adm-sheets-url').value = appData.sheetsUrl || '';
+  document.getElementById('adm-gh-token').value   = localStorage.getItem('gh_token') || '';
   document.getElementById('publish-status').textContent = '';
 
   // Cars table — global view (no country filter)
@@ -2654,6 +2670,7 @@ async function saveAdmin() {
   appData.subtitle   = document.getElementById('adm-subtitle').value;
   const uberKmVal    = parseFloat(document.getElementById('adm-uber-km').value);
   if (!isNaN(uberKmVal) && uberKmVal > 0) appData.uberPorKm = uberKmVal;
+  appData.sheetsUrl  = document.getElementById('adm-sheets-url').value.trim();
 
   const now = new Date();
   const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
