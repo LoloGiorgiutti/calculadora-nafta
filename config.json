@@ -1,14 +1,3703 @@
 {
   "lastUpdate": "Abril 2026",
-  "uberPorKm": 1800,
   "combustibles": {
     "AR": [
-      { "tipo": "Regular / Súper",  "precio": 1055 },
-      { "tipo": "Premium",          "precio": 1120 },
-      { "tipo": "Ultra / Infinia",  "precio": 1290 },
-      { "tipo": "Diesel",           "precio": 985  },
-      { "tipo": "Diesel Premium",   "precio": 1170 },
-      { "tipo": "GNC",              "precio": 94   }
+      {
+        "tipo": "Regular / Súper",
+        "precio": 2076
+      },
+      {
+        "tipo": "Premium",
+        "precio": 2380
+      },
+      {
+        "tipo": "Diesel",
+        "precio": 2274
+      },
+      {
+        "tipo": "Diesel Premium",
+        "precio": 2439
+      },
+      {
+        "tipo": "GNC",
+        "precio": 850
+      }
     ]
-  }
+  },
+  "autos": [
+    {
+      "marca": "Audi",
+      "modelo": "A3",
+      "version": "1.4 TFSI",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2013–2020"
+    },
+    {
+      "marca": "Audi",
+      "modelo": "A3",
+      "version": "2.0 TFSI",
+      "ciudad": 11,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2013–2020"
+    },
+    {
+      "marca": "Audi",
+      "modelo": "A4",
+      "version": "2.0 TFSI",
+      "ciudad": 11.5,
+      "ruta": 8.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2008–2025"
+    },
+    {
+      "marca": "Audi",
+      "modelo": "Q3",
+      "version": "1.4 TFSI",
+      "ciudad": 11,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2015–2020"
+    },
+    {
+      "marca": "Audi",
+      "modelo": "Q3",
+      "version": "1.5 TFSI",
+      "ciudad": 11,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2021–2025"
+    },
+    {
+      "marca": "Audi",
+      "modelo": "Q5",
+      "version": "2.0 TFSI",
+      "ciudad": 12.5,
+      "ruta": 9.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2012–2025"
+    },
+    {
+      "marca": "BMW",
+      "modelo": "Serie 1",
+      "version": "118i",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2012–2019"
+    },
+    {
+      "marca": "BMW",
+      "modelo": "Serie 1",
+      "version": "120i",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2012–2025"
+    },
+    {
+      "marca": "BMW",
+      "modelo": "Serie 3",
+      "version": "318i",
+      "ciudad": 11,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2005–2025"
+    },
+    {
+      "marca": "BMW",
+      "modelo": "Serie 3",
+      "version": "320i",
+      "ciudad": 11.5,
+      "ruta": 8.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2005–2025"
+    },
+    {
+      "marca": "BMW",
+      "modelo": "X1",
+      "version": "sDrive 18i",
+      "ciudad": 11,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2012–2025"
+    },
+    {
+      "marca": "BMW",
+      "modelo": "X3",
+      "version": "xDrive 20i",
+      "ciudad": 12,
+      "ruta": 9,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2012–2025"
+    },
+    {
+      "marca": "Chery",
+      "modelo": "Tiggo 2",
+      "version": "1.5",
+      "ciudad": 9.5,
+      "ruta": 7.2,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2018–2025"
+    },
+    {
+      "marca": "Chery",
+      "modelo": "Tiggo 4 Pro",
+      "version": "1.5T",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2022–2025"
+    },
+    {
+      "marca": "Chery",
+      "modelo": "Tiggo 4",
+      "version": "1.5",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2018–2022"
+    },
+    {
+      "marca": "Chery",
+      "modelo": "Tiggo 7 Pro",
+      "version": "1.5T",
+      "ciudad": 10.5,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2021–2025"
+    },
+    {
+      "marca": "Chery",
+      "modelo": "Tiggo 8 Pro",
+      "version": "1.6T",
+      "ciudad": 11.5,
+      "ruta": 8.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2022–2025"
+    },
+    {
+      "marca": "Chevrolet",
+      "modelo": "Agile",
+      "version": "1.4 N",
+      "ciudad": 9,
+      "ruta": 6.8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2010–2014"
+    },
+    {
+      "marca": "Chevrolet",
+      "modelo": "Celta",
+      "version": "1.0 N",
+      "ciudad": 7.5,
+      "ruta": 5.8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2002–2011"
+    },
+    {
+      "marca": "Chevrolet",
+      "modelo": "Classic",
+      "version": "1.4 N",
+      "ciudad": 9,
+      "ruta": 6.8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2003–2016"
+    },
+    {
+      "marca": "Chevrolet",
+      "modelo": "Cruze",
+      "version": "1.4 turbo",
+      "ciudad": 9.5,
+      "ruta": 6.8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2011–2025"
+    },
+    {
+      "marca": "Chevrolet",
+      "modelo": "Cruze",
+      "version": "1.8 N",
+      "ciudad": 10.5,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2011–2015"
+    },
+    {
+      "marca": "Chevrolet",
+      "modelo": "Equinox",
+      "version": "2.0 turbo",
+      "ciudad": 11.5,
+      "ruta": 8.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2018–2025"
+    },
+    {
+      "marca": "Chevrolet",
+      "modelo": "Meriva",
+      "version": "1.4 N",
+      "ciudad": 10.5,
+      "ruta": 7.8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2003–2012"
+    },
+    {
+      "marca": "Chevrolet",
+      "modelo": "Meriva",
+      "version": "1.8 N",
+      "ciudad": 11.5,
+      "ruta": 8.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2006–2012"
+    },
+    {
+      "marca": "Chevrolet",
+      "modelo": "Montana",
+      "version": "1.2 turbo",
+      "ciudad": 8,
+      "ruta": 6,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2023–2025"
+    },
+    {
+      "marca": "Chevrolet",
+      "modelo": "Montana",
+      "version": "1.8 N",
+      "ciudad": 10.5,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2003–2011"
+    },
+    {
+      "marca": "Chevrolet",
+      "modelo": "Onix Plus",
+      "version": "1.0 turbo flex",
+      "ciudad": 9,
+      "ruta": 6.8,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2020–2025"
+    },
+    {
+      "marca": "Chevrolet",
+      "modelo": "Onix",
+      "version": "1.0 turbo flex",
+      "ciudad": 8.5,
+      "ruta": 6.5,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2020–2025"
+    },
+    {
+      "marca": "Chevrolet",
+      "modelo": "Onix",
+      "version": "1.2 + GNC",
+      "ciudad": 8.5,
+      "ruta": 6.2,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2019–2025",
+      "gnc_ciudad": 10,
+      "gnc_ruta": 7.5
+    },
+    {
+      "marca": "Chevrolet",
+      "modelo": "Onix",
+      "version": "1.2 turbo",
+      "ciudad": 8.5,
+      "ruta": 6.2,
+      "paises": [
+        "AR",
+        "UY"
+      ],
+      "anos": "2019–2025"
+    },
+    {
+      "marca": "Chevrolet",
+      "modelo": "Onix",
+      "version": "1.4 N",
+      "ciudad": 8.5,
+      "ruta": 6.2,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2013–2018"
+    },
+    {
+      "marca": "Chevrolet",
+      "modelo": "Prisma",
+      "version": "1.4 N",
+      "ciudad": 8.5,
+      "ruta": 6.2,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2013–2018"
+    },
+    {
+      "marca": "Chevrolet",
+      "modelo": "S10",
+      "version": "2.8 TDI",
+      "ciudad": 12,
+      "ruta": 9,
+      "paises": [
+        "AR",
+        "BR"
+      ],
+      "anos": "2012–2025"
+    },
+    {
+      "marca": "Chevrolet",
+      "modelo": "Sail",
+      "version": "1.5 N",
+      "ciudad": 9,
+      "ruta": 6.8,
+      "paises": [
+        "CL"
+      ],
+      "anos": "2017–2025"
+    },
+    {
+      "marca": "Chevrolet",
+      "modelo": "Sonic",
+      "version": "1.6 N",
+      "ciudad": 10,
+      "ruta": 7.2,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2012–2018"
+    },
+    {
+      "marca": "Chevrolet",
+      "modelo": "Spin",
+      "version": "1.8 N",
+      "ciudad": 11.5,
+      "ruta": 8.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2013–2020"
+    },
+    {
+      "marca": "Chevrolet",
+      "modelo": "Tracker",
+      "version": "1.0 turbo",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR",
+        "UY"
+      ],
+      "anos": "2014–2025"
+    },
+    {
+      "marca": "Chevrolet",
+      "modelo": "Tracker",
+      "version": "1.2 turbo flex",
+      "ciudad": 9.5,
+      "ruta": 7.5,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2021–2025"
+    },
+    {
+      "marca": "Citroën",
+      "modelo": "Berlingo",
+      "version": "1.2 PureTech",
+      "ciudad": 9.5,
+      "ruta": 7.2,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2018–2025"
+    },
+    {
+      "marca": "Citroën",
+      "modelo": "Berlingo",
+      "version": "1.6 N",
+      "ciudad": 11,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2008–2017"
+    },
+    {
+      "marca": "Citroën",
+      "modelo": "C2",
+      "version": "1.4 N",
+      "ciudad": 8.5,
+      "ruta": 6.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2005–2009"
+    },
+    {
+      "marca": "Citroën",
+      "modelo": "C3",
+      "version": "1.0 flex",
+      "ciudad": 9,
+      "ruta": 6.8,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2020–2025"
+    },
+    {
+      "marca": "Citroën",
+      "modelo": "C3",
+      "version": "1.2 PureTech",
+      "ciudad": 8.5,
+      "ruta": 6.2,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2017–2025"
+    },
+    {
+      "marca": "Citroën",
+      "modelo": "C3",
+      "version": "1.4 N",
+      "ciudad": 9,
+      "ruta": 6.8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2003–2016"
+    },
+    {
+      "marca": "Citroën",
+      "modelo": "C4 Cactus",
+      "version": "1.2 PureTech",
+      "ciudad": 8.5,
+      "ruta": 6.3,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2018–2025"
+    },
+    {
+      "marca": "Citroën",
+      "modelo": "C4",
+      "version": "1.4 turbo",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2010–2015"
+    },
+    {
+      "marca": "Citroën",
+      "modelo": "C4",
+      "version": "1.6 N",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2006–2015"
+    },
+    {
+      "marca": "Citroën",
+      "modelo": "C5 Aircross",
+      "version": "1.6 turbo",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2020–2025"
+    },
+    {
+      "marca": "Citroën",
+      "modelo": "Picasso",
+      "version": "1.6 N",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2003–2012"
+    },
+    {
+      "marca": "Citroën",
+      "modelo": "Xsara",
+      "version": "1.6 N",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2001–2006"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Argo",
+      "version": "1.0 flex",
+      "ciudad": 9,
+      "ruta": 7,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2018–2025"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Argo",
+      "version": "1.3 + GNC",
+      "ciudad": 9,
+      "ruta": 6.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2018–2025",
+      "gnc_ciudad": 10.5,
+      "gnc_ruta": 7.8
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Argo",
+      "version": "1.3 flex",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2018–2025"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Argo",
+      "version": "1.3 N",
+      "ciudad": 9,
+      "ruta": 6.5,
+      "paises": [
+        "AR",
+        "UY"
+      ],
+      "anos": "2018–2025"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Bravo",
+      "version": "1.4 turbo",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2008–2015"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Bravo",
+      "version": "1.6 MJ diesel",
+      "ciudad": 7.5,
+      "ruta": 5.8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2008–2015"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Cronos",
+      "version": "1.3 + GNC",
+      "ciudad": 8.8,
+      "ruta": 6.3,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2018–2025",
+      "gnc_ciudad": 10.2,
+      "gnc_ruta": 7.6
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Cronos",
+      "version": "1.3 flex",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2018–2025"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Cronos",
+      "version": "1.3 N",
+      "ciudad": 8.8,
+      "ruta": 6.3,
+      "paises": [
+        "AR",
+        "UY"
+      ],
+      "anos": "2018–2025"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Doblo",
+      "version": "1.4 N",
+      "ciudad": 10.5,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2006–2015"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Doblo",
+      "version": "1.8 N",
+      "ciudad": 12,
+      "ruta": 9,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2006–2015"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Ducato",
+      "version": "2.3 diesel",
+      "ciudad": 15,
+      "ruta": 11,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2006–2025"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Duna",
+      "version": "1.3/1.5 N",
+      "ciudad": 9,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "1988–2001"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Fastback",
+      "version": "1.3 turbo",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR",
+        "BR"
+      ],
+      "anos": "2022–2025"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Grande Punto",
+      "version": "1.4 N",
+      "ciudad": 9,
+      "ruta": 6.8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2006–2012"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Grande Punto",
+      "version": "1.4 turbo",
+      "ciudad": 9,
+      "ruta": 6.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2008–2012"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Idea",
+      "version": "1.4 N",
+      "ciudad": 9.5,
+      "ruta": 7.2,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2006–2013"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Linea",
+      "version": "1.4 turbo",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2010–2015"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Linea",
+      "version": "1.8 N",
+      "ciudad": 11,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2010–2015"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Mobi",
+      "version": "1.0 flex",
+      "ciudad": 8.5,
+      "ruta": 6.3,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2018–2025"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Mobi",
+      "version": "1.0 N",
+      "ciudad": 8,
+      "ruta": 6,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2018–2025"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Palio",
+      "version": "1.3 N",
+      "ciudad": 8.5,
+      "ruta": 6.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "1998–2014"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Palio",
+      "version": "1.6 N",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2000–2014"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Pulse",
+      "version": "1.0 turbo",
+      "ciudad": 9,
+      "ruta": 6.8,
+      "paises": [
+        "AR",
+        "BR"
+      ],
+      "anos": "2022–2025"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Punto",
+      "version": "1.4 N",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2007–2013"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Punto",
+      "version": "1.8 N",
+      "ciudad": 11,
+      "ruta": 8.2,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2007–2013"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Siena",
+      "version": "1.4 N",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2001–2014"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Siena",
+      "version": "1.6 N",
+      "ciudad": 10.5,
+      "ruta": 7.8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2001–2014"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Strada",
+      "version": "1.3 flex",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2020–2025"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Strada",
+      "version": "1.3 N",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2022–2025"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Strada",
+      "version": "1.4 N",
+      "ciudad": 9.5,
+      "ruta": 7.2,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2004–2021"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Toro",
+      "version": "1.3 turbo",
+      "ciudad": 10.5,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2022–2025"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Toro",
+      "version": "2.0 diesel",
+      "ciudad": 12.5,
+      "ruta": 9.5,
+      "paises": [
+        "AR",
+        "BR"
+      ],
+      "anos": "2017–2025"
+    },
+    {
+      "marca": "Fiat",
+      "modelo": "Uno",
+      "version": "1.3/1.4 N",
+      "ciudad": 8.5,
+      "ruta": 6.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "1985–2014"
+    },
+    {
+      "marca": "Ford",
+      "modelo": "Bronco Sport",
+      "version": "2.0 turbo",
+      "ciudad": 11,
+      "ruta": 8.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2022–2025"
+    },
+    {
+      "marca": "Ford",
+      "modelo": "EcoSport",
+      "version": "1.5 flex",
+      "ciudad": 10.5,
+      "ruta": 8,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2013–2022"
+    },
+    {
+      "marca": "Ford",
+      "modelo": "EcoSport",
+      "version": "1.6 N",
+      "ciudad": 10.5,
+      "ruta": 7.8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2004–2012"
+    },
+    {
+      "marca": "Ford",
+      "modelo": "EcoSport",
+      "version": "2.0 N",
+      "ciudad": 11,
+      "ruta": 8,
+      "paises": [
+        "AR",
+        "UY"
+      ],
+      "anos": "2013–2022"
+    },
+    {
+      "marca": "Ford",
+      "modelo": "Escort",
+      "version": "1.6 N",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "1997–2004"
+    },
+    {
+      "marca": "Ford",
+      "modelo": "Escort",
+      "version": "1.8 N",
+      "ciudad": 11.5,
+      "ruta": 8.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "1997–2004"
+    },
+    {
+      "marca": "Ford",
+      "modelo": "Fiesta",
+      "version": "1.0 EcoBoost",
+      "ciudad": 8.5,
+      "ruta": 6,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2013–2018"
+    },
+    {
+      "marca": "Ford",
+      "modelo": "Fiesta",
+      "version": "1.6 N",
+      "ciudad": 10,
+      "ruta": 7.2,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2002–2013"
+    },
+    {
+      "marca": "Ford",
+      "modelo": "Focus",
+      "version": "1.6 N",
+      "ciudad": 10,
+      "ruta": 7.2,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2000–2015"
+    },
+    {
+      "marca": "Ford",
+      "modelo": "Focus",
+      "version": "2.0 N",
+      "ciudad": 11,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2000–2015"
+    },
+    {
+      "marca": "Ford",
+      "modelo": "Focus",
+      "version": "2.0 turbo",
+      "ciudad": 10.5,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2012–2019"
+    },
+    {
+      "marca": "Ford",
+      "modelo": "Ka",
+      "version": "1.0 N",
+      "ciudad": 8.5,
+      "ruta": 6.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2009–2013"
+    },
+    {
+      "marca": "Ford",
+      "modelo": "Ka",
+      "version": "1.5 + GNC",
+      "ciudad": 9,
+      "ruta": 6.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2015–2025",
+      "gnc_ciudad": 10.5,
+      "gnc_ruta": 7.8
+    },
+    {
+      "marca": "Ford",
+      "modelo": "Ka",
+      "version": "1.5 flex",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2013–2025"
+    },
+    {
+      "marca": "Ford",
+      "modelo": "Ka",
+      "version": "1.5 N",
+      "ciudad": 9,
+      "ruta": 6.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2013–2025"
+    },
+    {
+      "marca": "Ford",
+      "modelo": "Kuga",
+      "version": "1.6 EcoBoost",
+      "ciudad": 10.5,
+      "ruta": 7.8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2012–2019"
+    },
+    {
+      "marca": "Ford",
+      "modelo": "Mondeo",
+      "version": "2.0 N",
+      "ciudad": 12,
+      "ruta": 8.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2001–2012"
+    },
+    {
+      "marca": "Ford",
+      "modelo": "Mondeo",
+      "version": "2.0 turbo",
+      "ciudad": 11,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2007–2014"
+    },
+    {
+      "marca": "Ford",
+      "modelo": "Ranger",
+      "version": "2.2 TDI",
+      "ciudad": 11.5,
+      "ruta": 9,
+      "paises": [
+        "AR",
+        "UY",
+        "CL"
+      ],
+      "anos": "2012–2019"
+    },
+    {
+      "marca": "Ford",
+      "modelo": "Ranger",
+      "version": "2.3 Bi-Turbo",
+      "ciudad": 12,
+      "ruta": 9,
+      "paises": [
+        "AR",
+        "UY",
+        "CL",
+        "BR"
+      ],
+      "anos": "2020–2025"
+    },
+    {
+      "marca": "Ford",
+      "modelo": "Ranger",
+      "version": "2.5 N",
+      "ciudad": 12.5,
+      "ruta": 9.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2004–2011"
+    },
+    {
+      "marca": "Ford",
+      "modelo": "Ranger",
+      "version": "3.2 TDI",
+      "ciudad": 13,
+      "ruta": 10,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2012–2021"
+    },
+    {
+      "marca": "Ford",
+      "modelo": "Territory",
+      "version": "1.5 turbo",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2021–2025"
+    },
+    {
+      "marca": "Honda",
+      "modelo": "Accord",
+      "version": "2.4 N",
+      "ciudad": 12,
+      "ruta": 9,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2005–2015"
+    },
+    {
+      "marca": "Honda",
+      "modelo": "City",
+      "version": "1.5 flex",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2015–2025"
+    },
+    {
+      "marca": "Honda",
+      "modelo": "City",
+      "version": "1.5 N",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2003–2025"
+    },
+    {
+      "marca": "Honda",
+      "modelo": "Civic",
+      "version": "1.5 turbo",
+      "ciudad": 9.5,
+      "ruta": 6.8,
+      "paises": [
+        "AR",
+        "UY"
+      ],
+      "anos": "2017–2025"
+    },
+    {
+      "marca": "Honda",
+      "modelo": "Civic",
+      "version": "1.6 N",
+      "ciudad": 10.5,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2006–2011"
+    },
+    {
+      "marca": "Honda",
+      "modelo": "Civic",
+      "version": "2.0 N",
+      "ciudad": 11.5,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2012–2016"
+    },
+    {
+      "marca": "Honda",
+      "modelo": "CR-V",
+      "version": "1.5 turbo",
+      "ciudad": 10.5,
+      "ruta": 8,
+      "paises": [
+        "AR",
+        "UY"
+      ],
+      "anos": "2019–2025"
+    },
+    {
+      "marca": "Honda",
+      "modelo": "CR-V",
+      "version": "2.0 N",
+      "ciudad": 12,
+      "ruta": 8.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2006–2011"
+    },
+    {
+      "marca": "Honda",
+      "modelo": "CR-V",
+      "version": "2.4 N",
+      "ciudad": 12.5,
+      "ruta": 9,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2012–2018"
+    },
+    {
+      "marca": "Honda",
+      "modelo": "Fit",
+      "version": "1.4 N",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2003–2008"
+    },
+    {
+      "marca": "Honda",
+      "modelo": "Fit",
+      "version": "1.5 flex",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2009–2022"
+    },
+    {
+      "marca": "Honda",
+      "modelo": "Fit",
+      "version": "1.5 N",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2009–2022"
+    },
+    {
+      "marca": "Honda",
+      "modelo": "HR-V",
+      "version": "1.5 turbo",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR",
+        "UY"
+      ],
+      "anos": "2022–2025"
+    },
+    {
+      "marca": "Honda",
+      "modelo": "HR-V",
+      "version": "1.8 flex",
+      "ciudad": 10.5,
+      "ruta": 7.5,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2015–2025"
+    },
+    {
+      "marca": "Honda",
+      "modelo": "HR-V",
+      "version": "1.8 N",
+      "ciudad": 10.5,
+      "ruta": 7.5,
+      "paises": [
+        "AR",
+        "UY"
+      ],
+      "anos": "2015–2022"
+    },
+    {
+      "marca": "Honda",
+      "modelo": "WR-V",
+      "version": "1.5 flex",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2022–2025"
+    },
+    {
+      "marca": "Honda",
+      "modelo": "WR-V",
+      "version": "1.5 N",
+      "ciudad": 9,
+      "ruta": 6.8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2022–2025"
+    },
+    {
+      "marca": "Hyundai",
+      "modelo": "Accent",
+      "version": "1.4 N",
+      "ciudad": 8.5,
+      "ruta": 6.5,
+      "paises": [
+        "AR",
+        "CL"
+      ],
+      "anos": "2000–2018"
+    },
+    {
+      "marca": "Hyundai",
+      "modelo": "Accent",
+      "version": "1.6 N",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2006–2018"
+    },
+    {
+      "marca": "Hyundai",
+      "modelo": "Creta",
+      "version": "1.0 turbo",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR",
+        "UY",
+        "BR"
+      ],
+      "anos": "2021–2025"
+    },
+    {
+      "marca": "Hyundai",
+      "modelo": "Elantra",
+      "version": "1.6 N",
+      "ciudad": 10,
+      "ruta": 7.2,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2012–2016"
+    },
+    {
+      "marca": "Hyundai",
+      "modelo": "Elantra",
+      "version": "2.0 N",
+      "ciudad": 11,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2012–2016"
+    },
+    {
+      "marca": "Hyundai",
+      "modelo": "Grand i10",
+      "version": "1.2 N",
+      "ciudad": 7.5,
+      "ruta": 5.8,
+      "paises": [
+        "CL"
+      ],
+      "anos": "2015–2025"
+    },
+    {
+      "marca": "Hyundai",
+      "modelo": "HB20",
+      "version": "1.0 turbo",
+      "ciudad": 9,
+      "ruta": 6.8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2022–2025"
+    },
+    {
+      "marca": "Hyundai",
+      "modelo": "HB20",
+      "version": "1.0 turbo flex",
+      "ciudad": 9,
+      "ruta": 6.8,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2019–2025"
+    },
+    {
+      "marca": "Hyundai",
+      "modelo": "HB20",
+      "version": "1.6 N",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2012–2021"
+    },
+    {
+      "marca": "Hyundai",
+      "modelo": "i30",
+      "version": "1.4 turbo",
+      "ciudad": 9.5,
+      "ruta": 6.8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2012–2017"
+    },
+    {
+      "marca": "Hyundai",
+      "modelo": "i30",
+      "version": "1.6 N",
+      "ciudad": 10,
+      "ruta": 7.2,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2008–2017"
+    },
+    {
+      "marca": "Hyundai",
+      "modelo": "ix35/Tucson",
+      "version": "2.0 N",
+      "ciudad": 11.5,
+      "ruta": 8.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2010–2015"
+    },
+    {
+      "marca": "Hyundai",
+      "modelo": "Santa Fe",
+      "version": "2.4 N",
+      "ciudad": 12.5,
+      "ruta": 9.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2013–2019"
+    },
+    {
+      "marca": "Hyundai",
+      "modelo": "Santa Fe",
+      "version": "2.5 turbo",
+      "ciudad": 12,
+      "ruta": 9,
+      "paises": [
+        "AR",
+        "CL"
+      ],
+      "anos": "2020–2025"
+    },
+    {
+      "marca": "Hyundai",
+      "modelo": "Tucson",
+      "version": "1.6 turbo",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR",
+        "UY",
+        "CL"
+      ],
+      "anos": "2016–2025"
+    },
+    {
+      "marca": "Jeep",
+      "modelo": "Cherokee",
+      "version": "2.4 N",
+      "ciudad": 12.5,
+      "ruta": 9.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2014–2020"
+    },
+    {
+      "marca": "Jeep",
+      "modelo": "Cherokee",
+      "version": "3.2 V6",
+      "ciudad": 14,
+      "ruta": 11,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2014–2020"
+    },
+    {
+      "marca": "Jeep",
+      "modelo": "Commander",
+      "version": "1.3 turbo",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2022–2025"
+    },
+    {
+      "marca": "Jeep",
+      "modelo": "Commander",
+      "version": "1.3 turbo flex",
+      "ciudad": 10.5,
+      "ruta": 8,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2022–2025"
+    },
+    {
+      "marca": "Jeep",
+      "modelo": "Compass",
+      "version": "1.3 turbo",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR",
+        "UY"
+      ],
+      "anos": "2022–2025"
+    },
+    {
+      "marca": "Jeep",
+      "modelo": "Compass",
+      "version": "1.3 turbo flex",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2021–2025"
+    },
+    {
+      "marca": "Jeep",
+      "modelo": "Compass",
+      "version": "2.4 N",
+      "ciudad": 12,
+      "ruta": 9,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2017–2021"
+    },
+    {
+      "marca": "Jeep",
+      "modelo": "Grand Cherokee",
+      "version": "2.7 CRD diesel",
+      "ciudad": 12,
+      "ruta": 9,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2006–2014"
+    },
+    {
+      "marca": "Jeep",
+      "modelo": "Grand Cherokee",
+      "version": "3.6 V6",
+      "ciudad": 16,
+      "ruta": 12,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2005–2025"
+    },
+    {
+      "marca": "Jeep",
+      "modelo": "Renegade",
+      "version": "1.3 turbo",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2021–2025"
+    },
+    {
+      "marca": "Jeep",
+      "modelo": "Renegade",
+      "version": "1.3 turbo flex",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2019–2025"
+    },
+    {
+      "marca": "Jeep",
+      "modelo": "Renegade",
+      "version": "1.8 N",
+      "ciudad": 11,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2015–2021"
+    },
+    {
+      "marca": "Jeep",
+      "modelo": "Wrangler",
+      "version": "2.0 turbo",
+      "ciudad": 13,
+      "ruta": 10,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2019–2025"
+    },
+    {
+      "marca": "Jeep",
+      "modelo": "Wrangler",
+      "version": "3.6 V6",
+      "ciudad": 17,
+      "ruta": 13,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2008–2025"
+    },
+    {
+      "marca": "Kia",
+      "modelo": "Cerato/Forte",
+      "version": "1.6 N",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR",
+        "CL"
+      ],
+      "anos": "2013–2022"
+    },
+    {
+      "marca": "Kia",
+      "modelo": "Cerato/Forte",
+      "version": "2.0 N",
+      "ciudad": 11,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2013–2022"
+    },
+    {
+      "marca": "Kia",
+      "modelo": "Picanto",
+      "version": "1.2 N",
+      "ciudad": 7.5,
+      "ruta": 5.8,
+      "paises": [
+        "CL"
+      ],
+      "anos": "2012–2025"
+    },
+    {
+      "marca": "Kia",
+      "modelo": "Rio",
+      "version": "1.4 N",
+      "ciudad": 8.5,
+      "ruta": 6.5,
+      "paises": [
+        "CL"
+      ],
+      "anos": "2012–2025"
+    },
+    {
+      "marca": "Kia",
+      "modelo": "Seltos",
+      "version": "1.4 turbo",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "UY",
+        "CL"
+      ],
+      "anos": "2021–2025"
+    },
+    {
+      "marca": "Kia",
+      "modelo": "Sorento",
+      "version": "2.4 N",
+      "ciudad": 13,
+      "ruta": 9.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2012–2020"
+    },
+    {
+      "marca": "Kia",
+      "modelo": "Soul",
+      "version": "1.6 N",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2010–2019"
+    },
+    {
+      "marca": "Kia",
+      "modelo": "Sportage",
+      "version": "1.6 turbo",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR",
+        "UY",
+        "CL"
+      ],
+      "anos": "2022–2025"
+    },
+    {
+      "marca": "Kia",
+      "modelo": "Sportage",
+      "version": "2.0 N",
+      "ciudad": 11,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2010–2021"
+    },
+    {
+      "marca": "Mazda",
+      "modelo": "2",
+      "version": "1.5 N",
+      "ciudad": 8,
+      "ruta": 6,
+      "paises": [
+        "CL"
+      ],
+      "anos": "2015–2025"
+    },
+    {
+      "marca": "Mazda",
+      "modelo": "3",
+      "version": "2.0 N",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "CL"
+      ],
+      "anos": "2010–2025"
+    },
+    {
+      "marca": "Mazda",
+      "modelo": "CX-30",
+      "version": "2.0 N",
+      "ciudad": 9.5,
+      "ruta": 7.2,
+      "paises": [
+        "CL"
+      ],
+      "anos": "2020–2025"
+    },
+    {
+      "marca": "Mazda",
+      "modelo": "CX-3",
+      "version": "2.0 N",
+      "ciudad": 9.5,
+      "ruta": 7.2,
+      "paises": [
+        "CL"
+      ],
+      "anos": "2016–2025"
+    },
+    {
+      "marca": "Mazda",
+      "modelo": "CX-5",
+      "version": "2.0 N",
+      "ciudad": 10.5,
+      "ruta": 8,
+      "paises": [
+        "CL"
+      ],
+      "anos": "2012–2025"
+    },
+    {
+      "marca": "Mazda",
+      "modelo": "CX-5",
+      "version": "2.5 N",
+      "ciudad": 11,
+      "ruta": 8.5,
+      "paises": [
+        "CL"
+      ],
+      "anos": "2014–2025"
+    },
+    {
+      "marca": "Mercedes-Benz",
+      "modelo": "Clase A",
+      "version": "1.3 turbo",
+      "ciudad": 9,
+      "ruta": 6.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2019–2025"
+    },
+    {
+      "marca": "Mercedes-Benz",
+      "modelo": "Clase A",
+      "version": "1.6 N",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2012–2018"
+    },
+    {
+      "marca": "Mercedes-Benz",
+      "modelo": "Clase B",
+      "version": "1.6 turbo",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2012–2019"
+    },
+    {
+      "marca": "Mercedes-Benz",
+      "modelo": "Clase C",
+      "version": "1.6 turbo",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2014–2021"
+    },
+    {
+      "marca": "Mercedes-Benz",
+      "modelo": "Clase C",
+      "version": "2.0 turbo",
+      "ciudad": 11,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2014–2025"
+    },
+    {
+      "marca": "Mercedes-Benz",
+      "modelo": "GLA",
+      "version": "1.3 turbo",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2021–2025"
+    },
+    {
+      "marca": "Mercedes-Benz",
+      "modelo": "GLA",
+      "version": "1.6 turbo",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2014–2020"
+    },
+    {
+      "marca": "Mercedes-Benz",
+      "modelo": "GLC",
+      "version": "2.0 turbo",
+      "ciudad": 11.5,
+      "ruta": 8.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2016–2025"
+    },
+    {
+      "marca": "Mitsubishi",
+      "modelo": "ASX",
+      "version": "1.6 N",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR",
+        "CL"
+      ],
+      "anos": "2010–2024"
+    },
+    {
+      "marca": "Mitsubishi",
+      "modelo": "ASX",
+      "version": "2.0 N",
+      "ciudad": 11,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2010–2024"
+    },
+    {
+      "marca": "Mitsubishi",
+      "modelo": "Eclipse Cross",
+      "version": "1.5 turbo",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR",
+        "UY",
+        "CL"
+      ],
+      "anos": "2018–2024"
+    },
+    {
+      "marca": "Mitsubishi",
+      "modelo": "L200/Triton",
+      "version": "2.4 diesel",
+      "ciudad": 12,
+      "ruta": 9,
+      "paises": [
+        "AR",
+        "UY",
+        "CL"
+      ],
+      "anos": "2016–2025"
+    },
+    {
+      "marca": "Mitsubishi",
+      "modelo": "L200/Triton",
+      "version": "2.5 diesel",
+      "ciudad": 12.5,
+      "ruta": 9.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2005–2015"
+    },
+    {
+      "marca": "Mitsubishi",
+      "modelo": "Lancer",
+      "version": "1.6 N",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2002–2012"
+    },
+    {
+      "marca": "Mitsubishi",
+      "modelo": "Lancer",
+      "version": "2.0 N",
+      "ciudad": 11,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2012–2018"
+    },
+    {
+      "marca": "Mitsubishi",
+      "modelo": "Montero Sport",
+      "version": "3.0 V6",
+      "ciudad": 16,
+      "ruta": 12,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2000–2008"
+    },
+    {
+      "marca": "Mitsubishi",
+      "modelo": "Outlander",
+      "version": "2.0 N",
+      "ciudad": 12,
+      "ruta": 9,
+      "paises": [
+        "AR",
+        "CL"
+      ],
+      "anos": "2006–2013"
+    },
+    {
+      "marca": "Mitsubishi",
+      "modelo": "Outlander",
+      "version": "2.4 N",
+      "ciudad": 12,
+      "ruta": 9,
+      "paises": [
+        "AR",
+        "CL"
+      ],
+      "anos": "2013–2024"
+    },
+    {
+      "marca": "Nissan",
+      "modelo": "Frontier",
+      "version": "2.3 Bi-Turbo",
+      "ciudad": 13,
+      "ruta": 10,
+      "paises": [
+        "AR",
+        "CL",
+        "BR"
+      ],
+      "anos": "2017–2025"
+    },
+    {
+      "marca": "Nissan",
+      "modelo": "Frontier",
+      "version": "2.5 diesel",
+      "ciudad": 12,
+      "ruta": 9,
+      "paises": [
+        "AR",
+        "CL"
+      ],
+      "anos": "2008–2016"
+    },
+    {
+      "marca": "Nissan",
+      "modelo": "Kicks",
+      "version": "1.0 turbo flex",
+      "ciudad": 9.5,
+      "ruta": 7.2,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2021–2025"
+    },
+    {
+      "marca": "Nissan",
+      "modelo": "Kicks",
+      "version": "1.6 N",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2017–2025"
+    },
+    {
+      "marca": "Nissan",
+      "modelo": "March",
+      "version": "1.0 flex",
+      "ciudad": 8.5,
+      "ruta": 6.5,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2011–2025"
+    },
+    {
+      "marca": "Nissan",
+      "modelo": "Pathfinder",
+      "version": "3.5 V6",
+      "ciudad": 16,
+      "ruta": 12,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2013–2022"
+    },
+    {
+      "marca": "Nissan",
+      "modelo": "Sentra",
+      "version": "1.6 N",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2013–2019"
+    },
+    {
+      "marca": "Nissan",
+      "modelo": "Sentra",
+      "version": "2.0 N",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR",
+        "CL"
+      ],
+      "anos": "2019–2025"
+    },
+    {
+      "marca": "Nissan",
+      "modelo": "Tiida",
+      "version": "1.6 N",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2007–2013"
+    },
+    {
+      "marca": "Nissan",
+      "modelo": "Versa",
+      "version": "1.6 + GNC",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2012–2025",
+      "gnc_ciudad": 11,
+      "gnc_ruta": 8.2
+    },
+    {
+      "marca": "Nissan",
+      "modelo": "Versa",
+      "version": "1.6 flex",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2011–2025"
+    },
+    {
+      "marca": "Nissan",
+      "modelo": "Versa",
+      "version": "1.6 N",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR",
+        "UY"
+      ],
+      "anos": "2012–2025"
+    },
+    {
+      "marca": "Nissan",
+      "modelo": "X-Trail",
+      "version": "2.0 N",
+      "ciudad": 12,
+      "ruta": 9,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2008–2017"
+    },
+    {
+      "marca": "Nissan",
+      "modelo": "X-Trail",
+      "version": "2.5 N",
+      "ciudad": 12.5,
+      "ruta": 9.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2018–2022"
+    },
+    {
+      "marca": "Peugeot",
+      "modelo": "2008",
+      "version": "1.2 PureTech",
+      "ciudad": 9,
+      "ruta": 6.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2019–2025"
+    },
+    {
+      "marca": "Peugeot",
+      "modelo": "2008",
+      "version": "1.6 N",
+      "ciudad": 11,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2016–2018"
+    },
+    {
+      "marca": "Peugeot",
+      "modelo": "205",
+      "version": "1.4 N",
+      "ciudad": 9,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "1986–1998"
+    },
+    {
+      "marca": "Peugeot",
+      "modelo": "206",
+      "version": "1.4 N",
+      "ciudad": 9,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "1999–2014"
+    },
+    {
+      "marca": "Peugeot",
+      "modelo": "206",
+      "version": "1.6 N",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2001–2014"
+    },
+    {
+      "marca": "Peugeot",
+      "modelo": "207",
+      "version": "1.4 N",
+      "ciudad": 9,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2006–2016"
+    },
+    {
+      "marca": "Peugeot",
+      "modelo": "207",
+      "version": "1.6 N",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2006–2016"
+    },
+    {
+      "marca": "Peugeot",
+      "modelo": "207",
+      "version": "1.6 turbo",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2007–2016"
+    },
+    {
+      "marca": "Peugeot",
+      "modelo": "208",
+      "version": "1.2 PureTech",
+      "ciudad": 8.5,
+      "ruta": 6,
+      "paises": [
+        "AR",
+        "UY"
+      ],
+      "anos": "2019–2025"
+    },
+    {
+      "marca": "Peugeot",
+      "modelo": "208",
+      "version": "1.6 N",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2013–2018"
+    },
+    {
+      "marca": "Peugeot",
+      "modelo": "3008",
+      "version": "1.6 turbo",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2017–2025"
+    },
+    {
+      "marca": "Peugeot",
+      "modelo": "3008",
+      "version": "2.0 BlueHDi diesel",
+      "ciudad": 7.5,
+      "ruta": 6,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2018–2025"
+    },
+    {
+      "marca": "Peugeot",
+      "modelo": "306",
+      "version": "1.6 N",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "1994–2003"
+    },
+    {
+      "marca": "Peugeot",
+      "modelo": "306",
+      "version": "1.8 N",
+      "ciudad": 11,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "1994–2003"
+    },
+    {
+      "marca": "Peugeot",
+      "modelo": "307",
+      "version": "1.6 turbo",
+      "ciudad": 10.5,
+      "ruta": 7.8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2005–2011"
+    },
+    {
+      "marca": "Peugeot",
+      "modelo": "307",
+      "version": "2.0 N",
+      "ciudad": 11.5,
+      "ruta": 8.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2001–2011"
+    },
+    {
+      "marca": "Peugeot",
+      "modelo": "308",
+      "version": "1.6 turbo",
+      "ciudad": 10.5,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2008–2025"
+    },
+    {
+      "marca": "Peugeot",
+      "modelo": "405",
+      "version": "1.8/2.0 N",
+      "ciudad": 11,
+      "ruta": 8.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "1990–2000"
+    },
+    {
+      "marca": "Peugeot",
+      "modelo": "406",
+      "version": "2.0 N",
+      "ciudad": 11.5,
+      "ruta": 8.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "1996–2005"
+    },
+    {
+      "marca": "Peugeot",
+      "modelo": "408",
+      "version": "1.6 turbo",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2013–2022"
+    },
+    {
+      "marca": "Peugeot",
+      "modelo": "408",
+      "version": "2.0 N",
+      "ciudad": 11.5,
+      "ruta": 8.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2011–2022"
+    },
+    {
+      "marca": "Peugeot",
+      "modelo": "5008",
+      "version": "1.6 turbo",
+      "ciudad": 10.5,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2019–2022"
+    },
+    {
+      "marca": "Peugeot",
+      "modelo": "Partner",
+      "version": "1.4 N",
+      "ciudad": 10.5,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2002–2012"
+    },
+    {
+      "marca": "Peugeot",
+      "modelo": "Partner",
+      "version": "1.6 N",
+      "ciudad": 11,
+      "ruta": 8.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2012–2025"
+    },
+    {
+      "marca": "RAM",
+      "modelo": "1500",
+      "version": "5.7 V8 Hemi",
+      "ciudad": 22,
+      "ruta": 16,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2009–2025"
+    },
+    {
+      "marca": "RAM",
+      "modelo": "700",
+      "version": "2.0 turbo",
+      "ciudad": 11.5,
+      "ruta": 9,
+      "paises": [
+        "AR",
+        "BR"
+      ],
+      "anos": "2018–2025"
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Captur",
+      "version": "1.0 turbo flex",
+      "ciudad": 9,
+      "ruta": 7,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2021–2025"
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Captur",
+      "version": "1.3 turbo",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR",
+        "UY",
+        "CL"
+      ],
+      "anos": "2021–2025"
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Captur",
+      "version": "1.6 N",
+      "ciudad": 11,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2017–2020"
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Clio",
+      "version": "1.2 N",
+      "ciudad": 9,
+      "ruta": 6.8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2003–2016"
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Clio",
+      "version": "1.6 N",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2003–2016"
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Duster",
+      "version": "1.3 turbo",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2021–2025"
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Duster",
+      "version": "1.6 N",
+      "ciudad": 11,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2012–2020"
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Duster",
+      "version": "2.0 N",
+      "ciudad": 12,
+      "ruta": 9,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2012–2020"
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Fluence",
+      "version": "1.6 turbo",
+      "ciudad": 10.5,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2013–2020"
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Fluence",
+      "version": "2.0 N",
+      "ciudad": 11.5,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2011–2020"
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Kangoo",
+      "version": "1.6 + GNC",
+      "ciudad": 11.5,
+      "ruta": 8.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2010–2025",
+      "gnc_ciudad": 13,
+      "gnc_ruta": 9.8
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Kangoo",
+      "version": "1.6 N",
+      "ciudad": 11.5,
+      "ruta": 8.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2000–2025"
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Kwid",
+      "version": "1.0 flex",
+      "ciudad": 8,
+      "ruta": 6,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2017–2025"
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Kwid",
+      "version": "1.0 N",
+      "ciudad": 7.5,
+      "ruta": 5.5,
+      "paises": [
+        "AR",
+        "UY"
+      ],
+      "anos": "2017–2025"
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Kwid",
+      "version": "1.0 N + GNC",
+      "ciudad": 7.5,
+      "ruta": 5.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2020–2025",
+      "gnc_ciudad": 8.8,
+      "gnc_ruta": 6.5
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Laguna",
+      "version": "1.8/2.0 N",
+      "ciudad": 11,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2000–2010"
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Logan",
+      "version": "1.6 + GNC",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2006–2022",
+      "gnc_ciudad": 11,
+      "gnc_ruta": 8.2
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Logan",
+      "version": "1.6 N",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2006–2022"
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Megane",
+      "version": "1.6 N",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "1999–2012"
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Megane",
+      "version": "1.6 turbo",
+      "ciudad": 10,
+      "ruta": 7.2,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2013–2018"
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Megane",
+      "version": "2.0 N",
+      "ciudad": 11.5,
+      "ruta": 8.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "1999–2012"
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Oroch",
+      "version": "1.3 turbo",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2023–2025"
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Oroch",
+      "version": "2.0 N",
+      "ciudad": 11.5,
+      "ruta": 9,
+      "paises": [
+        "AR",
+        "BR"
+      ],
+      "anos": "2016–2022"
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Sandero",
+      "version": "1.0 flex",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2018–2025"
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Sandero",
+      "version": "1.0 turbo",
+      "ciudad": 8.5,
+      "ruta": 6.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2022–2025"
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Sandero",
+      "version": "1.6 + GNC",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2010–2025",
+      "gnc_ciudad": 11,
+      "gnc_ruta": 8.2
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Sandero",
+      "version": "1.6 N",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR",
+        "UY"
+      ],
+      "anos": "2008–2025"
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Stepway",
+      "version": "1.6 N",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR",
+        "UY"
+      ],
+      "anos": "2008–2025"
+    },
+    {
+      "marca": "Renault",
+      "modelo": "Symbol",
+      "version": "1.6 N",
+      "ciudad": 9.5,
+      "ruta": 7.2,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2002–2016"
+    },
+    {
+      "marca": "Subaru",
+      "modelo": "Forester",
+      "version": "2.0 N",
+      "ciudad": 11.5,
+      "ruta": 8.5,
+      "paises": [
+        "AR",
+        "CL"
+      ],
+      "anos": "2008–2025"
+    },
+    {
+      "marca": "Subaru",
+      "modelo": "Forester",
+      "version": "2.5 N",
+      "ciudad": 12,
+      "ruta": 9,
+      "paises": [
+        "CL"
+      ],
+      "anos": "2008–2025"
+    },
+    {
+      "marca": "Subaru",
+      "modelo": "Impreza",
+      "version": "2.0 N",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR",
+        "CL"
+      ],
+      "anos": "2008–2025"
+    },
+    {
+      "marca": "Subaru",
+      "modelo": "Legacy",
+      "version": "2.5 N",
+      "ciudad": 12,
+      "ruta": 9,
+      "paises": [
+        "AR",
+        "CL"
+      ],
+      "anos": "2009–2020"
+    },
+    {
+      "marca": "Subaru",
+      "modelo": "Outback",
+      "version": "2.5 N",
+      "ciudad": 12.5,
+      "ruta": 9.5,
+      "paises": [
+        "AR",
+        "CL"
+      ],
+      "anos": "2010–2025"
+    },
+    {
+      "marca": "Subaru",
+      "modelo": "XV",
+      "version": "2.0 N",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR",
+        "CL"
+      ],
+      "anos": "2013–2025"
+    },
+    {
+      "marca": "Suzuki",
+      "modelo": "Baleno",
+      "version": "1.2 N",
+      "ciudad": 8,
+      "ruta": 6,
+      "paises": [
+        "CL"
+      ],
+      "anos": "2016–2025"
+    },
+    {
+      "marca": "Suzuki",
+      "modelo": "Jimny",
+      "version": "1.3 N",
+      "ciudad": 12,
+      "ruta": 9.5,
+      "paises": [
+        "AR",
+        "CL"
+      ],
+      "anos": "2005–2018"
+    },
+    {
+      "marca": "Suzuki",
+      "modelo": "Jimny",
+      "version": "1.5 N",
+      "ciudad": 12,
+      "ruta": 9.5,
+      "paises": [
+        "CL"
+      ],
+      "anos": "2019–2025"
+    },
+    {
+      "marca": "Suzuki",
+      "modelo": "S-Cross",
+      "version": "1.4 turbo",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "CL"
+      ],
+      "anos": "2016–2025"
+    },
+    {
+      "marca": "Suzuki",
+      "modelo": "Swift",
+      "version": "1.2 N",
+      "ciudad": 7.5,
+      "ruta": 5.8,
+      "paises": [
+        "CL"
+      ],
+      "anos": "2010–2025"
+    },
+    {
+      "marca": "Suzuki",
+      "modelo": "Vitara",
+      "version": "1.4 turbo",
+      "ciudad": 9,
+      "ruta": 6.5,
+      "paises": [
+        "AR",
+        "CL"
+      ],
+      "anos": "2015–2025"
+    },
+    {
+      "marca": "Toyota",
+      "modelo": "Corolla Cross",
+      "version": "2.0 híbrido",
+      "ciudad": 6.5,
+      "ruta": 5.8,
+      "paises": [
+        "AR",
+        "UY"
+      ],
+      "anos": "2022–2025"
+    },
+    {
+      "marca": "Toyota",
+      "modelo": "Corolla Cross",
+      "version": "2.0 híbrido flex",
+      "ciudad": 6.8,
+      "ruta": 6,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2022–2025"
+    },
+    {
+      "marca": "Toyota",
+      "modelo": "Corolla",
+      "version": "1.8 híbrido",
+      "ciudad": 7,
+      "ruta": 5.8,
+      "paises": [
+        "AR",
+        "UY"
+      ],
+      "anos": "2020–2025"
+    },
+    {
+      "marca": "Toyota",
+      "modelo": "Corolla",
+      "version": "1.8 N",
+      "ciudad": 10.5,
+      "ruta": 7.8,
+      "paises": [
+        "AR",
+        "UY"
+      ],
+      "anos": "1998–2013"
+    },
+    {
+      "marca": "Toyota",
+      "modelo": "Corolla",
+      "version": "2.0 flex",
+      "ciudad": 10.5,
+      "ruta": 7.8,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2019–2025"
+    },
+    {
+      "marca": "Toyota",
+      "modelo": "Corolla",
+      "version": "2.0 N",
+      "ciudad": 10,
+      "ruta": 7,
+      "paises": [
+        "AR",
+        "UY",
+        "CL"
+      ],
+      "anos": "2014–2025"
+    },
+    {
+      "marca": "Toyota",
+      "modelo": "Etios",
+      "version": "1.5 + GNC",
+      "ciudad": 9,
+      "ruta": 6.8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2015–2021",
+      "gnc_ciudad": 10.5,
+      "gnc_ruta": 7.8
+    },
+    {
+      "marca": "Toyota",
+      "modelo": "Etios",
+      "version": "1.5 flex",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2012–2022"
+    },
+    {
+      "marca": "Toyota",
+      "modelo": "Etios",
+      "version": "1.5 N",
+      "ciudad": 9,
+      "ruta": 6.8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2013–2021"
+    },
+    {
+      "marca": "Toyota",
+      "modelo": "Fortuner",
+      "version": "2.7 N",
+      "ciudad": 15,
+      "ruta": 11.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2006–2010"
+    },
+    {
+      "marca": "Toyota",
+      "modelo": "Hilux",
+      "version": "2.4 diesel",
+      "ciudad": 11.5,
+      "ruta": 9,
+      "paises": [
+        "AR",
+        "UY",
+        "CL",
+        "BR"
+      ],
+      "anos": "2015–2025"
+    },
+    {
+      "marca": "Toyota",
+      "modelo": "Hilux",
+      "version": "2.7 N",
+      "ciudad": 13,
+      "ruta": 10,
+      "paises": [
+        "AR",
+        "UY",
+        "CL"
+      ],
+      "anos": "2004–2011"
+    },
+    {
+      "marca": "Toyota",
+      "modelo": "Hilux",
+      "version": "2.8 diesel",
+      "ciudad": 11,
+      "ruta": 8.5,
+      "paises": [
+        "AR",
+        "UY",
+        "CL",
+        "BR"
+      ],
+      "anos": "2015–2025"
+    },
+    {
+      "marca": "Toyota",
+      "modelo": "Hilux",
+      "version": "3.0 diesel",
+      "ciudad": 12,
+      "ruta": 9,
+      "paises": [
+        "AR",
+        "UY",
+        "CL"
+      ],
+      "anos": "2004–2015"
+    },
+    {
+      "marca": "Toyota",
+      "modelo": "Land Cruiser Prado",
+      "version": "2.7 N",
+      "ciudad": 15,
+      "ruta": 12,
+      "paises": [
+        "AR",
+        "CL"
+      ],
+      "anos": "2003–2015"
+    },
+    {
+      "marca": "Toyota",
+      "modelo": "Land Cruiser Prado",
+      "version": "2.8 diesel",
+      "ciudad": 14,
+      "ruta": 11,
+      "paises": [
+        "AR",
+        "CL"
+      ],
+      "anos": "2016–2025"
+    },
+    {
+      "marca": "Toyota",
+      "modelo": "Prius",
+      "version": "1.8 híbrido",
+      "ciudad": 5.5,
+      "ruta": 4.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2010–2022"
+    },
+    {
+      "marca": "Toyota",
+      "modelo": "RAV4",
+      "version": "2.0 N",
+      "ciudad": 12,
+      "ruta": 9,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2013–2018"
+    },
+    {
+      "marca": "Toyota",
+      "modelo": "RAV4",
+      "version": "2.5 híbrido",
+      "ciudad": 7.5,
+      "ruta": 6.5,
+      "paises": [
+        "AR",
+        "UY",
+        "CL"
+      ],
+      "anos": "2019–2025"
+    },
+    {
+      "marca": "Toyota",
+      "modelo": "SW4",
+      "version": "2.7 N",
+      "ciudad": 14,
+      "ruta": 11,
+      "paises": [
+        "AR",
+        "UY",
+        "CL"
+      ],
+      "anos": "2005–2015"
+    },
+    {
+      "marca": "Toyota",
+      "modelo": "SW4",
+      "version": "2.8 diesel",
+      "ciudad": 13,
+      "ruta": 10,
+      "paises": [
+        "AR",
+        "UY",
+        "CL"
+      ],
+      "anos": "2016–2025"
+    },
+    {
+      "marca": "Toyota",
+      "modelo": "Yaris",
+      "version": "1.3 N",
+      "ciudad": 8.5,
+      "ruta": 6.5,
+      "paises": [
+        "AR",
+        "UY",
+        "CL"
+      ],
+      "anos": "2006–2020"
+    },
+    {
+      "marca": "Toyota",
+      "modelo": "Yaris",
+      "version": "1.5 flex",
+      "ciudad": 9,
+      "ruta": 6.8,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2018–2025"
+    },
+    {
+      "marca": "Toyota",
+      "modelo": "Yaris",
+      "version": "1.5 N",
+      "ciudad": 8.5,
+      "ruta": 6.5,
+      "paises": [
+        "UY",
+        "CL"
+      ],
+      "anos": "2020–2025"
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Amarok",
+      "version": "2.0 Bi-TDI",
+      "ciudad": 11.5,
+      "ruta": 9,
+      "paises": [
+        "AR",
+        "UY"
+      ],
+      "anos": "2011–2022"
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Amarok",
+      "version": "2.0 TDI",
+      "ciudad": 12,
+      "ruta": 9,
+      "paises": [
+        "AR",
+        "UY"
+      ],
+      "anos": "2011–2016"
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Amarok",
+      "version": "3.0 V6 TDI",
+      "ciudad": 13,
+      "ruta": 10,
+      "paises": [
+        "AR",
+        "UY"
+      ],
+      "anos": "2017–2025"
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Bora/Vento",
+      "version": "1.4 TSI",
+      "ciudad": 9,
+      "ruta": 6.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2012–2025"
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Bora/Vento",
+      "version": "1.4 TSI + GNC",
+      "ciudad": 9,
+      "ruta": 6.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2012–2025",
+      "gnc_ciudad": 10.5,
+      "gnc_ruta": 7.8
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Bora/Vento",
+      "version": "2.0 N",
+      "ciudad": 11.5,
+      "ruta": 8.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2000–2011"
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Fox",
+      "version": "1.0 N",
+      "ciudad": 9,
+      "ruta": 6.8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2005–2011"
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Fox",
+      "version": "1.6 N",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2005–2011"
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Gol",
+      "version": "1.0 N",
+      "ciudad": 9,
+      "ruta": 6.8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "1994–2008"
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Gol",
+      "version": "1.0 turbo flex",
+      "ciudad": 9,
+      "ruta": 6.5,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2018–2025"
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Gol",
+      "version": "1.4 N",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2008–2014"
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Gol",
+      "version": "1.6 + GNC",
+      "ciudad": 9.5,
+      "ruta": 6.8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2015–2025",
+      "gnc_ciudad": 11,
+      "gnc_ruta": 8.2
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Gol",
+      "version": "1.6 N",
+      "ciudad": 9.5,
+      "ruta": 6.8,
+      "paises": [
+        "AR",
+        "UY",
+        "CL"
+      ],
+      "anos": "2014–2025"
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Golf",
+      "version": "1.4 TSI",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2013–2025"
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Golf",
+      "version": "1.6 N",
+      "ciudad": 10.5,
+      "ruta": 7.8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2000–2014"
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Passat",
+      "version": "1.8 turbo",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2007–2015"
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Passat",
+      "version": "2.0 TSI",
+      "ciudad": 11,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2007–2015"
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Polo Classic",
+      "version": "1.6 N",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "1997–2009"
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Polo",
+      "version": "1.0 turbo flex",
+      "ciudad": 9,
+      "ruta": 7,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2018–2025"
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Polo",
+      "version": "1.6 + GNC",
+      "ciudad": 10,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2010–2025",
+      "gnc_ciudad": 11.5,
+      "gnc_ruta": 8.5
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Polo",
+      "version": "1.6 N",
+      "ciudad": 10,
+      "ruta": 7,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2002–2025"
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Saveiro",
+      "version": "1.6 flex",
+      "ciudad": 10.5,
+      "ruta": 8,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2010–2025"
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Saveiro",
+      "version": "1.6 N",
+      "ciudad": 10.5,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2010–2018"
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Suran",
+      "version": "1.6 N",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2006–2018"
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "T-Cross",
+      "version": "1.0 turbo",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR",
+        "UY",
+        "CL",
+        "BR"
+      ],
+      "anos": "2019–2025"
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Taos",
+      "version": "1.4 turbo",
+      "ciudad": 9.5,
+      "ruta": 7,
+      "paises": [
+        "AR",
+        "UY"
+      ],
+      "anos": "2021–2025"
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Tiguan",
+      "version": "1.4 TSI",
+      "ciudad": 11.5,
+      "ruta": 8.5,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2010–2020"
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Tiguan",
+      "version": "2.0 TSI",
+      "ciudad": 11,
+      "ruta": 8,
+      "paises": [
+        "AR"
+      ],
+      "anos": "2020–2025"
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Virtus",
+      "version": "1.0 turbo",
+      "ciudad": 9,
+      "ruta": 7,
+      "paises": [
+        "AR",
+        "UY",
+        "CL"
+      ],
+      "anos": "2021–2025"
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Virtus",
+      "version": "1.0 turbo flex",
+      "ciudad": 9,
+      "ruta": 7,
+      "paises": [
+        "BR"
+      ],
+      "anos": "2018–2025"
+    },
+    {
+      "marca": "Volkswagen",
+      "modelo": "Virtus",
+      "version": "1.6 N",
+      "ciudad": 10,
+      "ruta": 7.5,
+      "paises": [
+        "AR",
+        "UY"
+      ],
+      "anos": "2019–2025"
+    }
+  ],
+  "uberPorKm": 1800
 }
