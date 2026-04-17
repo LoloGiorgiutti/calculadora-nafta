@@ -1037,22 +1037,12 @@
   <!-- Card: Combustible -->
   <div class="card">
     <div class="card-title">Combustible</div>
-    <div class="grid-2">
-      <div class="field">
-        <label>Estación de servicio</label>
-        <div class="select-wrapper">
-          <select id="select-estacion" onchange="onEstacionChange()">
-            <option value="">— Estación —</option>
-          </select>
-        </div>
-      </div>
-      <div class="field">
-        <label>Tipo de combustible</label>
-        <div class="select-wrapper">
-          <select id="select-nafta" onchange="calcular()">
-            <option value="">— Tipo —</option>
-          </select>
-        </div>
+    <div class="field">
+      <label>Tipo de combustible</label>
+      <div class="select-wrapper">
+        <select id="select-nafta" onchange="calcular()">
+          <option value="">— Tipo —</option>
+        </select>
       </div>
     </div>
   </div>
@@ -1257,17 +1247,19 @@
         </div>
       </div>
 
-      <!-- ── ESTACIONES ── -->
+      <!-- ── PRECIOS DE COMBUSTIBLE ── -->
       <div class="admin-section">
-        <h3>Estaciones y combustibles</h3>
-        <div class="admin-car-tabs" id="admin-station-tabs" style="margin-bottom:14px">
-          <button class="admin-car-tab active" onclick="switchStationTab('AR',this)">🇦🇷 Argentina</button>
-          <button class="admin-car-tab" onclick="switchStationTab('UY',this)">🇺🇾 Uruguay</button>
-          <button class="admin-car-tab" onclick="switchStationTab('CL',this)">🇨🇱 Chile</button>
-          <button class="admin-car-tab" onclick="switchStationTab('BR',this)">🇧🇷 Brasil</button>
-        </div>
-        <div id="admin-stations-container"></div>
-        <button class="admin-add-car" style="margin-top:8px" onclick="addStation()">+ Agregar estación</button>
+        <h3>Precios de combustible</h3>
+        <p class="admin-hint" style="margin-bottom:12px">Precio promedio entre estaciones de servicio ($/litro o $/m³ para GNC).</p>
+        <table style="width:100%; border-collapse:collapse">
+          <thead>
+            <tr>
+              <th style="text-align:left; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-light); padding:0 0 8px; font-weight:600">Tipo</th>
+              <th style="text-align:right; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-light); padding:0 0 8px; font-weight:600">Precio</th>
+            </tr>
+          </thead>
+          <tbody id="admin-fuel-tbody"></tbody>
+        </table>
       </div>
 
       <!-- ── TARIFAS DE REFERENCIA ── -->
@@ -1692,99 +1684,16 @@ const DEFAULT_DATA = {
     {marca:"Volkswagen", modelo:"Virtus",    version:"1.0 turbo",     anos:"2021–2025", ciudad:9.0,  ruta:7.0,  tanque:52, paises:['AR','UY','CL']},
     {marca:"Volkswagen", modelo:"Virtus",    version:"1.0 turbo flex",anos:"2018–2025", ciudad:9.0,  ruta:7.0,  tanque:52, paises:['BR']},
   ],
-  estaciones: {
+  // Precios promedio entre estaciones de servicio (YPF, Shell, Axion, Puma, etc.)
+  combustibles: {
     AR: [
-      { nombre:"YPF",       naftas:[
-        {tipo:"Súper",          precio:1060},
-        {tipo:"Premium",        precio:1130},
-        {tipo:"Infinia",        precio:1290},
-        {tipo:"Diesel",         precio:990},
-        {tipo:"Infinia Diesel", precio:1170},
-      ]},
-      { nombre:"Shell",     naftas:[
-        {tipo:"Regular",         precio:1065},
-        {tipo:"V-Power",         precio:1145},
-        {tipo:"V-Power Racing",  precio:1310},
-        {tipo:"Diesel",          precio:995},
-        {tipo:"V-Power Diesel",  precio:1185},
-      ]},
-      { nombre:"Axion",     naftas:[
-        {tipo:"Regular",     precio:1055},
-        {tipo:"Premium",     precio:1120},
-        {tipo:"Ultra",       precio:1275},
-        {tipo:"Diesel",      precio:985},
-        {tipo:"Ultra Diesel",precio:1160},
-      ]},
-      { nombre:"Puma",      naftas:[
-        {tipo:"Regular", precio:1050},
-        {tipo:"Premium", precio:1115},
-        {tipo:"Diesel",  precio:980},
-      ]},
-      { nombre:"Petrobras", naftas:[
-        {tipo:"Regular", precio:1055},
-        {tipo:"Premium", precio:1120},
-        {tipo:"Podium",  precio:1270},
-        {tipo:"Diesel",  precio:985},
-      ]},
-      { nombre:"Refinor",   naftas:[
-        {tipo:"Regular", precio:1040},
-        {tipo:"Premium", precio:1110},
-        {tipo:"Diesel",  precio:975},
-      ]},
-      { nombre:"GNC YPF Gas",       naftas:[{tipo:"GNC", precio:96}]},
-      { nombre:"GNC Shell Gas",     naftas:[{tipo:"GNC", precio:95}]},
-      { nombre:"GNC Axion Energy",  naftas:[{tipo:"GNC", precio:93}]},
-      { nombre:"GNC Independiente", naftas:[{tipo:"GNC", precio:90}]},
-    ],
-    UY: [
-      { nombre:"ANCAP", naftas:[
-        {tipo:"Regular (91)",  precio:79},
-        {tipo:"Premium (95)", precio:85},
-        {tipo:"Gasoil",        precio:64},
-      ]},
-      { nombre:"Shell UY", naftas:[
-        {tipo:"Regular",  precio:80},
-        {tipo:"V-Power",  precio:88},
-        {tipo:"Diesel",   precio:65},
-      ]},
-      { nombre:"Petrobras UY", naftas:[
-        {tipo:"Regular",  precio:79},
-        {tipo:"Premium",  precio:86},
-        {tipo:"Diesel",   precio:64},
-      ]},
-    ],
-    CL: [
-      { nombre:"Copec", naftas:[
-        {tipo:"93 octanos",  precio:1120},
-        {tipo:"95 octanos",  precio:1180},
-        {tipo:"97 octanos",  precio:1240},
-        {tipo:"Diesel",      precio:980},
-      ]},
-      { nombre:"Shell CL", naftas:[
-        {tipo:"93 octanos",  precio:1115},
-        {tipo:"95 octanos",  precio:1175},
-        {tipo:"V-Power",     precio:1250},
-        {tipo:"Diesel",      precio:975},
-      ]},
-      { nombre:"Petrobras CL", naftas:[
-        {tipo:"93 octanos", precio:1110},
-        {tipo:"95 octanos", precio:1170},
-        {tipo:"Diesel",     precio:970},
-      ]},
-    ],
-    BR: [
-      { nombre:"Petrobras BR", naftas:[
-        {tipo:"Gasolina comum",  precio:6.20},
-        {tipo:"Gasolina aditivada", precio:6.60},
-        {tipo:"Etanol",          precio:4.30},
-        {tipo:"Diesel",          precio:6.00},
-      ]},
-      { nombre:"Shell BR", naftas:[
-        {tipo:"Gasolina comum",     precio:6.25},
-        {tipo:"V-Power",            precio:6.80},
-        {tipo:"Diesel",             precio:6.05},
-      ]},
-    ],
+      { tipo: "Regular / Súper",    precio: 1055 },
+      { tipo: "Premium",            precio: 1120 },
+      { tipo: "Ultra / Infinia",    precio: 1290 },
+      { tipo: "Diesel",             precio: 985  },
+      { tipo: "Diesel Premium",     precio: 1170 },
+      { tipo: "GNC",                precio: 94   },
+    ]
   }
 };
 
@@ -1802,11 +1711,9 @@ try {
   if (Array.isArray(saved.autos) && saved.autos.length && saved.autos[0].marca) {
     appData.autos = saved.autos;
   }
-  if (saved.estaciones) {
-    for (const pais of Object.keys(saved.estaciones)) {
-      if (appData.estaciones[pais] !== undefined) {
-        appData.estaciones[pais] = saved.estaciones[pais];
-      }
+  if (saved.combustibles) {
+    for (const pais of Object.keys(saved.combustibles)) {
+      appData.combustibles[pais] = saved.combustibles[pais];
     }
   }
 } catch(e) {}
@@ -1826,9 +1733,9 @@ async function init() {
     const res = await fetch('/config.json?t=' + Date.now());
     if (res.ok) {
       const remote = await res.json();
-      if (remote.estaciones) {
-        for (const pais of Object.keys(remote.estaciones)) {
-          appData.estaciones[pais] = remote.estaciones[pais];
+      if (remote.combustibles) {
+        for (const pais of Object.keys(remote.combustibles)) {
+          appData.combustibles[pais] = remote.combustibles[pais];
         }
       }
       if (Array.isArray(remote.autos) && remote.autos.length && remote.autos[0].marca) {
@@ -1844,7 +1751,7 @@ async function init() {
   document.getElementById('last-update').textContent   = appData.lastUpdate;
 
   populateAutos();
-  populateEstaciones();
+  populateCombustibles();
   onSliderRoad();
 
   // Aplicar parámetros compartidos de la URL (link compartido)
@@ -1958,16 +1865,10 @@ function updateGNCDisplay() {
   const content = document.getElementById('gnc-panel-content');
   if (isGNC) { content.innerHTML = ''; return; }
 
-  // Buscar precio GNC más barato del país
-  let precioGNC = null;
-  let nombreEst = '';
-  for (const est of appData.estaciones[currentCountry]) {
-    const n = est.naftas.find(n => n.tipo === 'GNC');
-    if (n && (precioGNC === null || n.precio < precioGNC)) {
-      precioGNC = n.precio; nombreEst = est.nombre;
-    }
-  }
-  if (precioGNC === null) { content.innerHTML = '<p style="color:var(--ink-faint);font-size:13px">No hay estaciones GNC configuradas para este país.</p>'; return; }
+  // Buscar precio GNC del país
+  const cGNC = (appData.combustibles[currentCountry] || []).find(c => c.tipo === 'GNC');
+  const precioGNC = cGNC ? cGNC.precio : null;
+  if (precioGNC === null) { content.innerHTML = '<p style="color:var(--ink-faint);font-size:13px">No hay precio GNC configurado.</p>'; return; }
 
   // Consumo GNC: si el auto tiene datos GNC los usa, si no estima × 0.85
   const consumoGNC = auto.gnc_ciudad
@@ -1997,10 +1898,6 @@ function updateGNCDisplay() {
       <div class="gnc-cell">
         <div class="gnc-cell-lbl">Precio GNC</div>
         <div class="gnc-cell-val">${currency} ${fmt(precioGNC, 2)} / m³</div>
-      </div>
-      <div class="gnc-cell">
-        <div class="gnc-cell-lbl">Estación ref.</div>
-        <div class="gnc-cell-val" style="font-size:1rem">${nombreEst}</div>
       </div>
     </div>
     ${bannerHtml}
@@ -2047,17 +1944,15 @@ function updateUberDisplay() {
     <p class="gnc-note">* Estimación orientativa. El precio real de Uber varía según demanda, hora y ruta.</p>`;
 }
 
-function populateEstaciones() {
-  const estaciones = appData.estaciones[currentCountry] || [];
-  const selEst = document.getElementById('select-estacion');
-  selEst.innerHTML = '<option value="">— Estación —</option>';
-  estaciones.forEach((e, i) => {
+function populateCombustibles() {
+  const lista  = appData.combustibles[currentCountry] || [];
+  const sel    = document.getElementById('select-nafta');
+  sel.innerHTML = '<option value="">— Tipo —</option>';
+  lista.forEach((c, i) => {
     const o = document.createElement('option');
-    o.value = i;
-    o.textContent = e.nombre;
-    selEst.appendChild(o);
+    o.value = i; o.textContent = c.tipo;
+    sel.appendChild(o);
   });
-  document.getElementById('select-nafta').innerHTML = '<option value="">— Tipo —</option>';
   calcular();
 }
 
@@ -2065,22 +1960,7 @@ function onCountryChange() {
   currentCountry = document.getElementById('select-country').value;
   document.getElementById('flag-display').textContent = FLAGS[currentCountry] || '🌎';
   populateAutos();
-  populateEstaciones();
-}
-
-function onEstacionChange() {
-  const estIdx = document.getElementById('select-estacion').value;
-  const selNafta = document.getElementById('select-nafta');
-  selNafta.innerHTML = '<option value="">— Tipo —</option>';
-  if (estIdx === '') { calcular(); return; }
-  const naftas = appData.estaciones[currentCountry][estIdx].naftas;
-  naftas.forEach((n, i) => {
-    const o = document.createElement('option');
-    o.value = i;
-    o.textContent = n.tipo;
-    selNafta.appendChild(o);
-  });
-  calcular();
+  populateCombustibles();
 }
 
 function onSliderRoad() {
@@ -2107,7 +1987,6 @@ function calcular() {
   const modelo     = document.getElementById('select-modelo').value;
   const versionIdx = document.getElementById('select-version').value;
   const km         = parseFloat(document.getElementById('input-km').value);
-  const estIdx     = document.getElementById('select-estacion').value;
   const naftaIdx   = document.getElementById('select-nafta').value;
 
   const amountEl  = document.getElementById('result-amount');
@@ -2125,7 +2004,7 @@ function calcular() {
     lastResult = null;
   };
 
-  if (!marca || !modelo || versionIdx === '' || !km || estIdx === '' || naftaIdx === '') {
+  if (!marca || !modelo || versionIdx === '' || !km || naftaIdx === '') {
     hide('Completá los datos'); return;
   }
 
@@ -2134,9 +2013,9 @@ function calcular() {
   )[parseInt(versionIdx)];
   if (!auto) { hide('Auto no encontrado'); return; }
 
-  const estacion = appData.estaciones[currentCountry][estIdx];
-  const nafta    = estacion.naftas[naftaIdx];
-  const isGNC    = nafta.tipo === 'GNC';
+  const nafta = appData.combustibles[currentCountry][parseInt(naftaIdx)];
+  if (!nafta) { hide('Combustible no encontrado'); return; }
+  const isGNC = nafta.tipo === 'GNC';
 
   let consumo;
   if (isGNC) {
@@ -2186,7 +2065,7 @@ function calcular() {
   document.getElementById('share-row').style.display = '';
 
   // GNC chip: visible solo si el combustible actual NO es GNC y hay precio GNC en el país
-  const hayGNC = appData.estaciones[currentCountry].some(e => e.naftas.some(n => n.tipo === 'GNC'));
+  const hayGNC = (appData.combustibles[currentCountry] || []).some(c => c.tipo === 'GNC');
   document.getElementById('chip-gnc').style.display = (!isGNC && hayGNC) ? '' : 'none';
 
   // Chip comparar
@@ -2214,21 +2093,15 @@ async function compartirResultado() {
   if (!lastResult) return;
   const { costo, currency, fmt, auto, km } = lastResult;
 
-  const marca   = document.getElementById('select-marca').value;
-  const modelo  = document.getElementById('select-modelo').value;
-  const vIdx    = document.getElementById('select-version').value;
-  const estIdx  = document.getElementById('select-estacion').value;
-  const nftIdx  = document.getElementById('select-nafta').value;
-  const estacion = appData.estaciones[currentCountry][parseInt(estIdx)];
-  const nafta    = estacion.naftas[parseInt(nftIdx)];
+  const marca  = document.getElementById('select-marca').value;
+  const modelo = document.getElementById('select-modelo').value;
+  const vIdx   = document.getElementById('select-version').value;
+  const nftIdx = document.getElementById('select-nafta').value;
+  const nafta  = appData.combustibles[currentCountry][parseInt(nftIdx)];
 
-  const params = new URLSearchParams({
-    marca, modelo, v: vIdx,
-    km: Math.round(km), road: roadPct,
-    est: estacion.nombre, nft: nafta.tipo
-  });
+  const params   = new URLSearchParams({ marca, modelo, v: vIdx, km: Math.round(km), road: roadPct, nft: nafta.tipo });
   const shareUrl = `https://calculadoradenafta.com/?${params}`;
-  const texto    = `🚗 ${auto.marca} ${auto.modelo} · ${estacion.nombre} ${nafta.tipo} · ${Math.round(km)} km\n💰 ${currency} ${fmt(costo)} en combustible\n${shareUrl}`;
+  const texto    = `🚗 ${auto.marca} ${auto.modelo} · ${nafta.tipo} · ${Math.round(km)} km\n💰 ${currency} ${fmt(costo)} en combustible\n${shareUrl}`;
 
   const btn  = document.getElementById('btn-share');
   const orig = btn.innerHTML;
@@ -2261,8 +2134,7 @@ function applyUrlParams() {
   const vIdx      = p.get('v')    || '0';
   const km        = p.get('km')   || '100';
   const road      = parseInt(p.get('road') || '30');
-  const estNombre = p.get('est')  || '';
-  const nftTipo   = p.get('nft')  || '';
+  const nftTipo = p.get('nft') || '';
 
   // Auto
   const selMarca = document.getElementById('select-marca');
@@ -2284,19 +2156,11 @@ function applyUrlParams() {
   roadPct = road;
   onSliderRoad();
 
-  // Estación y combustible
-  if (estNombre) {
-    const estaciones = appData.estaciones[currentCountry];
-    const estIdx = estaciones.findIndex(e => e.nombre === estNombre);
-    if (estIdx >= 0) {
-      document.getElementById('select-estacion').value = estIdx;
-      onEstacionChange();
-      if (nftTipo) {
-        const selNafta = document.getElementById('select-nafta');
-        const nftIdx   = estaciones[estIdx].naftas.findIndex(n => n.tipo === nftTipo);
-        if (nftIdx >= 0) selNafta.value = nftIdx;
-      }
-    }
+  // Combustible
+  if (nftTipo) {
+    const lista  = appData.combustibles[currentCountry] || [];
+    const nftIdx = lista.findIndex(c => c.tipo === nftTipo);
+    if (nftIdx >= 0) document.getElementById('select-nafta').value = nftIdx;
   }
 
   calcular();
@@ -2588,73 +2452,33 @@ function collectCarsFromTable() {
 }
 
 // ── Station admin ────────────────────────────────────────────
-let currentAdminStationTab = 'AR';
-
-function switchStationTab(pais, btn) {
-  currentAdminStationTab = pais;
-  document.querySelectorAll('#admin-station-tabs .admin-car-tab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
-  renderStations(pais);
-}
-
-function renderStations(pais) {
-  const container = document.getElementById('admin-stations-container');
-  container.innerHTML = '';
-  (appData.estaciones[pais] || []).forEach(est => container.appendChild(makeStationCard(est)));
-}
-
-function makeStationCard(est) {
-  const card = document.createElement('div');
-  card.className = 'admin-station-card';
-  const fuelHtml = (est.naftas || []).map(n => `
-    <div class="admin-fuel-row">
-      <input type="text" data-field="tipo" value="${escHtml(n.tipo)}" placeholder="Tipo de combustible">
-      <input type="number" data-field="precio" value="${n.precio}" step="0.01" min="0">
-      <button class="admin-car-del" onclick="this.closest('.admin-fuel-row').remove()">✕</button>
-    </div>`).join('');
-  card.innerHTML = `
-    <div class="admin-station-header">
-      <input type="text" data-field="nombre" value="${escHtml(est.nombre)}" placeholder="Nombre de la estación">
-      <button class="admin-station-del" onclick="this.closest('.admin-station-card').remove()">✕ Eliminar</button>
-    </div>
-    <div class="fuel-rows-container">${fuelHtml}</div>
-    <button class="admin-add-fuel" onclick="addFuelType(this)">+ Agregar combustible</button>`;
-  return card;
-}
-
-function addFuelType(btn) {
-  const container = btn.previousElementSibling;
-  const div = document.createElement('div');
-  div.className = 'admin-fuel-row';
-  div.innerHTML = `
-    <input type="text" data-field="tipo" placeholder="Tipo de combustible">
-    <input type="number" data-field="precio" step="0.01" min="0" placeholder="0">
-    <button class="admin-car-del" onclick="this.closest('.admin-fuel-row').remove()">✕</button>`;
-  container.appendChild(div);
-  div.querySelector('input').focus();
-}
-
-function addStation() {
-  const container = document.getElementById('admin-stations-container');
-  const card = makeStationCard({nombre:'', naftas:[{tipo:'', precio:0}]});
-  container.appendChild(card);
-  card.querySelector('input').focus();
-}
-
-function collectStationsFromUI() {
-  const estaciones = [];
-  document.querySelectorAll('#admin-stations-container .admin-station-card').forEach(card => {
-    const nombre = card.querySelector('[data-field="nombre"]').value.trim();
-    if (!nombre) return;
-    const naftas = [];
-    card.querySelectorAll('.admin-fuel-row').forEach(row => {
-      const tipo   = row.querySelector('[data-field="tipo"]').value.trim();
-      const precio = parseFloat(row.querySelector('[data-field="precio"]').value);
-      if (tipo && !isNaN(precio)) naftas.push({tipo, precio});
-    });
-    if (naftas.length) estaciones.push({nombre, naftas});
+function renderFuelPrices() {
+  const tbody = document.getElementById('admin-fuel-tbody');
+  tbody.innerHTML = '';
+  (appData.combustibles['AR'] || []).forEach(c => {
+    const tr = document.createElement('tr');
+    tr.dataset.tipo = c.tipo;
+    tr.innerHTML = `
+      <td style="padding:8px 4px 8px 0; font-size:14px; color:var(--ink)">${escHtml(c.tipo)}</td>
+      <td style="padding:8px 0; text-align:right">
+        <input type="number" value="${c.precio}" step="1" min="0"
+          style="width:96px; padding:7px 10px; border:1.5px solid var(--border); border-radius:var(--radius-sm);
+                 font-family:'DM Sans',sans-serif; font-size:14px; background:var(--bg); color:var(--ink);
+                 outline:none; text-align:right;"
+          onfocus="this.style.borderColor='var(--hi)'" onblur="this.style.borderColor='var(--border)'">
+      </td>`;
+    tbody.appendChild(tr);
   });
-  return estaciones;
+}
+
+function collectFuelPricesFromUI() {
+  const result = [];
+  document.querySelectorAll('#admin-fuel-tbody tr').forEach(tr => {
+    const tipo   = tr.dataset.tipo;
+    const precio = parseFloat(tr.querySelector('input').value);
+    if (tipo && !isNaN(precio)) result.push({ tipo, precio });
+  });
+  return result;
 }
 
 function openAdmin() {
@@ -2668,13 +2492,8 @@ function openAdmin() {
   document.getElementById('adm-gh-token').value   = localStorage.getItem('gh_token') || '';
   document.getElementById('publish-status').textContent = '';
 
-  // Cars table — global view (no country filter)
   renderCarTable();
-
-  // Stations — reset to AR tab
-  currentAdminStationTab = 'AR';
-  document.querySelectorAll('#admin-station-tabs .admin-car-tab').forEach((t,i) => t.classList.toggle('active', i===0));
-  renderStations('AR');
+  renderFuelPrices();
 }
 
 function closeAdmin() {
@@ -2694,7 +2513,7 @@ async function saveAdmin() {
   appData.lastUpdate = `${months[now.getMonth()]} ${now.getFullYear()}`;
 
   appData.autos = collectCarsFromTable();
-  appData.estaciones[currentAdminStationTab] = collectStationsFromUI();
+  appData.combustibles['AR'] = collectFuelPricesFromUI();
 
   // Guardar token en localStorage (no en config.json — es privado)
   const token = (document.getElementById('adm-gh-token').value || '').trim();
@@ -2703,7 +2522,7 @@ async function saveAdmin() {
   // Persistir localmente
   localStorage.setItem('nafta_data', JSON.stringify({
     title: appData.title, subtitle: appData.subtitle,
-    lastUpdate: appData.lastUpdate, autos: appData.autos, estaciones: appData.estaciones,
+    lastUpdate: appData.lastUpdate, autos: appData.autos, combustibles: appData.combustibles,
     uberPorKm: appData.uberPorKm, sheetsUrl: appData.sheetsUrl, carsSheetUrl: appData.carsSheetUrl
   }));
 
@@ -2733,10 +2552,10 @@ async function publishToGitHub(token) {
   try {
     const owner = 'LoloGiorgiutti', repo = 'calculadora-nafta', path = 'config.json';
     const configData = {
-      lastUpdate: appData.lastUpdate,
-      estaciones: appData.estaciones,
-      autos: appData.autos,
-      uberPorKm: appData.uberPorKm
+      lastUpdate:  appData.lastUpdate,
+      combustibles: appData.combustibles,
+      autos:       appData.autos,
+      uberPorKm:   appData.uberPorKm
     };
     const content = JSON.stringify(configData, null, 2);
     // btoa con soporte UTF-8
@@ -2760,8 +2579,9 @@ async function publishToGitHub(token) {
 }
 
 // ── Google Sheets: precios ───────────────────────────────────
-// Formato CSV: pais,estacion,tipo,precio  (encabezado en fila 1)
-// La planilla es fuente de verdad: si borrás una fila, ese combustible desaparece de esa estación.
+// Formato CSV: tipo,precio  (encabezado en fila 1)
+// Ejemplo: Regular / Súper,1055
+// Si borrás una fila, ese tipo de combustible desaparece de la app.
 async function fetchSheetsPrices() {
   const url    = document.getElementById('adm-sheets-url').value.trim();
   const status = document.getElementById('sheets-status');
@@ -2769,40 +2589,28 @@ async function fetchSheetsPrices() {
 
   status.textContent = 'Descargando precios…';
   try {
-    const res  = await fetch(url + (url.includes('?') ? '&' : '?') + 't=' + Date.now());
-    const text = await res.text();
-    const lines = text.trim().split('\n').slice(1); // saltar encabezado
+    const res   = await fetch(url + (url.includes('?') ? '&' : '?') + 't=' + Date.now());
+    const text  = await res.text();
+    const lines = text.trim().split('\n').slice(1);
 
-    // Agrupar filas por estación → reemplazar naftas completas
-    const byStation = {}; // clave: "pais|estacion"
+    const nuevos = [];
     lines.forEach(line => {
       const cols = line.split(',').map(s => s.trim().replace(/^"|"$/g, ''));
-      const [pais, estacion, tipo, precioStr] = cols;
-      if (!pais || !estacion || !tipo || !precioStr) return;
+      const [tipo, precioStr] = cols;
+      if (!tipo || !precioStr) return;
       const precio = parseFloat(precioStr);
-      if (isNaN(precio)) return;
-      const key = `${pais}|${estacion}`;
-      if (!byStation[key]) byStation[key] = { pais, estacion, naftas: [] };
-      byStation[key].naftas.push({ tipo, precio });
+      if (!isNaN(precio)) nuevos.push({ tipo, precio });
     });
 
-    // Reemplazar el array de naftas de cada estación encontrada en el Sheet
-    // (estaciones que no aparecen en el Sheet quedan sin tocar)
-    let count = 0;
-    for (const { pais, estacion, naftas } of Object.values(byStation)) {
-      const ests = appData.estaciones[pais];
-      if (!ests) continue;
-      const est = ests.find(e => e.nombre === estacion);
-      if (!est) continue;
-      est.naftas = naftas; // reemplazo total — si falta una fila, ese tipo desaparece
-      count += naftas.length;
-    }
+    if (!nuevos.length) { status.textContent = '⚠ No se encontraron filas válidas.'; return; }
+    appData.combustibles['AR'] = nuevos; // reemplazo total
 
-    renderStations(currentAdminStationTab);
+    renderFuelPrices();
+    populateCombustibles();
     const now = new Date();
     const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
     appData.lastUpdate = `${months[now.getMonth()]} ${now.getFullYear()}`;
-    status.textContent = `✓ ${count} precio${count!==1?'s':''} cargado${count!==1?'s':''}. Guardá los cambios para publicarlos.`;
+    status.textContent = `✓ ${nuevos.length} tipo${nuevos.length!==1?'s':''} de combustible cargado${nuevos.length!==1?'s':''}. Guardá los cambios para publicarlos.`;
   } catch(e) {
     status.textContent = `✕ Error al cargar: ${e.message}`;
   }
