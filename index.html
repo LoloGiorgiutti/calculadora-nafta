@@ -351,9 +351,9 @@
   .road-slider-bg {
     position: absolute;
     left: 0; right: 0;
-    height: 6px;
+    height: 4px;
     border-radius: 99px;
-    background: #C8CCD8; /* se actualiza dinámicamente en onSliderRoad() */
+    background: #C8CCD8;
   }
   input[type="range"] {
     width: 100%;
@@ -365,27 +365,37 @@
   }
   input[type="range"]::-webkit-slider-thumb {
     appearance: none;
-    width: 24px; height: 24px;
-    border-radius: 50%;
-    background: var(--surface);
-    border: 2.5px solid var(--hi);
-    box-shadow: 0 2px 8px rgba(26,95,232,0.28);
-    transition: transform 0.15s, box-shadow 0.15s;
+    width: 4px; height: 24px;
+    border-radius: 2px;
+    background: var(--hi);
+    border: none;
+    box-shadow: 0 1px 6px rgba(26,95,232,0.35);
+    transition: transform 0.12s, box-shadow 0.12s;
   }
   input[type="range"]::-webkit-slider-thumb:hover {
-    transform: scale(1.15);
-    box-shadow: 0 4px 16px rgba(26,95,232,0.42);
+    transform: scaleY(1.15);
+    box-shadow: 0 2px 12px rgba(26,95,232,0.5);
   }
   input[type="range"]::-webkit-slider-runnable-track {
     height: 0;
     background: transparent;
   }
+  input[type="range"]::-moz-range-thumb {
+    appearance: none;
+    width: 4px; height: 24px;
+    border-radius: 2px;
+    background: var(--hi);
+    border: none;
+    box-shadow: 0 1px 6px rgba(26,95,232,0.35);
+    cursor: pointer;
+  }
   input[type="range"]::-moz-range-track {
-    height: 0;
-    background: transparent;
+    height: 4px;
+    background: #C8CCD8;
+    border-radius: 99px;
   }
   input[type="range"]::-moz-range-progress {
-    display: none;
+    background: transparent;
   }
   .road-mix-label {
     text-align: center;
@@ -2143,10 +2153,6 @@ function onSliderRoad() {
   } else {
     lbl.innerHTML = `<strong>${100-roadPct}% ciudad</strong> · <strong>${roadPct}% ruta</strong>`;
   }
-  // Fill azul crece desde la derecha (lado RUTA) según el porcentaje
-  const ciudadPct = 100 - roadPct;
-  document.querySelector('.road-slider-bg').style.background =
-    `linear-gradient(to right, #C8CCD8 ${ciudadPct}%, var(--hi) ${ciudadPct}%)`;
   calcular();
 }
 
