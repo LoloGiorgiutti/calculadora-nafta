@@ -326,34 +326,34 @@
   }
 
   /* ── ROAD SLIDER ── */
-  .road-slider-wrap {
-    margin-bottom: 0;
-  }
+  .road-slider-wrap { margin-bottom: 0; }
   .road-labels {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
   }
   .road-label {
     font-size: 12px;
-    font-weight: 500;
+    font-weight: 600;
     letter-spacing: 0.05em;
     text-transform: uppercase;
+    color: var(--ink-faint);
+    transition: color 0.2s;
   }
-  .road-label.ciudad { color: var(--ink-light); }
-  .road-label.ruta { color: var(--hi); }
+  .road-label.active-lbl { color: var(--hi); }
   .road-slider-track {
     position: relative;
-    height: 44px;
+    height: 48px;
     display: flex;
     align-items: center;
+    cursor: pointer;
   }
   .road-slider-bg {
     position: absolute;
     left: 0; right: 0;
-    height: 4px;
+    height: 3px;
     border-radius: 99px;
-    background: #C8CCD8;
+    background: var(--border);
   }
   input[type="range"] {
     width: 100%;
@@ -362,51 +362,42 @@
     position: relative;
     z-index: 2;
     cursor: pointer;
+    margin: 0;
   }
   input[type="range"]::-webkit-slider-thumb {
     appearance: none;
-    width: 4px; height: 24px;
-    border-radius: 2px;
-    background: var(--hi);
-    border: none;
-    box-shadow: 0 1px 6px rgba(26,95,232,0.35);
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 2px solid var(--hi);
+    box-shadow: 0 1px 8px rgba(26,95,232,0.28);
     transition: transform 0.12s, box-shadow 0.12s;
   }
-  input[type="range"]::-webkit-slider-thumb:hover {
-    transform: scaleY(1.15);
-    box-shadow: 0 2px 12px rgba(26,95,232,0.5);
-  }
-  input[type="range"]::-webkit-slider-runnable-track {
-    height: 0;
-    background: transparent;
-  }
+  input[type="range"]::-webkit-slider-thumb:active { transform: scale(1.18); }
+  input[type="range"]::-webkit-slider-runnable-track { height: 0; background: transparent; }
   input[type="range"]::-moz-range-thumb {
-    appearance: none;
-    width: 4px; height: 24px;
-    border-radius: 2px;
-    background: var(--hi);
-    border: none;
-    box-shadow: 0 1px 6px rgba(26,95,232,0.35);
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 2px solid var(--hi);
+    box-shadow: 0 1px 8px rgba(26,95,232,0.28);
     cursor: pointer;
   }
-  input[type="range"]::-moz-range-track {
-    height: 4px;
-    background: #C8CCD8;
-    border-radius: 99px;
+  input[type="range"]::-moz-range-track { height: 3px; background: var(--border); border-radius: 99px; }
+  input[type="range"]::-moz-range-progress { background: transparent; }
+  .road-pct-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
   }
-  input[type="range"]::-moz-range-progress {
-    background: transparent;
-  }
-  .road-mix-label {
-    text-align: center;
-    margin-top: 8px;
+  .road-pct {
     font-size: 13px;
-    color: var(--ink-light);
-    font-weight: 300;
-    min-height: 18px;
+    font-weight: 400;
+    color: var(--ink-faint);
+    transition: color 0.2s, font-weight 0.2s;
   }
-  .road-mix-label strong {
-    color: var(--accent);
+  .road-pct.dominant {
+    color: var(--ink);
     font-weight: 600;
   }
 
@@ -1141,14 +1132,17 @@
       <div class="field road-slider-wrap">
         <label>Tipo de camino</label>
         <div class="road-labels">
-          <span class="road-label ciudad">Ciudad</span>
-          <span class="road-label ruta">Ruta</span>
+          <span class="road-label active-lbl" id="road-lbl-ciudad">Ciudad</span>
+          <span class="road-label" id="road-lbl-ruta">Ruta</span>
         </div>
         <div class="road-slider-track">
           <div class="road-slider-bg"></div>
           <input type="range" id="slider-road" min="0" max="100" value="30" oninput="onSliderRoad()">
         </div>
-        <p class="road-mix-label" id="road-mix-label"></p>
+        <div class="road-pct-row">
+          <span class="road-pct dominant" id="road-pct-ciudad">70% ciudad</span>
+          <span class="road-pct" id="road-pct-ruta">30% ruta</span>
+        </div>
       </div>
     </div>
 
@@ -2145,14 +2139,20 @@ function onCountryChange() {
 
 function onSliderRoad() {
   roadPct = parseInt(document.getElementById('slider-road').value);
-  const lbl = document.getElementById('road-mix-label');
-  if (roadPct === 0) {
-    lbl.innerHTML = '<strong>100% ciudad</strong>';
-  } else if (roadPct === 100) {
-    lbl.innerHTML = '<strong>100% ruta / autopista</strong>';
-  } else {
-    lbl.innerHTML = `<strong>${100-roadPct}% ciudad</strong> · <strong>${roadPct}% ruta</strong>`;
-  }
+  const ciudad = 100 - roadPct;
+
+  // Porcentajes
+  document.getElementById('road-pct-ciudad').textContent = `${ciudad}% ciudad`;
+  document.getElementById('road-pct-ruta').textContent   = `${roadPct}% ruta`;
+
+  // El dominante en negrita/oscuro, el menor en gris
+  document.getElementById('road-pct-ciudad').classList.toggle('dominant', ciudad >= roadPct);
+  document.getElementById('road-pct-ruta').classList.toggle('dominant',   roadPct > ciudad);
+
+  // Label activo en azul
+  document.getElementById('road-lbl-ciudad').classList.toggle('active-lbl', ciudad >= roadPct);
+  document.getElementById('road-lbl-ruta').classList.toggle('active-lbl',   roadPct > ciudad);
+
   calcular();
 }
 
