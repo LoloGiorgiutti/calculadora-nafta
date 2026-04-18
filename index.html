@@ -353,7 +353,7 @@
     left: 0; right: 0;
     height: 6px;
     border-radius: 99px;
-    background: linear-gradient(to right, #C8CCD8 0%, var(--hi) 100%);
+    background: #C8CCD8; /* se actualiza dinámicamente en onSliderRoad() */
   }
   input[type="range"] {
     width: 100%;
@@ -378,6 +378,14 @@
   }
   input[type="range"]::-webkit-slider-runnable-track {
     height: 0;
+    background: transparent;
+  }
+  input[type="range"]::-moz-range-track {
+    height: 0;
+    background: transparent;
+  }
+  input[type="range"]::-moz-range-progress {
+    display: none;
   }
   .road-mix-label {
     text-align: center;
@@ -2135,6 +2143,10 @@ function onSliderRoad() {
   } else {
     lbl.innerHTML = `<strong>${100-roadPct}% ciudad</strong> · <strong>${roadPct}% ruta</strong>`;
   }
+  // Fill azul crece desde la derecha (lado RUTA) según el porcentaje
+  const ciudadPct = 100 - roadPct;
+  document.querySelector('.road-slider-bg').style.background =
+    `linear-gradient(to right, #C8CCD8 ${ciudadPct}%, var(--hi) ${ciudadPct}%)`;
   calcular();
 }
 
