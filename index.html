@@ -354,13 +354,14 @@
     height: 3px;
     border-radius: 99px;
     background: var(--border);
+    pointer-events: none; /* no intercepta clicks */
   }
   input[type="range"] {
-    width: 100%;
+    position: absolute;
+    left: 0; right: 0; top: 0; bottom: 0;
+    width: 100%; height: 100%;
     appearance: none;
     background: transparent;
-    position: relative;
-    z-index: 2;
     cursor: pointer;
     margin: 0;
   }
